@@ -1,0 +1,107 @@
+﻿@page "/wardrobe"
+@inject IWardrobeService _wardrobeService
+
+<div class="header-container">
+    <h2>Wardrobe Iventory</h2>
+    <NavLink href="/wardrobe/create" style="float: right;">
+        <button class="btn-form btn-form--submit btn-plus"></button>
+    </NavLink>
+</div>
+
+<div class="menu-container">
+    <input @bind-value="SearchedItem" placeholder="Search..." @onkeydown="SearchOnEnter" @bind-value:event="oninput"/>
+    <button @onclick="SearchForItem"></button>
+</div>
+
+<div class="item-container">
+    
+    @if (WardrobeList.Any())
+    {
+        <div class="item-card item-card--info">
+            <div class="item-property">Color</div>
+            <div class="item-property">Item Type</div>
+            <div class="item-property">Price</div>
+            <div class="item-action">Action</div>
+        </div>
+        @foreach (var item in WardrobeList)
+        {
+            <div class="item-card item-card--content">
+                <div class="item-property">@item.Color</div>
+                <div class="item-property">@item.ItemType</div>
+                <div class="item-property">@item.Price€</div>
+                <div class="item-action">
+                    <NavLink href=@($"/wardrobe/create/{item.Id}")>
+                        <button class="btn-form btn-form--submit" style="margin-right: 2px;">Edit</button>
+                    </NavLink>
+                    <button class="btn-form btn-form--cancel" style="margin-left: 2px;" @onclick="() => DeleteItem(item.Id)">Delete</button>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        if (IsLoading)
+        {
+            <div class="loadingio-spinner-ellipsis-eubh4z5wpcn">
+                <div class="ldio-hmy703dd2nh">
+                    <div></div><div></div><div></div><div></div><div></div>
+                </div>
+            </div>
+        }
+        else
+        {
+           <p>No Data found</p>
+        }
+    }
+</div>
+
+<style>
+    body { background-color: #f3f3f3; }
+</style>
+
+@code {
+    private IEnumerable<WardrobeDTO> WardrobeList { get; set; } = new List<WardrobeDTO>();
+
+    bool IsLoading { get; set; }
+    private string SearchedItem { get; set; } = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadWardrobeList();
+        }        
+    }
+
+    private async Task LoadWardrobeList()
+    {
+        IsLoading = true;
+        StateHasChanged();
+        WardrobeList = await Task.Run(() => _wardrobeService.GetAll());
+        IsLoading = false;
+        StateHasChanged();
+    }
+
+    private async Task DeleteItem(int id)
+    {
+        IsLoading = true;
+        await _wardrobeService.Delete(id);
+        await LoadWardrobeList();
+        IsLoading = false;
+    }
+
+    private async Task SearchForItem()
+    {
+        IsLoading = true;
+        WardrobeList = await Task.Run(() => _wardrobeService.SearchByText(SearchedItem));
+        IsLoading = false;
+    }
+
+    private async Task SearchOnEnter(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SearchForItem();
+        }
+    }
+}

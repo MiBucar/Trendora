@@ -1,0 +1,98 @@
+﻿@page "/wardrobe/create"
+@page "/wardrobe/create/{Id:int}"
+
+@inject NavigationManager _navigationManager
+@inject IWardrobeService _wardrobeService
+
+<div>
+    <h2>@Title Item</h2>
+</div>
+
+<div>
+    @if (IsLoading)
+    {
+        <div class="loadingio-spinner-ellipsis-eubh4z5wpcn"><div class="ldio-hmy703dd2nh">
+        <div></div><div></div><div></div><div></div><div></div>
+        </div></div>
+    }
+    else
+    {
+        <EditForm Model="WardrobeItem" OnValidSubmit="@Submit">
+            <DataAnnotationsValidator />
+            <div class="form">
+                <div class="input-container">
+                    <p class="input-container--text">Item Color</p>
+                    <InputText @bind-Value="WardrobeItem.Color" class="input-container--content" placeholder="Enter text...">test</InputText>
+                </div>
+                <div class="input-container">
+                    <p class="input-container--text">Item Type</p>
+                    <InputText @bind-Value="WardrobeItem.ItemType" class="input-container--content" placeholder="Enter text..."></InputText>
+                </div>
+                <div class="input-container">
+                    <p class="input-container--text">Item Price €</p>
+                    <InputNumber @bind-Value="WardrobeItem.Price" class="input-container--content"></InputNumber>
+                </div>
+            </div>
+            <ValidationMessage For="() => WardrobeItem.Color" />
+            <ValidationMessage For="() => WardrobeItem.ItemType" />
+            <button type="submit" class="btn-form btn-form--submit">Submit</button>
+            <NavLink href="/wardrobe"><button class="btn-form btn-form--cancel">Cancel</button></NavLink>
+        </EditForm>
+    }    
+</div>
+
+<style>
+    .input-container--content {
+        border: none;
+        background-color: #dddddd;
+        padding: 5px;
+        border-radius: 3px;
+    }
+</style>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private string Title { get; set; } = "Create";
+    private bool IsLoading { get; set; }
+
+    private WardrobeDTO WardrobeItem { get; set; } = new WardrobeDTO(); 
+
+    private async Task Submit()
+    {
+        if (Id == 0)
+        {
+            await _wardrobeService.Create(WardrobeItem);
+        }
+        else
+        {
+            await _wardrobeService.Update(WardrobeItem);
+        }
+        _navigationManager.NavigateTo("/wardrobe");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (Id == 0)
+            {
+                IsLoading = false;
+            }
+            else
+            {
+                Title = "Update";
+                await LoadItem();
+            }
+        }
+    }
+
+    private async Task LoadItem()
+    {
+        IsLoading = true;
+        StateHasChanged();
+        WardrobeItem = await _wardrobeService.GetById(Id);
+        IsLoading = false;
+        StateHasChanged();
+    }
+}
