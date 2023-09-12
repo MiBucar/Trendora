@@ -12,6 +12,7 @@ namespace Wardrobe.Models.Models
         public string Color { get; set; }
         public string ItemType { get; set; }
         public int Price { get; set; }
+        public byte[] ImageData { get; set; }   
         public DateTime DateCreated { get; set; }
     }
 }

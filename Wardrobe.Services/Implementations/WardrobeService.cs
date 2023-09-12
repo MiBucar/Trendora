@@ -62,8 +62,16 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<IEnumerable<WardrobeDTO>> SearchByText(string text)
         {
-            var obj = await _db.WardrobeList.Where(x => x.Color.Contains(text) || x.ItemType.Contains(text)).ToListAsync();
-            return _mapper.Map<IEnumerable<WardrobeModel>, IEnumerable<WardrobeDTO>>(obj);
+            var searchTerms = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            var query = _db.WardrobeList.AsQueryable();
+
+            foreach (var term in searchTerms)
+            {
+                query = query.Where(x => x.Color.Contains(term) || x.ItemType.Contains(term));
+            }
+
+            var results = await query.ToListAsync();
+            return _mapper.Map<IEnumerable<WardrobeModel>, IEnumerable<WardrobeDTO>>(results);
         }
 
         public async Task<WardrobeDTO> Update(WardrobeDTO wDto)
@@ -74,6 +82,7 @@ namespace Wardrobe.Services.Implementations
                 obj.ItemType = wDto.ItemType;
                 obj.Price = wDto.Price;
                 obj.Color = wDto.Color;
+                obj.ImageData = wDto.ImageData;
                 await _db.SaveChangesAsync();
                 return _mapper.Map<WardrobeModel, WardrobeDTO>(obj);
             }

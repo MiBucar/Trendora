@@ -18,5 +18,6 @@ namespace Wardrobe.Models.DTOs
         public string ItemType { get; set; }
         [Required]
         public int Price { get; set; }
+        public byte[] ImageData { get; set; }
     }
 }

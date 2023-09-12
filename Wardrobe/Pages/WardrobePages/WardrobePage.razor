@@ -1,6 +1,23 @@
 ﻿@page "/wardrobe"
 @inject IWardrobeService _wardrobeService
 
+@{
+    var showClass = IsVisible ? "d-block" : "d-none";
+}
+
+<div class="toast-container p-3 popup-container @showClass" data-bs-autohide="true" data-bs-delay="5000">
+    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">@HeaderText</strong>
+            <button type="button" class="btn-close" aria-label="Close" @onclick="Close"></button>
+        </div>
+
+        <div class="toast-body">
+            <img src="@ImageData()" class="input-container--image" />
+        </div>
+    </div>
+</div>
+
 <div class="header-container">
     <h2>Wardrobe Iventory</h2>
     <NavLink href="/wardrobe/create" style="float: right;">
@@ -21,6 +38,7 @@
             <div class="item-property">Color</div>
             <div class="item-property">Item Type</div>
             <div class="item-property">Price</div>
+            <div class="item-property">Image</div>
             <div class="item-action">Action</div>
         </div>
         @foreach (var item in WardrobeList)
@@ -29,6 +47,17 @@
                 <div class="item-property">@item.Color</div>
                 <div class="item-property">@item.ItemType</div>
                 <div class="item-property">@item.Price€</div>
+
+                <div class="item-property">
+                    @if (item.ImageData.Any()) {
+                        <button class="item-property--button" @onclick="Show"></button>
+                    }
+                    else
+                    {
+                        <span>None</span>
+                    }
+                </div>
+
                 <div class="item-action">
                     <NavLink href=@($"/wardrobe/create/{item.Id}")>
                         <button class="btn-form btn-form--submit" style="margin-right: 2px;">Edit</button>
@@ -103,5 +132,38 @@
         {
             await SearchForItem();
         }
+    }
+
+    private string ImageData()
+    {
+        if (WardrobeItem.ImageData != null && WardrobeItem.ImageData.Length > 0)
+        {
+            var base64String = Convert.ToBase64String(WardrobeItem.ImageData);
+            return $"data:image/jpeg;base64,{base64String}";
+        }
+        return "";
+    }
+
+    [Parameter]
+    public bool IsVisible { get; set; } = false;
+
+    [Parameter]
+    public EventCallback<bool> IsVisibleChanged { get; set; }
+
+    [Parameter]
+    public string? HeaderText { get; set; }
+
+    public void Show()
+    {
+        HeaderText = "Image";
+        IsVisible = true;
+        StateHasChanged();
+    }
+
+    private void Close()
+    {
+        HeaderText = string.Empty;
+        IsVisible = false;
+        StateHasChanged();
     }
 }

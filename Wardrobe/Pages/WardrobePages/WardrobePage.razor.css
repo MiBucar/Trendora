@@ -20,7 +20,7 @@
 
 .item-card {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 columns */
+    grid-template-columns: repeat(5, 1fr); /* 4 columns */
     gap: 10px;
     padding: 10px;
     box-sizing: border-box;
@@ -49,6 +49,24 @@
     align-items: center;
     justify-content: center;
 }
+
+    .item-property--button {
+        background-image: url('Images/image.png');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 25px;
+        background-color: white;
+        height: 30px;
+        width: 30px;
+        border: none;
+        border-top-right-radius: 2px;
+        border-bottom-right-radius: 2px;
+        transition: 1s ease;
+    }
+
+    .item-property--button:hover {
+        background-image: url('Images/image-light.png');
+    }
 
 .item-action {
     display: flex;
@@ -99,4 +117,11 @@
     background-repeat: no-repeat;
     background-position: center;
     background-size: 15px;
+}
+
+.popup-container{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }

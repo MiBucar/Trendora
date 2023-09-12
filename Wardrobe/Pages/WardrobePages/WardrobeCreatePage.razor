@@ -32,6 +32,14 @@
                     <p class="input-container--text">Item Price €</p>
                     <InputNumber @bind-Value="WardrobeItem.Price" class="input-container--content"></InputNumber>
                 </div>
+                <div class="input-container">
+                    <p class="input-container--text">Image Upload</p>
+                    <InputFile OnChange="@HandleFileUpload" class="input-container--content" />
+                </div>
+                <div class="input-container">
+                    <p class="input-container--text">Image</p>
+                    <img src="@ImageData()" class="input-container--image"/>
+                </div>
             </div>
             <ValidationMessage For="() => WardrobeItem.Color" />
             <ValidationMessage For="() => WardrobeItem.ItemType" />
@@ -62,6 +70,7 @@
     {
         if (Id == 0)
         {
+            Console.WriteLine("Image Data is " + WardrobeItem.ImageData);
             await _wardrobeService.Create(WardrobeItem);
         }
         else
@@ -73,6 +82,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        Console.WriteLine(WardrobeItem.ImageData);
         if (firstRender)
         {
             if (Id == 0)
@@ -94,5 +104,29 @@
         WardrobeItem = await _wardrobeService.GetById(Id);
         IsLoading = false;
         StateHasChanged();
+    }
+
+    private async Task HandleFileUpload(InputFileChangeEventArgs e)
+    {
+        var imageFile = e.File;
+
+        if (imageFile != null)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                await imageFile.OpenReadStream().CopyToAsync(memoryStream);
+                WardrobeItem.ImageData = memoryStream.ToArray();
+            }
+        }
+    }
+
+    private string ImageData()
+    {
+        if (WardrobeItem.ImageData != null && WardrobeItem.ImageData.Length > 0)
+        {
+            var base64String = Convert.ToBase64String(WardrobeItem.ImageData);
+            return $"data:image/jpeg;base64,{base64String}";
+        }
+        return "";
     }
 }
