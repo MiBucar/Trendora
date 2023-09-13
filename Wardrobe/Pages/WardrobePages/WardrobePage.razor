@@ -6,13 +6,13 @@
 }
 
 <div class="toast-container p-3 popup-container @showClass" data-bs-autohide="true" data-bs-delay="5000">
-    <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast show popup-container--content" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header">
             <strong class="me-auto">@HeaderText</strong>
             <button type="button" class="btn-close" aria-label="Close" @onclick="Close"></button>
         </div>
 
-        <div class="toast-body">
+        <div class="toast-body popup-container--body">
             <img src="@ImageData()" class="input-container--image" />
         </div>
     </div>
@@ -50,7 +50,7 @@
 
                 <div class="item-property">
                     @if (item.ImageData.Any()) {
-                        <button class="item-property--button" @onclick="Show"></button>
+                        <button class="item-property--button" @onclick="() => Show(item.Id)"></button>
                     }
                     else
                     {
@@ -71,9 +71,9 @@
     {
         if (IsLoading)
         {
-            <div class="loadingio-spinner-ellipsis-eubh4z5wpcn">
-                <div class="ldio-hmy703dd2nh">
-                    <div></div><div></div><div></div><div></div><div></div>
+            <div class="loadingio-spinner-blocks-49enh9aem">
+                <div class="ldio-4kmgy2v2hm7">
+                    <div style='left:25.919999999999998px;top:25.919999999999998px;animation-delay:0s'></div><div style='left:57.599999999999994px;top:25.919999999999998px;animation-delay:0.32894736842105265s'></div><div style='left:89.28px;top:25.919999999999998px;animation-delay:0.6578947368421053s'></div><div style='left:25.919999999999998px;top:57.599999999999994px;animation-delay:2.3026315789473686s'></div><div style='left:89.28px;top:57.599999999999994px;animation-delay:0.9868421052631579s'></div><div style='left:25.919999999999998px;top:89.28px;animation-delay:1.9736842105263157s'></div><div style='left:57.599999999999994px;top:89.28px;animation-delay:1.644736842105263s'></div><div style='left:89.28px;top:89.28px;animation-delay:1.3157894736842106s'></div>
                 </div>
             </div>
         }
@@ -90,6 +90,7 @@
 
 @code {
     private IEnumerable<WardrobeDTO> WardrobeList { get; set; } = new List<WardrobeDTO>();
+    private WardrobeDTO WardrobeItem { get; set; } = new WardrobeDTO();
 
     bool IsLoading { get; set; }
     private string SearchedItem { get; set; } = "";
@@ -134,16 +135,6 @@
         }
     }
 
-    private string ImageData()
-    {
-        if (WardrobeItem.ImageData != null && WardrobeItem.ImageData.Length > 0)
-        {
-            var base64String = Convert.ToBase64String(WardrobeItem.ImageData);
-            return $"data:image/jpeg;base64,{base64String}";
-        }
-        return "";
-    }
-
     [Parameter]
     public bool IsVisible { get; set; } = false;
 
@@ -153,10 +144,11 @@
     [Parameter]
     public string? HeaderText { get; set; }
 
-    public void Show()
+    public async void Show(int id)
     {
         HeaderText = "Image";
         IsVisible = true;
+        await LoadWardrobeItem(id);
         StateHasChanged();
     }
 
@@ -165,5 +157,20 @@
         HeaderText = string.Empty;
         IsVisible = false;
         StateHasChanged();
+    }
+
+    private async Task LoadWardrobeItem(int id)
+    {
+        WardrobeItem = await _wardrobeService.GetById(id);
+    }
+
+    private string ImageData()
+    {
+        if (WardrobeItem.ImageData != null && WardrobeItem.ImageData.Length > 0)
+        {
+            var base64String = Convert.ToBase64String(WardrobeItem.ImageData);
+            return $"data:image/jpeg;base64,{base64String}";
+        }
+        return "";
     }
 }
