@@ -15,6 +15,7 @@ builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IWardrobeService, WardrobeService>();
+builder.Services.AddScoped<IItemTypeService, ItemTypeService>();
 
 var app = builder.Build();
 
