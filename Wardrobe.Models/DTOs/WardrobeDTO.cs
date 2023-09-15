@@ -12,13 +12,16 @@ namespace Wardrobe.Models.DTOs
     public class WardrobeDTO
     {
         [Key]
-        public int Id { get; set; }
+        public int WardrobeModelId { get; set; }
         [Required(ErrorMessage = "Please enter the color")]
         public string Color { get; set; }
-        [Required(ErrorMessage = "Please select the item type")]
-        public string ItemType { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Please enter the price")]
         public int Price { get; set; }
         public byte[] ImageData { get; set; }
+
+        [Range(1, int.MaxValue, ErrorMessage = "Please select a model")]
+        public int ItemTypeModelId { get; set; }
+        public ItemTypeModelDTO ItemType { get; set; }
+
     }
 }

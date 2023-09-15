@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Wardrobe.Data_Access;
 
@@ -11,9 +12,11 @@ using Wardrobe.Data_Access;
 namespace Wardrobe.Data_Access.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230914093743_NewModelMigration")]
+    partial class NewModelMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,13 +25,30 @@ namespace Wardrobe.Data_Access.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Wardrobe.Models.Models.ItemTypeModel", b =>
+            modelBuilder.Entity("Wardrobe.Models.DTOs.ItemTypeModelDTO", b =>
                 {
-                    b.Property<int>("ItemTypeId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ItemTypeId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Model")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ItemTypeModelDTO");
+                });
+
+            modelBuilder.Entity("Wardrobe.Models.Models.ItemTypeModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
@@ -37,18 +57,18 @@ namespace Wardrobe.Data_Access.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ItemTypeId");
+                    b.HasKey("Id");
 
                     b.ToTable("ItemTypeList");
                 });
 
             modelBuilder.Entity("Wardrobe.Models.Models.WardrobeModel", b =>
                 {
-                    b.Property<int>("WardrobeModelId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WardrobeModelId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Color")
                         .IsRequired()
@@ -61,24 +81,24 @@ namespace Wardrobe.Data_Access.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<int>("ItemTypeModelId")
+                    b.Property<int>("ItemTypeId")
                         .HasColumnType("int");
 
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
-                    b.HasKey("WardrobeModelId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("ItemTypeModelId");
+                    b.HasIndex("ItemTypeId");
 
                     b.ToTable("WardrobeList");
                 });
 
             modelBuilder.Entity("Wardrobe.Models.Models.WardrobeModel", b =>
                 {
-                    b.HasOne("Wardrobe.Models.Models.ItemTypeModel", "ItemType")
+                    b.HasOne("Wardrobe.Models.DTOs.ItemTypeModelDTO", "ItemType")
                         .WithMany()
-                        .HasForeignKey("ItemTypeModelId")
+                        .HasForeignKey("ItemTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Wardrobe.Data_Access;
@@ -36,7 +37,7 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<int> Delete(int id)
         {
-            var obj = await _db.ItemTypeList.FirstOrDefaultAsync(x => x.Id == id);
+            var obj = await _db.ItemTypeList.FirstOrDefaultAsync(x => x.ItemTypeId == id);
             if (obj != null)
             {
                 _db.Remove(obj);
@@ -52,7 +53,7 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<ItemTypeModelDTO> GetById(int id)
         {
-            var obj = await _db.ItemTypeList.FirstOrDefaultAsync(x => x.Id == id);
+            var obj = await _db.ItemTypeList.FirstOrDefaultAsync(x => x.ItemTypeId == id);
             if (obj != null)
             {
                 return _mapper.Map<ItemTypeModel, ItemTypeModelDTO>(obj);
@@ -62,7 +63,7 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<ItemTypeModelDTO> Update(ItemTypeModelDTO item)
         {
-            var obj = await _db.ItemTypeList.FirstOrDefaultAsync(x => x.Id == item.Id);
+            var obj = await _db.ItemTypeList.FirstOrDefaultAsync(x => x.ItemTypeId == item.ItemTypeId);
             if (obj != null)
             {
                 obj.Model = item.Model;

@@ -1,5 +1,6 @@
 ﻿@page "/wardrobe"
 @inject IWardrobeService _wardrobeService
+@inject IItemTypeService _itemTypeService
 
 @{
     var showClass = IsVisible ? "d-block" : "d-none";
@@ -34,7 +35,7 @@
     
     @if (WardrobeList.Any())
     {
-        <div class="item-card item-card--info">
+        <div class="item-row item-row--info">
             <div class="item-property">Color</div>
             <div class="item-property">Item Type</div>
             <div class="item-property">Price</div>
@@ -43,14 +44,14 @@
         </div>
         @foreach (var item in WardrobeList)
         {
-            <div class="item-card item-card--content">
+            <div class="item-row item-row--content">
                 <div class="item-property">@item.Color</div>
-                <div class="item-property">@item.ItemType</div>
+                <div class="item-property">@item.ItemType.Model</div>
                 <div class="item-property">@item.Price€</div>
 
                 <div class="item-property">
                     @if (item.ImageData.Any()) {
-                        <button class="item-property--button" @onclick="() => Show(item.Id)"></button>
+                        <button class="item-property--button" @onclick="() => Show(item.WardrobeModelId)"></button>
                     }
                     else
                     {
@@ -59,10 +60,10 @@
                 </div>
 
                 <div class="item-action">
-                    <NavLink href=@($"/wardrobe/create/{item.Id}")>
+                    <NavLink href=@($"/wardrobe/create/{item.WardrobeModelId}")>
                         <button class="btn-form btn-form--submit" style="margin-right: 2px;">Edit</button>
                     </NavLink>
-                    <button class="btn-form btn-form--cancel" style="margin-left: 2px;" @onclick="() => DeleteItem(item.Id)">Delete</button>
+                    <button class="btn-form btn-form--cancel" style="margin-left: 2px;" @onclick="() => DeleteItem(item.WardrobeModelId)">Delete</button>
                 </div>
             </div>
         }
@@ -107,7 +108,7 @@
     {
         IsLoading = true;
         StateHasChanged();
-        WardrobeList = await Task.Run(() => _wardrobeService.GetAll());
+        WardrobeList = await _wardrobeService.GetAll();
         IsLoading = false;
         StateHasChanged();
     }
@@ -172,5 +173,11 @@
             return $"data:image/jpeg;base64,{base64String}";
         }
         return "";
+    }
+
+    private async Task<string> GetItemTypeModel(int id)
+    {
+        var obj = await _itemTypeService.GetById(id);
+        return obj.Model;
     }
 }
