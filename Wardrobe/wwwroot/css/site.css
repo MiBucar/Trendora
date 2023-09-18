@@ -146,9 +146,6 @@ a, .btn-link {
     flex-wrap: wrap;
     gap: 20px;
     border-radius: 1px;
-    margin: auto;
-    margin-top: 20px;
-    align-content: center;
     justify-content: center;
 }
 

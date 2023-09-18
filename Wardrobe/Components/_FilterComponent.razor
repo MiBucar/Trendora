@@ -1,0 +1,41 @@
+﻿@inject IWardrobeService _wardrobeService
+@inject IJSRuntime JSRuntime
+
+<div class="menu-container--input">
+    <select @onchange="FilterItems" placeholder="Filter By">
+        <option value="none">Filter by</option>
+        <option value="PriceAscending">Price low to high</option>
+        <option value="PriceDescending">Price high to low</option>
+    </select>
+</div>
+
+@code {
+    [Parameter]
+    public Action<IEnumerable<WardrobeDTO>> OnFilterApplied { get; set; }
+
+    private string? SelectedValue { get; set; }
+
+    private async Task FilterItems(ChangeEventArgs e)
+    {
+        IEnumerable<WardrobeDTO> filteredList = new List<WardrobeDTO>();
+        SelectedValue = e.Value?.ToString();
+
+        if (SelectedValue.Length > 1)
+        {
+            switch (SelectedValue)
+            {
+                case "PriceAscending":
+                    filteredList = await _wardrobeService.SortByPrice("ascending");
+                    break;
+                case "PriceDescending":
+                    filteredList = await _wardrobeService.SortByPrice("descending");
+                    break;
+                case "none":
+                    filteredList = await _wardrobeService.GetAll();
+                    break;
+            }
+
+            OnFilterApplied?.Invoke(filteredList);
+        }
+    }
+}

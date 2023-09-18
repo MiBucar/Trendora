@@ -15,5 +15,6 @@ namespace Wardrobe.Services.Interfaces
         public Task<WardrobeDTO> GetById(int id);
         public Task<IEnumerable<WardrobeDTO>> GetAll();
         public Task<IEnumerable<WardrobeDTO>> SearchByText(string text);
+        public Task<IEnumerable<WardrobeDTO>> SortByPrice(string type);
     }
 }

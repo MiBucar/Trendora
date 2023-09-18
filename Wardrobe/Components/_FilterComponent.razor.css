@@ -1,0 +1,25 @@
+﻿div select {
+    width: 100%;
+    padding: 6px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border: none;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+    background-color: #dbdbdb;
+    height: 40px;
+    outline: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('Images/dropdown.png'); /* Use your custom arrow icon */
+    background-repeat: no-repeat;
+    background-position: 95%;
+    background-size: 20px;
+    border-radius: 2px;
+    padding-right: 50px;
+}
+
+    div select:focus {
+        border: none;
+    }

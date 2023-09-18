@@ -9,7 +9,6 @@ namespace Wardrobe.Models.DTOs
 {
     public class ItemTypeModelDTO
     {
-        [Key]
         public int ItemTypeId { get; set; }
         [Required(ErrorMessage = "Please enter a model type")]
         public string Model { get; set; }

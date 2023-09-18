@@ -1,6 +1,7 @@
 ﻿@page "/wardrobe"
 @inject IWardrobeService _wardrobeService
 @inject IItemTypeService _itemTypeService
+@inject IJSRuntime JSRuntime
 
 @{
     var showClass = IsVisible ? "d-block" : "d-none";
@@ -20,19 +21,30 @@
 </div>
 
 <div class="header-container">
-    <h2>Wardrobe Iventory</h2>
-    <NavLink href="/wardrobe/create" style="float: right;">
-        <button class="btn-form btn-form--submit btn-plus"></button>
-    </NavLink>
+    <h2>Wardrobe Iventory</h2>    
 </div>
 
-<div class="menu-container">
-    <input @bind-value="SearchedItem" placeholder="Search..." @onkeydown="SearchOnEnter" @bind-value:event="oninput"/>
-    <button @onclick="SearchForItem"></button>
-</div>
+@if (WardrobeList.Any())
+{
+    <div style="display: flex; justify-content: center;">
+        <div class="menu-container">
+            <div class="menu-container--content">
+                <_FilterComponent OnFilterApplied="HandleFilterApplied"></_FilterComponent>
+            </div>
+            <div class="menu-container--content">
+                <input @bind-value="SearchedItem" placeholder="Search..." @onkeydown="SearchOnEnter" @bind-value:event="oninput" />
+                <button class="menu-container--search-button" @onclick="SearchForItem"></button>
+            </div>
+            <div class="menu-container--content">
+                <NavLink href="/wardrobe/create" style="float: right;">
+                    <button class="btn-form btn-form--submit btn-plus"></button>
+                </NavLink>
+            </div>
+        </div>
+    </div>
+}
 
 <div class="item-container">
-    
     @if (WardrobeList.Any())
     {
         <div class="item-row item-row--info">
@@ -175,9 +187,9 @@
         return "";
     }
 
-    private async Task<string> GetItemTypeModel(int id)
+    private void HandleFilterApplied(IEnumerable<WardrobeDTO> filteredList)
     {
-        var obj = await _itemTypeService.GetById(id);
-        return obj.Model;
+        WardrobeList = filteredList;
+        StateHasChanged();
     }
 }

@@ -11,7 +11,6 @@ namespace Wardrobe.Models.DTOs
 {
     public class WardrobeDTO
     {
-        [Key]
         public int WardrobeModelId { get; set; }
         [Required(ErrorMessage = "Please enter the color")]
         public string Color { get; set; }
@@ -19,7 +18,7 @@ namespace Wardrobe.Models.DTOs
         public int Price { get; set; }
         public byte[] ImageData { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "Please select a model")]
+        [Range(1, int.MaxValue, ErrorMessage = "Please select a type")]
         public int ItemTypeModelId { get; set; }
         public ItemTypeModelDTO ItemType { get; set; }
 

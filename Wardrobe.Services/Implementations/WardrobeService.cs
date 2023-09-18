@@ -74,15 +74,31 @@ namespace Wardrobe.Services.Implementations
             return _mapper.Map<IEnumerable<WardrobeModel>, IEnumerable<WardrobeDTO>>(results);
         }
 
+        public async Task<IEnumerable<WardrobeDTO>> SortByPrice(string type)
+        {
+            if (type == "ascending")
+            {
+                var results = await _db.WardrobeList.OrderBy(x => x.Price).ToListAsync();
+                return _mapper.Map<IEnumerable<WardrobeModel>, IEnumerable<WardrobeDTO>>(results);
+            }
+            else if (type == "descending")
+            {
+                var results = await _db.WardrobeList.OrderByDescending(x => x.Price).ToListAsync();
+                return _mapper.Map<IEnumerable<WardrobeModel>, IEnumerable<WardrobeDTO>>(results);
+            }
+            return new List<WardrobeDTO>();
+        }
+
         public async Task<WardrobeDTO> Update(WardrobeDTO wDto)
         {
             var obj = await _db.WardrobeList.FirstOrDefaultAsync(x => x.WardrobeModelId == wDto.WardrobeModelId);
             if ( obj != null)
             {
-                obj.ItemTypeModelId = wDto.WardrobeModelId;
+                obj.ItemTypeModelId = wDto.ItemTypeModelId;
                 obj.Price = wDto.Price;
                 obj.Color = wDto.Color;
                 obj.ImageData = wDto.ImageData;
+                _db.WardrobeList.Update(obj);
                 await _db.SaveChangesAsync();
                 return _mapper.Map<WardrobeModel, WardrobeDTO>(obj);
             }
