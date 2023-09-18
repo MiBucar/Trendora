@@ -36,7 +36,7 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<int> Delete(int id)
         {
-            var obj = await _db.WardrobeList.FirstOrDefaultAsync(x => x.Id == id);
+            var obj = await _db.WardrobeList.Include(x => x.ItemType).FirstOrDefaultAsync(x => x.WardrobeModelId == id);
             if (obj != null)
             {
                 _db.Remove(obj);
@@ -47,12 +47,12 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<IEnumerable<WardrobeDTO>> GetAll()
         {
-            return _mapper.Map<IEnumerable<WardrobeModel>, IEnumerable<WardrobeDTO>>(_db.WardrobeList);
+            return _mapper.Map<IEnumerable<WardrobeModel>, IEnumerable<WardrobeDTO>>(_db.WardrobeList.Include(x => x.ItemType));
         }
 
         public async Task<WardrobeDTO> GetById(int id)
         {
-            var obj = await _db.WardrobeList.FirstOrDefaultAsync(x => x.Id == id);
+            var obj = await _db.WardrobeList.FirstOrDefaultAsync(x => x.WardrobeModelId == id);
             if (obj != null)
             {
                 return _mapper.Map<WardrobeModel, WardrobeDTO>(obj);
@@ -67,22 +67,38 @@ namespace Wardrobe.Services.Implementations
 
             foreach (var term in searchTerms)
             {
-                query = query.Where(x => x.Color.Contains(term) || x.ItemType.Contains(term));
+                query = query.Where(x => x.Color.Contains(term) || x.ItemType.Model.Contains(term));
             }
 
             var results = await query.ToListAsync();
             return _mapper.Map<IEnumerable<WardrobeModel>, IEnumerable<WardrobeDTO>>(results);
         }
 
+        public async Task<IEnumerable<WardrobeDTO>> SortByPrice(string type)
+        {
+            if (type == "ascending")
+            {
+                var results = await _db.WardrobeList.OrderBy(x => x.Price).ToListAsync();
+                return _mapper.Map<IEnumerable<WardrobeModel>, IEnumerable<WardrobeDTO>>(results);
+            }
+            else if (type == "descending")
+            {
+                var results = await _db.WardrobeList.OrderByDescending(x => x.Price).ToListAsync();
+                return _mapper.Map<IEnumerable<WardrobeModel>, IEnumerable<WardrobeDTO>>(results);
+            }
+            return new List<WardrobeDTO>();
+        }
+
         public async Task<WardrobeDTO> Update(WardrobeDTO wDto)
         {
-            var obj = await _db.WardrobeList.FirstOrDefaultAsync(x => x.Id == wDto.Id);
+            var obj = await _db.WardrobeList.FirstOrDefaultAsync(x => x.WardrobeModelId == wDto.WardrobeModelId);
             if ( obj != null)
             {
-                obj.ItemType = wDto.ItemType;
+                obj.ItemTypeModelId = wDto.ItemTypeModelId;
                 obj.Price = wDto.Price;
                 obj.Color = wDto.Color;
                 obj.ImageData = wDto.ImageData;
+                _db.WardrobeList.Update(obj);
                 await _db.SaveChangesAsync();
                 return _mapper.Map<WardrobeModel, WardrobeDTO>(obj);
             }

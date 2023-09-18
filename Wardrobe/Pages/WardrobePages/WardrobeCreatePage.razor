@@ -3,6 +3,7 @@
 
 @inject NavigationManager _navigationManager
 @inject IWardrobeService _wardrobeService
+@inject IItemTypeService _itemTypeService
 
 <div>
     <h2>@Title Item</h2>
@@ -28,7 +29,13 @@
                 </div>
                 <div class="input-container">
                     <p class="input-container--text">Item Type</p>
-                    <InputText @bind-Value="WardrobeItem.ItemType" class="input-container--content" placeholder="Enter text..."></InputText>
+                    <InputSelect @bind-Value="WardrobeItem.ItemTypeModelId" class="input-container--content">
+                        <option value="">Select an option</option>
+                        @foreach (var itemType in ItemTypeModels)
+                        {
+                            <option value="@itemType.ItemTypeId">@itemType.Model</option>
+                        }
+                    </InputSelect>
                 </div>
                 <div class="input-container">
                     <p class="input-container--text">Item Price €</p>
@@ -44,21 +51,12 @@
                 </div>
             </div>
             <ValidationMessage For="() => WardrobeItem.Color" />
-            <ValidationMessage For="() => WardrobeItem.ItemType" />
+            <ValidationMessage For="() => WardrobeItem.ItemTypeModelId" />
             <button type="submit" class="btn-form btn-form--submit">Submit</button>
             <NavLink href="/wardrobe"><button class="btn-form btn-form--cancel">Cancel</button></NavLink>
         </EditForm>
     }    
 </div>
-
-<style>
-    .input-container--content {
-        border: none;
-        background-color: #dddddd;
-        padding: 5px;
-        border-radius: 3px;
-    }
-</style>
 
 @code {
     [Parameter]
@@ -66,13 +64,13 @@
     private string Title { get; set; } = "Create";
     private bool IsLoading { get; set; }
 
-    private WardrobeDTO WardrobeItem { get; set; } = new WardrobeDTO(); 
+    private WardrobeDTO WardrobeItem { get; set; } = new WardrobeDTO();
+    private IEnumerable<ItemTypeModelDTO> ItemTypeModels { get; set; } = new List<ItemTypeModelDTO>();
 
     private async Task Submit()
     {
         if (Id == 0)
         {
-            Console.WriteLine("Image Data is " + WardrobeItem.ImageData);
             await _wardrobeService.Create(WardrobeItem);
         }
         else
@@ -83,19 +81,10 @@
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        Console.WriteLine(WardrobeItem.ImageData);
+    {     
         if (firstRender)
         {
-            if (Id == 0)
-            {
-                IsLoading = false;
-            }
-            else
-            {
-                Title = "Update";
-                await LoadItem();
-            }
+            await LoadItem();
         }
     }
 
@@ -103,7 +92,12 @@
     {
         IsLoading = true;
         StateHasChanged();
-        WardrobeItem = await _wardrobeService.GetById(Id);
+        ItemTypeModels = await _itemTypeService.GetAll();
+        if (Id != 0)
+        {
+            WardrobeItem = await _wardrobeService.GetById(Id);
+            Title = "Update";
+        }
         IsLoading = false;
         StateHasChanged();
     }

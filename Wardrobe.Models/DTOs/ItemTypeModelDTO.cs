@@ -4,15 +4,13 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Wardrobe.Models.DTOs;
 
-namespace Wardrobe.Models.Models
+namespace Wardrobe.Models.DTOs
 {
-    public class ItemTypeModel
+    public class ItemTypeModelDTO
     {
-        [Key]
         public int ItemTypeId { get; set; }
+        [Required(ErrorMessage = "Please enter a model type")]
         public string Model { get; set; }
-        public DateTime DateCreated { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Wardrobe.Data_Access;
 
@@ -11,9 +12,11 @@ using Wardrobe.Data_Access;
 namespace Wardrobe.Data_Access.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230913113420_ItemTypeFirstMigration")]
+    partial class ItemTypeFirstMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,11 +27,11 @@ namespace Wardrobe.Data_Access.Migrations
 
             modelBuilder.Entity("Wardrobe.Models.Models.ItemTypeModel", b =>
                 {
-                    b.Property<int>("ItemTypeId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ItemTypeId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
@@ -37,18 +40,18 @@ namespace Wardrobe.Data_Access.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ItemTypeId");
+                    b.HasKey("Id");
 
                     b.ToTable("ItemTypeList");
                 });
 
             modelBuilder.Entity("Wardrobe.Models.Models.WardrobeModel", b =>
                 {
-                    b.Property<int>("WardrobeModelId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WardrobeModelId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Color")
                         .IsRequired()
@@ -61,28 +64,16 @@ namespace Wardrobe.Data_Access.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<int>("ItemTypeModelId")
-                        .HasColumnType("int");
+                    b.Property<string>("ItemType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
-                    b.HasKey("WardrobeModelId");
-
-                    b.HasIndex("ItemTypeModelId");
+                    b.HasKey("Id");
 
                     b.ToTable("WardrobeList");
-                });
-
-            modelBuilder.Entity("Wardrobe.Models.Models.WardrobeModel", b =>
-                {
-                    b.HasOne("Wardrobe.Models.Models.ItemTypeModel", "ItemType")
-                        .WithMany()
-                        .HasForeignKey("ItemTypeModelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ItemType");
                 });
 #pragma warning restore 612, 618
         }

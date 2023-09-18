@@ -1,0 +1,101 @@
+﻿@page "/itemtypes"
+@inject IItemTypeService _itemTypeService
+
+<h2>Item types</h2>
+
+<div class="item-container">
+    <!-- Create New Model Type --> 
+    <div class="item-card">
+        <div style="display: flex; height: 100%; flex-direction: column; justify-content: center;">
+            <EditForm Model="ItemTypeModel" OnValidSubmit="@CreateItemType">
+                <DataAnnotationsValidator/>
+                <h4 style="text-align: left;">Create new model</h4>
+                <div class="item-property">
+                    <InputText @bind-Value="ItemTypeModel.Model" class="input-container--content" placeholder="Enter text..."></InputText>
+                </div>
+                <ValidationMessage For="() => ItemTypeModel.Model" />
+                <div style="margin-top: 10px; text-align: right; width: 100%;">
+                    <button type="submit" class="btn-form btn-form--submit">Create</button>
+                </div>                
+            </EditForm>
+        </div>        
+    </div>
+    <!-- List of Model Types -->
+    <div class="item-card">
+        @if (ItemTypeModelList.Any())
+        {
+            <div class="item-row item-row--info">
+                <div class="item-property">Model Type</div>
+                <div class="item-action">Action</div>
+            </div>
+            @foreach (var model in ItemTypeModelList)
+            {
+                <div class="item-row item-row--content">
+                    <div class="item-property">@model.Model</div>
+                    <div class="item-action">
+                        <button class="btn-form btn-form--cancel" @onclick="() => DeleteModel(model.ItemTypeId)">Delete</button>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            if (IsLoading)
+            {
+                <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
+                    <div class="loadingio-spinner-blocks-49enh9aem">
+                        <div class="ldio-4kmgy2v2hm7">
+                            <div style='left:25.919999999999998px;top:25.919999999999998px;animation-delay:0s'></div><div style='left:57.599999999999994px;top:25.919999999999998px;animation-delay:0.32894736842105265s'></div><div style='left:89.28px;top:25.919999999999998px;animation-delay:0.6578947368421053s'></div><div style='left:25.919999999999998px;top:57.599999999999994px;animation-delay:2.3026315789473686s'></div><div style='left:89.28px;top:57.599999999999994px;animation-delay:0.9868421052631579s'></div><div style='left:25.919999999999998px;top:89.28px;animation-delay:1.9736842105263157s'></div><div style='left:57.599999999999994px;top:89.28px;animation-delay:1.644736842105263s'></div><div style='left:89.28px;top:89.28px;animation-delay:1.3157894736842106s'></div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
+                    <p>Nothing to show</p>
+                </div>                
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private bool IsLoading { get; set; }
+
+    private ItemTypeModelDTO ItemTypeModel { get; set; } = new ItemTypeModelDTO();
+    private IEnumerable<ItemTypeModelDTO> ItemTypeModelList { get; set; } = new List<ItemTypeModelDTO>();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadItemTypes();
+        }
+    }
+
+    private async Task LoadItemTypes()
+    {
+        IsLoading = true;
+        StateHasChanged();
+        ItemTypeModelList = await _itemTypeService.GetAll();
+        IsLoading = false;
+        StateHasChanged();
+    }
+
+    private async Task CreateItemType()
+    {
+        var newModel = await _itemTypeService.Create(ItemTypeModel);
+        ItemTypeModelList = await _itemTypeService.GetAll();
+
+        ItemTypeModel = new ItemTypeModelDTO();
+        StateHasChanged();
+    }
+
+    private async Task DeleteModel(int id)
+    {
+        await _itemTypeService.Delete(id);
+        await LoadItemTypes();
+        StateHasChanged();
+    }
+}

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Wardrobe.Data_Access;
 
@@ -11,9 +12,11 @@ using Wardrobe.Data_Access;
 namespace Wardrobe.Data_Access.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230915084219_NewMigration03")]
+    partial class NewMigration03
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,23 @@ namespace Wardrobe.Data_Access.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Wardrobe.Models.DTOs.ItemTypeModelDTO", b =>
+                {
+                    b.Property<int>("ItemTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ItemTypeId"));
+
+                    b.Property<string>("Model")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ItemTypeId");
+
+                    b.ToTable("ItemTypeModelDTO");
+                });
 
             modelBuilder.Entity("Wardrobe.Models.Models.ItemTypeModel", b =>
                 {
@@ -76,7 +96,7 @@ namespace Wardrobe.Data_Access.Migrations
 
             modelBuilder.Entity("Wardrobe.Models.Models.WardrobeModel", b =>
                 {
-                    b.HasOne("Wardrobe.Models.Models.ItemTypeModel", "ItemType")
+                    b.HasOne("Wardrobe.Models.DTOs.ItemTypeModelDTO", "ItemType")
                         .WithMany()
                         .HasForeignKey("ItemTypeModelId")
                         .OnDelete(DeleteBehavior.Cascade)

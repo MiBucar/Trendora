@@ -1,5 +1,7 @@
 ﻿@page "/wardrobe"
 @inject IWardrobeService _wardrobeService
+@inject IItemTypeService _itemTypeService
+@inject IJSRuntime JSRuntime
 
 @{
     var showClass = IsVisible ? "d-block" : "d-none";
@@ -19,22 +21,33 @@
 </div>
 
 <div class="header-container">
-    <h2>Wardrobe Iventory</h2>
-    <NavLink href="/wardrobe/create" style="float: right;">
-        <button class="btn-form btn-form--submit btn-plus"></button>
-    </NavLink>
+    <h2>Wardrobe Iventory</h2>    
 </div>
 
-<div class="menu-container">
-    <input @bind-value="SearchedItem" placeholder="Search..." @onkeydown="SearchOnEnter" @bind-value:event="oninput"/>
-    <button @onclick="SearchForItem"></button>
-</div>
+@if (WardrobeList.Any())
+{
+    <div style="display: flex; justify-content: center;">
+        <div class="menu-container">
+            <div class="menu-container--content">
+                <_FilterComponent OnFilterApplied="HandleFilterApplied"></_FilterComponent>
+            </div>
+            <div class="menu-container--content">
+                <input @bind-value="SearchedItem" placeholder="Search..." @onkeydown="SearchOnEnter" @bind-value:event="oninput" />
+                <button class="menu-container--search-button" @onclick="SearchForItem"></button>
+            </div>
+            <div class="menu-container--content">
+                <NavLink href="/wardrobe/create" style="float: right;">
+                    <button class="btn-form btn-form--submit btn-plus"></button>
+                </NavLink>
+            </div>
+        </div>
+    </div>
+}
 
 <div class="item-container">
-    
     @if (WardrobeList.Any())
     {
-        <div class="item-card item-card--info">
+        <div class="item-row item-row--info">
             <div class="item-property">Color</div>
             <div class="item-property">Item Type</div>
             <div class="item-property">Price</div>
@@ -43,14 +56,14 @@
         </div>
         @foreach (var item in WardrobeList)
         {
-            <div class="item-card item-card--content">
+            <div class="item-row item-row--content">
                 <div class="item-property">@item.Color</div>
-                <div class="item-property">@item.ItemType</div>
+                <div class="item-property">@item.ItemType.Model</div>
                 <div class="item-property">@item.Price€</div>
 
                 <div class="item-property">
                     @if (item.ImageData.Any()) {
-                        <button class="item-property--button" @onclick="() => Show(item.Id)"></button>
+                        <button class="item-property--button" @onclick="() => Show(item.WardrobeModelId)"></button>
                     }
                     else
                     {
@@ -59,10 +72,10 @@
                 </div>
 
                 <div class="item-action">
-                    <NavLink href=@($"/wardrobe/create/{item.Id}")>
+                    <NavLink href=@($"/wardrobe/create/{item.WardrobeModelId}")>
                         <button class="btn-form btn-form--submit" style="margin-right: 2px;">Edit</button>
                     </NavLink>
-                    <button class="btn-form btn-form--cancel" style="margin-left: 2px;" @onclick="() => DeleteItem(item.Id)">Delete</button>
+                    <button class="btn-form btn-form--cancel" style="margin-left: 2px;" @onclick="() => DeleteItem(item.WardrobeModelId)">Delete</button>
                 </div>
             </div>
         }
@@ -107,7 +120,7 @@
     {
         IsLoading = true;
         StateHasChanged();
-        WardrobeList = await Task.Run(() => _wardrobeService.GetAll());
+        WardrobeList = await _wardrobeService.GetAll();
         IsLoading = false;
         StateHasChanged();
     }
@@ -172,5 +185,11 @@
             return $"data:image/jpeg;base64,{base64String}";
         }
         return "";
+    }
+
+    private void HandleFilterApplied(IEnumerable<WardrobeDTO> filteredList)
+    {
+        WardrobeList = filteredList;
+        StateHasChanged();
     }
 }
