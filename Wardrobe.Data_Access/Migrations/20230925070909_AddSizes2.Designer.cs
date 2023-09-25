@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Wardrobe.Data_Access;
 
@@ -11,9 +12,11 @@ using Wardrobe.Data_Access;
 namespace Wardrobe.Data_Access.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230925070909_AddSizes2")]
+    partial class AddSizes2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,21 @@ namespace Wardrobe.Data_Access.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("ItemTypeModelSize", b =>
+                {
+                    b.Property<int>("ItemTypesItemTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SizesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ItemTypesItemTypeId", "SizesId");
+
+                    b.HasIndex("SizesId");
+
+                    b.ToTable("ItemTypeModelSize");
+                });
 
             modelBuilder.Entity("Wardrobe.Models.Models.ItemTypeModel", b =>
                 {
@@ -42,7 +60,7 @@ namespace Wardrobe.Data_Access.Migrations
                     b.ToTable("ItemTypeList");
                 });
 
-            modelBuilder.Entity("Wardrobe.Models.Models.SizeModel", b =>
+            modelBuilder.Entity("Wardrobe.Models.Models.Size", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -50,19 +68,14 @@ namespace Wardrobe.Data_Access.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("IsAvailable")
+                    b.Property<bool>("IsChecked")
                         .HasColumnType("bit");
 
                     b.Property<string>("ItemSize")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ItemTypeModelId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ItemTypeModelId");
 
                     b.ToTable("SizeList");
                 });
@@ -99,15 +112,19 @@ namespace Wardrobe.Data_Access.Migrations
                     b.ToTable("WardrobeList");
                 });
 
-            modelBuilder.Entity("Wardrobe.Models.Models.SizeModel", b =>
+            modelBuilder.Entity("ItemTypeModelSize", b =>
                 {
-                    b.HasOne("Wardrobe.Models.Models.ItemTypeModel", "ItemTypeModel")
-                        .WithMany("Sizes")
-                        .HasForeignKey("ItemTypeModelId")
+                    b.HasOne("Wardrobe.Models.Models.ItemTypeModel", null)
+                        .WithMany()
+                        .HasForeignKey("ItemTypesItemTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ItemTypeModel");
+                    b.HasOne("Wardrobe.Models.Models.Size", null)
+                        .WithMany()
+                        .HasForeignKey("SizesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Wardrobe.Models.Models.WardrobeModel", b =>
@@ -119,11 +136,6 @@ namespace Wardrobe.Data_Access.Migrations
                         .IsRequired();
 
                     b.Navigation("ItemType");
-                });
-
-            modelBuilder.Entity("Wardrobe.Models.Models.ItemTypeModel", b =>
-                {
-                    b.Navigation("Sizes");
                 });
 #pragma warning restore 612, 618
         }

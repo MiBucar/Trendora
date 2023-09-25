@@ -15,6 +15,7 @@ namespace Wardrobe.Services.Mapper
         {
             CreateMap<WardrobeModel, WardrobeDTO>().ReverseMap();
             CreateMap<ItemTypeModel, ItemTypeModelDTO>().ReverseMap();
+            CreateMap<SizeModel, SizeModelDTO>().ReverseMap();
         }
     }
 }

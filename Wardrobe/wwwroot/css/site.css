@@ -91,6 +91,14 @@ a, .btn-link {
             background-color: #eb3434;
         }
 
+.btn-plus {
+    background-image: url('Images/plus.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 15px;
+    height: 40px;
+}
+
 @keyframes ldio-4kmgy2v2hm7 {
     0%
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Wardrobe.Data_Access;
 
@@ -11,9 +12,11 @@ using Wardrobe.Data_Access;
 namespace Wardrobe.Data_Access.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230925114945_NewMigration10")]
+    partial class NewMigration10
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,12 +60,12 @@ namespace Wardrobe.Data_Access.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ItemTypeModelId")
+                    b.Property<int?>("ItemTypeModelItemTypeId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ItemTypeModelId");
+                    b.HasIndex("ItemTypeModelItemTypeId");
 
                     b.ToTable("SizeList");
                 });
@@ -101,13 +104,9 @@ namespace Wardrobe.Data_Access.Migrations
 
             modelBuilder.Entity("Wardrobe.Models.Models.SizeModel", b =>
                 {
-                    b.HasOne("Wardrobe.Models.Models.ItemTypeModel", "ItemTypeModel")
+                    b.HasOne("Wardrobe.Models.Models.ItemTypeModel", null)
                         .WithMany("Sizes")
-                        .HasForeignKey("ItemTypeModelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ItemTypeModel");
+                        .HasForeignKey("ItemTypeModelItemTypeId");
                 });
 
             modelBuilder.Entity("Wardrobe.Models.Models.WardrobeModel", b =>

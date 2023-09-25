@@ -1,41 +1,72 @@
 ﻿@page "/itemtypes"
 @inject IItemTypeService _itemTypeService
+@inject ISizeService _sizeService
 
-<h2>Item types</h2>
+<h2 style="text-align:center">Item types</h2>
 
-<div class="item-container">
+<div class="item-container--item-page">
     <!-- Create New Model Type --> 
-    <div class="item-card">
-        <div style="display: flex; height: 100%; flex-direction: column; justify-content: center;">
+    <div class="item-card item-card--1">
+        <div style=" height: 100%;">
             <EditForm Model="ItemTypeModel" OnValidSubmit="@CreateItemType">
                 <DataAnnotationsValidator/>
-                <h4 style="text-align: left;">Create new model</h4>
-                <div class="item-property">
+                <h4 style="text-align: center;">Create new Item Type</h4>
+                <div style="text-align:left;">
+                    <label>Item Type Name</label>
+                </div>
+                <div class="item-property--card-1">                    
                     <InputText @bind-Value="ItemTypeModel.Model" class="input-container--content" placeholder="Enter text..."></InputText>
+                </div>
+                <div style="text-align:left;">
+                    <label>Item Type Size</label>
+                </div>
+                <div class="item-property--card-1">                    
+                    <InputText @bind-Value="NewSizeValue" class="input-container--content"></InputText>
+                    <button @onclick="@AddNewSize" class="btn-form btn-form--submit btn-plus" type="button"></button>
                 </div>
                 <ValidationMessage For="() => ItemTypeModel.Model" />
                 <div style="margin-top: 10px; text-align: right; width: 100%;">
                     <button type="submit" class="btn-form btn-form--submit">Create</button>
                 </div>                
             </EditForm>
-        </div>        
+            @if (AvailableSizes.Any())
+            {
+                <div>
+                    @foreach (var size in AvailableSizes)
+                    {
+                        <h2>@size.ItemSize</h2>
+                    }
+                </div>                
+            }
+        </div>      
     </div>
     <!-- List of Model Types -->
-    <div class="item-card">
+    <div class="item-card item-card--2">
         @if (ItemTypeModelList.Any())
         {
             <div class="item-row item-row--info">
                 <div class="item-property">Model Type</div>
+                <div class="item-property">Sizes</div>
                 <div class="item-action">Action</div>
             </div>
             @foreach (var model in ItemTypeModelList)
             {
                 <div class="item-row item-row--content">
                     <div class="item-property">@model.Model</div>
+                    <div class="item-property">
+                        @if (model.Sizes.Any())
+                        {
+                                    @foreach (var size in model.Sizes)
+                                    {
+                                        <span style="margin-right: 5px;">@size.ItemSize</span>
+                                    }
+                        }
+                    </div>
                     <div class="item-action">
                         <button class="btn-form btn-form--cancel" @onclick="() => DeleteModel(model.ItemTypeId)">Delete</button>
-                    </div>
+                    </div>                    
                 </div>
+                
             }
         }
         else
@@ -64,7 +95,17 @@
     private bool IsLoading { get; set; }
 
     private ItemTypeModelDTO ItemTypeModel { get; set; } = new ItemTypeModelDTO();
+    private SizeModelDTO SizeModel{ get; set; } = new SizeModelDTO();
     private IEnumerable<ItemTypeModelDTO> ItemTypeModelList { get; set; } = new List<ItemTypeModelDTO>();
+    private IEnumerable<SizeModelDTO> ItemSizeList { get; set; } = new List<SizeModelDTO>();
+
+    private string NewSizeValue { get; set; } = "";
+    private List<SizeModelDTO> AvailableSizes { get; set; } = new List<SizeModelDTO>(){};
+
+    private void AddNewSize()
+    {
+        AvailableSizes.Add(new SizeModelDTO() { ItemSize = NewSizeValue, IsAvailable = true });
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -78,6 +119,7 @@
     {
         IsLoading = true;
         StateHasChanged();
+        ItemSizeList = await _sizeService.GetAll();
         ItemTypeModelList = await _itemTypeService.GetAll();
         IsLoading = false;
         StateHasChanged();
@@ -86,10 +128,16 @@
     private async Task CreateItemType()
     {
         var newModel = await _itemTypeService.Create(ItemTypeModel);
-        ItemTypeModelList = await _itemTypeService.GetAll();
 
-        ItemTypeModel = new ItemTypeModelDTO();
+        foreach(var size in AvailableSizes)
+        {
+            await _sizeService.Create(size, newModel.ItemTypeId);
+        }
+
+        AvailableSizes = new List<SizeModelDTO>();
+        ItemTypeModelList = await _itemTypeService.GetAll();
         StateHasChanged();
+        ItemTypeModel = new ItemTypeModelDTO();
     }
 
     private async Task DeleteModel(int id)

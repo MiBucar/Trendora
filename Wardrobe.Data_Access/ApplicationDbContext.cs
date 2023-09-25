@@ -9,5 +9,6 @@ namespace Wardrobe.Data_Access
 
         public DbSet<WardrobeModel> WardrobeList { get; set; }
         public DbSet<ItemTypeModel> ItemTypeList { get; set; }
+        public DbSet<SizeModel> SizeList { get; set; }
     }
 }

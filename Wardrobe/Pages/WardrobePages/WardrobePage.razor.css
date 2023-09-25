@@ -109,14 +109,6 @@
             background-color: #2e2ec9;
         }
 
-.btn-plus {
-    background-image: url('Images/plus.png');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 15px;
-    height: 40px;
-}
-
 .popup-container{
     position: fixed;
     top: 50%;
