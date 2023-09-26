@@ -2,17 +2,34 @@
 @page "/itemtypes/edit/{Id:int}"
 @inject IItemTypeService _itemTypeService
 @inject ISizeService _sizeService
+@inject IJSRuntime _jsRuntime
 
 @{
     var showClass = IsVisible ? "d-block" : "d-none";
 }
 
-<h2 style="text-align:center">Item types</h2>
+<h2 style="text-align:center">Create new Item Type</h2>
 
 <div class="toast-container p-3 popup-container @showClass" data-bs-autohide="true" data-bs-delay="5000">
     <div class="toast show popup-container--content" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header">
-            <strong class="me-auto">@HeaderText</strong>
+            <div style="display: flex; align-items: center;">
+                @if (!IsEditingHeaderText)
+                {
+                    <h5 style="margin: 0;">@HeaderText</h5>
+                    <div @onclick="StartEditingHeaderText" class="popup-container--edit-name"></div>
+                }
+                else
+                {
+                    <EditForm Model="ShownTypeModel" OnValidSubmit="SaveEditingHeaderText" @onfocusout="@(() => StopEditingHeaderText())">
+                        <DataAnnotationsValidator />
+                        <div class="item-property--card-1">
+                            <InputText @bind-Value="ShownTypeModel.Model" class="input-container--content no-focus-outline" style="width: 50%;" placeholder="Rename..."></InputText>
+                        </div>
+                        <ValidationMessage For="() => ShownTypeModel.Model" />
+                    </EditForm>
+                }
+            </div>
             <button type="button" class="btn-close" aria-label="Close" @onclick="Close"></button>
         </div>
 
@@ -39,7 +56,6 @@
         <div style=" height: 100%;">
             <EditForm Model="ItemTypeModel" OnValidSubmit="@AddNewSize">
                 <DataAnnotationsValidator />
-                <h4 style="text-align: center;">Create new Item Type</h4>
                 <div style="text-align:left;">
                     <label>Item Type Name</label>
                 </div>
@@ -59,7 +75,6 @@
                     @if (AvailableSizes.Any())
                     {
                         <button @onclick="@DeleteAvailableSizes" type="button" class="btn-form btn-form--cancel" style="margin-left: 5px;">Delete sizes</button>
-                        <button class="btn-form btn-form--submit">Edit</button>
                     }
                 </div>
             </EditForm>
@@ -257,5 +272,26 @@
         HeaderText = string.Empty;
         IsVisible = false;
         StateHasChanged();
+    }
+
+    private bool IsEditingHeaderText = false;
+
+    private void StartEditingHeaderText()
+    {
+        IsEditingHeaderText = true;
+    }
+
+    private void StopEditingHeaderText()
+    {
+        IsEditingHeaderText = false;
+    }
+
+    private async Task SaveEditingHeaderText()
+    {
+        await _itemTypeService.Update(ShownTypeModel);
+        HeaderText = ShownTypeModel.Model;
+        ItemTypeModelList = await _itemTypeService.GetAll();
+        StateHasChanged();
+        IsEditingHeaderText = false;
     }
 }

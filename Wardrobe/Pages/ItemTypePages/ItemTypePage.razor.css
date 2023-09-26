@@ -117,3 +117,22 @@
 .popup-container--body img {
     width: 500px;
 }
+
+.popup-container--edit-name {
+    background-image: url('Images/edit.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 15px;
+    height: 25px;
+    width: 25px;
+    transition: .5s ease;
+}
+
+    .popup-container--edit-name:hover {
+        background-image: url('Images/edit-light.png');
+        cursor: pointer;
+    }
+
+.toast-header {
+    justify-content: space-between;
+}

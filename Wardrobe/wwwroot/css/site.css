@@ -169,3 +169,7 @@ a, .btn-link {
     border-radius: 3px;
     width: 100%;
 }
+
+.input-container--content:focus{
+    outline: none !important;
+}
