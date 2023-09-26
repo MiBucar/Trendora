@@ -24,7 +24,7 @@
     <h2>Wardrobe Iventory</h2>    
 </div>
 
-@if (WardrobeList.Any())
+@if (!IsLoading)
 {
     <div style="display: flex; justify-content: center;">
         <div class="menu-container">
@@ -101,6 +101,14 @@
 
 <style>
     body { background-color: #f3f3f3; }
+
+    .btn-plus {
+        background-image: url('Images/plus.png');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 15px;
+        margin-left: 5px;
+    }
 </style>
 
 @code {

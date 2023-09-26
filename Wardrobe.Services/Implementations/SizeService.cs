@@ -34,6 +34,17 @@ namespace Wardrobe.Services.Implementations
             return _mapper.Map<SizeModel, SizeModelDTO>(createdObj.Entity);
         }
 
+        public async Task<int> Delete(SizeModelDTO item)
+        {
+            var obj = await _db.SizeList.FirstOrDefaultAsync(x => x.Id == item.Id);
+            if (obj != null)
+            {
+                _db.Remove(obj);
+                return await _db.SaveChangesAsync();
+            }
+            return 0;
+        }
+
         public async Task<IEnumerable<SizeModelDTO>> GetAll()
         {
             return _mapper.Map<IEnumerable<SizeModel>, IEnumerable<SizeModelDTO>>(_db.SizeList);

@@ -1,9 +1,14 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: CovesBold;
     background-color: #f3f3f3;
 }
+
+h4{
+    font-size: 30px;
+}
+
 
 h1:focus {
     outline: none;
@@ -73,14 +78,14 @@ a, .btn-link {
     border-radius: 3px;
 }
 
-    .btn-form--submit {
-        background-color: #1a1a85;
-        transition: .5s ease;
-    }
+.btn-form--submit {
+    background-color: var(--color-primary);
+    transition: .5s ease;
+}
 
-        .btn-form--submit:hover {
-            background-color:#2e2ec9;
-        }
+    .btn-form--submit:hover {
+        background-color: var(--color-primary-light);
+    }
 
     .btn-form--cancel {
         background-color: #cd1919;

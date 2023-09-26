@@ -1,51 +1,89 @@
 ﻿@page "/itemtypes"
+@page "/itemtypes/edit/{Id:int}"
 @inject IItemTypeService _itemTypeService
 @inject ISizeService _sizeService
 
+@{
+    var showClass = IsVisible ? "d-block" : "d-none";
+}
+
 <h2 style="text-align:center">Item types</h2>
 
+<div class="toast-container p-3 popup-container @showClass" data-bs-autohide="true" data-bs-delay="5000">
+    <div class="toast show popup-container--content" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">@HeaderText</strong>
+            <button type="button" class="btn-close" aria-label="Close" @onclick="Close"></button>
+        </div>
+
+        <div class="toast-body popup-container--body">
+            @if (IsVisible)
+            {
+                <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                    @foreach (var size in ShownTypeModel.Sizes)
+                    {
+                            <div class="size-container">
+                                <span style="margin: 1px 3px 0px 2px;">@size.ItemSize</span>
+                                <div @onclick="() => RemoveExistingSize(size)" class="size-container--image"></div>
+                            </div>
+                    }
+                </div>
+            }            
+        </div>
+    </div>
+</div>
+
 <div class="item-container--item-page">
-    <!-- Create New Model Type --> 
+    <!-- Create New Model Type -->
     <div class="item-card item-card--1">
         <div style=" height: 100%;">
-            <EditForm Model="ItemTypeModel" OnValidSubmit="@CreateItemType">
-                <DataAnnotationsValidator/>
+            <EditForm Model="ItemTypeModel" OnValidSubmit="@AddNewSize">
+                <DataAnnotationsValidator />
                 <h4 style="text-align: center;">Create new Item Type</h4>
                 <div style="text-align:left;">
                     <label>Item Type Name</label>
                 </div>
-                <div class="item-property--card-1">                    
-                    <InputText @bind-Value="ItemTypeModel.Model" class="input-container--content" placeholder="Enter text..."></InputText>
+                <div class="item-property--card-1">
+                    <InputText @bind-Value="ItemTypeModel.Model" class="input-container--content-2" placeholder="Enter new model type..."></InputText>
                 </div>
                 <div style="text-align:left;">
                     <label>Item Type Size</label>
                 </div>
-                <div class="item-property--card-1">                    
-                    <InputText @bind-Value="NewSizeValue" class="input-container--content"></InputText>
-                    <button @onclick="@AddNewSize" class="btn-form btn-form--submit btn-plus" type="button"></button>
+                <div class="item-property--card-1">
+                    <InputText @bind-Value="NewSizeValue" class="input-container--content-2" placeholder="Enter new size..."></InputText>
+                    <button class="btn-form btn-form--submit btn-plus" type="submit"></button>
                 </div>
                 <ValidationMessage For="() => ItemTypeModel.Model" />
-                <div style="margin-top: 10px; text-align: right; width: 100%;">
-                    <button type="submit" class="btn-form btn-form--submit">Create</button>
-                </div>                
+                <div style="margin-top: 10px; text-align: left; width: 100%;">
+                    <button @onclick="CreateItemType" type="button" class="btn-form btn-form--submit">Create</button>
+                    @if (AvailableSizes.Any())
+                    {
+                        <button @onclick="@DeleteAvailableSizes" type="button" class="btn-form btn-form--cancel" style="margin-left: 5px;">Delete sizes</button>
+                        <button class="btn-form btn-form--submit">Edit</button>
+                    }
+                </div>
             </EditForm>
             @if (AvailableSizes.Any())
             {
-                <div>
+                <h5 style="margin: 15px 0 5px 0">Created Sizes</h5>
+                <div style="margin-top:10px; display: flex; align-items: center; flex-wrap: wrap;">
                     @foreach (var size in AvailableSizes)
                     {
-                        <h2>@size.ItemSize</h2>
+                        <div class="size-container">
+                            <span style="margin: 1px 3px 0px 2px;">@size.ItemSize</span>
+                            <div @onclick="() => RemoveAvailableSize(size)" class="size-container--image"></div>
+                        </div>
                     }
-                </div>                
+                </div>
             }
-        </div>      
+        </div>
     </div>
     <!-- List of Model Types -->
     <div class="item-card item-card--2">
         @if (ItemTypeModelList.Any())
         {
             <div class="item-row item-row--info">
-                <div class="item-property">Model Type</div>
+                <div class="item-property" style="font-weight: 700;">Model Type</div>
                 <div class="item-property">Sizes</div>
                 <div class="item-action">Action</div>
             </div>
@@ -56,17 +94,23 @@
                     <div class="item-property">
                         @if (model.Sizes.Any())
                         {
-                                    @foreach (var size in model.Sizes)
-                                    {
-                                        <span style="margin-right: 5px;">@size.ItemSize</span>
-                                    }
+                            @for (int i = 0; i < 4; i++)
+                            {
+                                <span style="margin-right: 5px;">@model.Sizes[i].ItemSize</span>
+                            }
+                            <span>...</span>
+                        }
+                        else
+                        {
+                            <span>None</span>
                         }
                     </div>
                     <div class="item-action">
-                        <button class="btn-form btn-form--cancel" @onclick="() => DeleteModel(model.ItemTypeId)">Delete</button>
-                    </div>                    
+                        <button class="btn-form btn-form--cancel" style="margin-right: 2px;" @onclick="() => DeleteModel(model.ItemTypeId)">Delete</button>
+                        <button class="btn-form btn-form--submit" style="margin-left: 2px;" @onclick="() => Show(model.ItemTypeId)">Edit</button>
+                    </div>
                 </div>
-                
+
             }
         }
         else
@@ -85,26 +129,70 @@
             {
                 <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
                     <p>Nothing to show</p>
-                </div>                
+                </div>
             }
         }
     </div>
 </div>
 
+<style>
+    .btn-plus {
+        background-image: url('Images/plus.png');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 15px;
+        margin-left: 5px;
+        height: 35px;
+    }
+
+    .input-container--content-2 {
+        border: none;
+        background-color: #dddddd;
+        padding: 5px;
+        border-radius: 3px;
+        width: 94%;
+    }
+</style>
+
 @code {
+    [Parameter]
+    public int Id { get; set; }
+
     private bool IsLoading { get; set; }
 
     private ItemTypeModelDTO ItemTypeModel { get; set; } = new ItemTypeModelDTO();
-    private SizeModelDTO SizeModel{ get; set; } = new SizeModelDTO();
+    private ItemTypeModelDTO ShownTypeModel { get; set; } = new ItemTypeModelDTO();
+    private SizeModelDTO SizeModel { get; set; } = new SizeModelDTO();
     private IEnumerable<ItemTypeModelDTO> ItemTypeModelList { get; set; } = new List<ItemTypeModelDTO>();
     private IEnumerable<SizeModelDTO> ItemSizeList { get; set; } = new List<SizeModelDTO>();
 
     private string NewSizeValue { get; set; } = "";
-    private List<SizeModelDTO> AvailableSizes { get; set; } = new List<SizeModelDTO>(){};
+    private List<SizeModelDTO> AvailableSizes { get; set; } = new List<SizeModelDTO>() { };
 
     private void AddNewSize()
     {
-        AvailableSizes.Add(new SizeModelDTO() { ItemSize = NewSizeValue, IsAvailable = true });
+        if (NewSizeValue.Length > 0)
+        {
+            AvailableSizes.Add(new SizeModelDTO() { ItemSize = NewSizeValue, IsAvailable = true });
+        }
+        NewSizeValue = "";
+    }
+
+    private void RemoveAvailableSize(SizeModelDTO sizeToRemove)
+    {
+        AvailableSizes.Remove(sizeToRemove);
+    }
+
+    private async Task RemoveExistingSize(SizeModelDTO sizeToRemove)
+    {
+        await _sizeService.Delete(sizeToRemove);
+        await LoadItemTypes();
+        StateHasChanged();
+    }
+
+    private void DeleteAvailableSizes()
+    {
+        AvailableSizes = new List<SizeModelDTO>() { };
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -129,7 +217,7 @@
     {
         var newModel = await _itemTypeService.Create(ItemTypeModel);
 
-        foreach(var size in AvailableSizes)
+        foreach (var size in AvailableSizes)
         {
             await _sizeService.Create(size, newModel.ItemTypeId);
         }
@@ -144,6 +232,30 @@
     {
         await _itemTypeService.Delete(id);
         await LoadItemTypes();
+        StateHasChanged();
+    }
+
+    [Parameter]
+    public bool IsVisible { get; set; } = false;
+
+    [Parameter]
+    public EventCallback<bool> IsVisibleChanged { get; set; }
+
+    [Parameter]
+    public string? HeaderText { get; set; }
+
+    public async void Show(int id)
+    {
+        ShownTypeModel = await _itemTypeService.GetById(id);
+        HeaderText = ShownTypeModel.Model;
+        IsVisible = true;
+        StateHasChanged();
+    }
+
+    private void Close()
+    {
+        HeaderText = string.Empty;
+        IsVisible = false;
         StateHasChanged();
     }
 }
