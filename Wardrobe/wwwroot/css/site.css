@@ -140,6 +140,20 @@ a, .btn-link {
     outline: none !important;
 }
 
+.input-container__size-box {
+    background-color: #dddddd;
+    height: 25px;
+    min-width: 40px;
+    margin-right: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 2px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 4px;
+}
+
 .popup-container {
     position: fixed;
     top: 50%;

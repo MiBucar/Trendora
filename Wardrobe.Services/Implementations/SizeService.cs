@@ -50,6 +50,11 @@ namespace Wardrobe.Services.Implementations
             return _mapper.Map<IEnumerable<SizeModel>, IEnumerable<SizeModelDTO>>(_db.SizeList);
         }
 
+        public async Task<IEnumerable<SizeModelDTO>> GetAllOfId(int id)
+        {
+            return _mapper.Map<IEnumerable<SizeModel>, IEnumerable<SizeModelDTO>>(_db.SizeList.Where(u => u.ItemTypeModelId == id));
+        }
+
         public async Task<SizeModelDTO> GetById(int id)
         {
             var obj = await _db.SizeList.FirstOrDefaultAsync(x => x.Id == id);

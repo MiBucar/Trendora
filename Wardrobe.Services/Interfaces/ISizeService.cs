@@ -14,5 +14,6 @@ namespace Wardrobe.Services.Interfaces
         public Task<SizeModelDTO> Update(SizeModelDTO item);
         public Task<SizeModelDTO> GetById(int id);
         public Task<IEnumerable<SizeModelDTO>> GetAll();
+        public Task<IEnumerable<SizeModelDTO>> GetAllOfId(int id);
     }
 }
