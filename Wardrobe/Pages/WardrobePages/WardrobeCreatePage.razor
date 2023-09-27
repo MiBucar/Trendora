@@ -25,11 +25,11 @@
             <div class="form">
                 <div class="input-container">
                     <p class="input-container--text">Item Color</p>
-                    <InputText @bind-Value="WardrobeItem.Color" class="input-container--content" placeholder="Enter text...">test</InputText>
+                    <InputText @bind-Value="WardrobeItem.Color" class="item-container__input" placeholder="Enter text...">test</InputText>
                 </div>
                 <div class="input-container">
                     <p class="input-container--text">Item Type</p>
-                    <InputSelect @bind-Value="WardrobeItem.ItemTypeModelId" class="input-container--content">
+                    <InputSelect @bind-Value="WardrobeItem.ItemTypeModelId" class="item-container__input">
                         <option value="">Select an option</option>
                         @foreach (var itemType in ItemTypeModels)
                         {
@@ -39,11 +39,23 @@
                 </div>
                 <div class="input-container">
                     <p class="input-container--text">Item Price €</p>
-                    <InputNumber @bind-Value="WardrobeItem.Price" class="input-container--content"></InputNumber>
+                    <InputNumber @bind-Value="WardrobeItem.Price" class="item-container__input"></InputNumber>
+                </div>
+                <div class="input-container">
+                    @if (WardrobeItem.ItemTypeModelId != 0)
+                    {
+                        <form>
+                            @foreach (var size in ItemTypeModel.Sizes)
+                            {
+                                <input type="checkbox" class="form-check-input" id="@($"size{size.Id}")" @bind="size.IsAvailable" />
+                                <label class="form-check-label" for="@($"size{size.Id}")">@size.ItemSize</label>
+                            }
+                        </form>
+                    }                    
                 </div>
                 <div class="input-container">
                     <p class="input-container--text">Image Upload</p>
-                    <InputFile OnChange="@HandleFileUpload" class="input-container--content" />
+                    <InputFile OnChange="@HandleFileUpload" class="item-container__input" />
                 </div>
                 <div class="input-container">
                     <p class="input-container--text">Image</p>
@@ -64,6 +76,7 @@
     private string Title { get; set; } = "Create";
     private bool IsLoading { get; set; }
 
+    private ItemTypeModelDTO ItemTypeModel { get; set; } = new ItemTypeModelDTO();
     private WardrobeDTO WardrobeItem { get; set; } = new WardrobeDTO();
     private IEnumerable<ItemTypeModelDTO> ItemTypeModels { get; set; } = new List<ItemTypeModelDTO>();
 
@@ -95,6 +108,7 @@
         ItemTypeModels = await _itemTypeService.GetAll();
         if (Id != 0)
         {
+            ItemTypeModel = await _itemTypeService.GetById(WardrobeItem.ItemTypeModelId);
             WardrobeItem = await _wardrobeService.GetById(Id);
             Title = "Update";
         }

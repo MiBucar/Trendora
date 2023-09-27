@@ -48,22 +48,22 @@
     @if (WardrobeList.Any())
     {
         <div class="item-row item-row--info">
-            <div class="item-property">Color</div>
-            <div class="item-property">Item Type</div>
-            <div class="item-property">Price</div>
-            <div class="item-property">Image</div>
+            <div class="item-container__property">Color</div>
+            <div class="item-container__property">Item Type</div>
+            <div class="item-container__property">Price</div>
+            <div class="item-container__property">Image</div>
             <div class="item-action">Action</div>
         </div>
         @foreach (var item in WardrobeList)
         {
             <div class="item-row item-row--content">
-                <div class="item-property">@item.Color</div>
-                <div class="item-property">@item.ItemType.Model</div>
-                <div class="item-property">@item.Price€</div>
+                <div class="item-container__property">@item.Color</div>
+                <div class="item-container__property">@item.ItemType.Model</div>
+                <div class="item-container__property">@item.Price€</div>
 
-                <div class="item-property">
+                <div class="item-container__property">
                     @if (item.ImageData.Any()) {
-                        <button class="item-property--button" @onclick="() => Show(item.WardrobeModelId)"></button>
+                        <button class="item-container__property--button" @onclick="() => Show(item.WardrobeModelId)"></button>
                     }
                     else
                     {

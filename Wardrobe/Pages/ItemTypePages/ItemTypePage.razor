@@ -4,70 +4,83 @@
 @inject ISizeService _sizeService
 @inject IJSRuntime _jsRuntime
 
-@{
-    var showClass = IsVisible ? "d-block" : "d-none";
-}
-
 <h2 style="text-align:center">Create new Item Type</h2>
 
-<div class="toast-container p-3 popup-container @showClass" data-bs-autohide="true" data-bs-delay="5000">
-    <div class="toast show popup-container--content" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
-            <div style="display: flex; align-items: center;">
-                @if (!IsEditingHeaderText)
-                {
-                    <h5 style="margin: 0;">@HeaderText</h5>
-                    <div @onclick="StartEditingHeaderText" class="popup-container--edit-name"></div>
-                }
-                else
-                {
-                    <EditForm Model="ShownTypeModel" OnValidSubmit="SaveEditingHeaderText" @onfocusout="@(() => StopEditingHeaderText())">
-                        <DataAnnotationsValidator />
-                        <div class="item-property--card-1">
-                            <InputText @bind-Value="ShownTypeModel.Model" class="input-container--content no-focus-outline" style="width: 50%;" placeholder="Rename..."></InputText>
-                        </div>
-                        <ValidationMessage For="() => ShownTypeModel.Model" />
-                    </EditForm>
-                }
-            </div>
-            <button type="button" class="btn-close" aria-label="Close" @onclick="Close"></button>
-        </div>
-
-        <div class="toast-body popup-container--body">
-            @if (IsVisible)
-            {
-                <div style="display: flex; align-items: center; flex-wrap: wrap;">
-                    @foreach (var size in ShownTypeModel.Sizes)
+@if (IsVisible)
+{
+    <div class="toast-container p-3 popup-container" data-bs-autohide="true" data-bs-delay="5000" style="z-index: 10;">
+        <div class="toast show popup-container__content" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <div style="display: flex; align-items: center;">
+                    @if (!IsEditingHeaderText)
                     {
-                            <div class="size-container">
-                                <span style="margin: 1px 3px 0px 2px;">@size.ItemSize</span>
-                                <div @onclick="() => RemoveExistingSize(size)" class="size-container--image"></div>
+                        <h5 style="margin: 0;">@HeaderText</h5>
+                        <div @onclick="StartEditingHeaderText" class="popup-container__edit-name"></div>
+                    }
+                    else
+                    {
+                        <EditForm Model="ShownTypeModel" OnValidSubmit="SaveEditingHeaderText" @onfocusout="@(() => StopEditingHeaderText())">
+                            <DataAnnotationsValidator />
+                            <div class="item-property--card-1">
+                                <input @bind-value="ShownTypeModel.Model" class="item-container__input no-focus-outline input-for-focus" style="width: 50%;" placeholder="Rename..."></input>
                             </div>
+                            <ValidationMessage For="() => ShownTypeModel.Model" />
+                        </EditForm>
                     }
                 </div>
-            }            
+                <button type="button" class="btn-close" aria-label="Close" @onclick="ClosePopup"></button>
+            </div>
+
+            <div class="toast-body popup-container__body">
+                @if (IsVisible)
+                {
+                    <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                        @foreach (var size in ShownTypeModel.Sizes)
+                        {
+                            <div class="size-container">
+                                <span style="margin: 1px 3px 0px 2px;">@size.ItemSize</span>
+                                <div @onclick="() => RemoveExistingSize(size)" class="size-container__image"></div>
+                            </div>
+                        }                        
+                        @if (!IsEditingExistingSize)
+                        {
+                            <div class="size-container size-container--light">
+                                <div @onclick="StartEditingExistingSizes" class="size-container__image--add"></div>
+                            </div>
+                        } else
+                        {
+                            <EditForm Model="ShownTypeModel" OnValidSubmit="SaveEditingExistingSizes" @onfocusout="@(() => StopEditingExistingSizes())">
+                                <DataAnnotationsValidator />
+                                    <input @bind-value="SizeModel.ItemSize" class="item-container__input no-focus-outline input-for-focus-2" placeholder="Add new Size" style="padding: 3px 5px 3px 5px; margin-right: 10px; margin-top: 5px; width: 54%;"></input>
+                                <ValidationMessage For="() => ShownTypeModel.Model" />
+                            </EditForm>
+                        }
+                    </div>                    
+                }
+            </div>
         </div>
     </div>
-</div>
+}
+
 
 <div class="item-container--item-page">
     <!-- Create New Model Type -->
-    <div class="item-card item-card--1">
+    <div class="item-container__card">
         <div style=" height: 100%;">
             <EditForm Model="ItemTypeModel" OnValidSubmit="@AddNewSize">
                 <DataAnnotationsValidator />
                 <div style="text-align:left;">
                     <label>Item Type Name</label>
                 </div>
-                <div class="item-property--card-1">
-                    <InputText @bind-Value="ItemTypeModel.Model" class="input-container--content-2" placeholder="Enter new model type..."></InputText>
+                <div class="item-container__property">
+                    <InputText @bind-Value="ItemTypeModel.Model" class="item-container__input" placeholder="Enter new model type..."></InputText>
                 </div>
                 <div style="text-align:left;">
                     <label>Item Type Size</label>
                 </div>
-                <div class="item-property--card-1">
-                    <InputText @bind-Value="NewSizeValue" class="input-container--content-2" placeholder="Enter new size..."></InputText>
-                    <button class="btn-form btn-form--submit btn-plus" type="submit"></button>
+                <div class="item-container__property">
+                    <InputText @bind-Value="NewSizeValue" class="item-container__input" placeholder="Enter new size..."></InputText>
+                    <button class="btn-form btn-form--submit btn-plus" style="margin-left: 5px;" type="submit"></button>
                 </div>
                 <ValidationMessage For="() => ItemTypeModel.Model" />
                 <div style="margin-top: 10px; text-align: left; width: 100%;">
@@ -86,7 +99,7 @@
                     {
                         <div class="size-container">
                             <span style="margin: 1px 3px 0px 2px;">@size.ItemSize</span>
-                            <div @onclick="() => RemoveAvailableSize(size)" class="size-container--image"></div>
+                            <div @onclick="() => RemoveAvailableSize(size)" class="size-container__image"></div>
                         </div>
                     }
                 </div>
@@ -94,35 +107,45 @@
         </div>
     </div>
     <!-- List of Model Types -->
-    <div class="item-card item-card--2">
+    <div class="item-container__card item-container__card--fixed-height">
         @if (ItemTypeModelList.Any())
         {
-            <div class="item-row item-row--info">
-                <div class="item-property" style="font-weight: 700;">Model Type</div>
-                <div class="item-property">Sizes</div>
-                <div class="item-action">Action</div>
+            <div class="item-container__row item-container__row--info">
+                <div class="item-container__property" style="font-weight: 700;">Model Type</div>
+                <div class="item-container__property">Sizes</div>
+                <div class="item-container__property">Action</div>
             </div>
             @foreach (var model in ItemTypeModelList)
             {
-                <div class="item-row item-row--content">
-                    <div class="item-property">@model.Model</div>
-                    <div class="item-property">
+                <div class="item-container__row item-container__row--content">
+                    <div class="item-container__property">@model.Model</div>
+                    <div class="item-container__property">
                         @if (model.Sizes.Any())
                         {
-                            @for (int i = 0; i < 4; i++)
+                            if (model.Sizes.Count >= 4)
                             {
-                                <span style="margin-right: 5px;">@model.Sizes[i].ItemSize</span>
+                                @for (int i = 0; i < 4; i++)
+                                {
+                                    <span style="margin-right: 5px;">@model.Sizes[i].ItemSize</span>
+                                }
+                                <span>...</span>
                             }
-                            <span>...</span>
+                            else
+                            {
+                                @foreach (var size in model.Sizes)
+                                {
+                                    <span style="margin-right: 5px;">@size.ItemSize</span>
+                                }
+                            }
                         }
                         else
                         {
                             <span>None</span>
                         }
                     </div>
-                    <div class="item-action">
-                        <button class="btn-form btn-form--cancel" style="margin-right: 2px;" @onclick="() => DeleteModel(model.ItemTypeId)">Delete</button>
-                        <button class="btn-form btn-form--submit" style="margin-left: 2px;" @onclick="() => Show(model.ItemTypeId)">Edit</button>
+                    <div class="item-container__property">
+                        <button class="btn-form btn-form--submit" style="margin-right: 2px;" @onclick="() => ShowPopup(model.ItemTypeId)">Edit</button>
+                        <button class="btn-form btn-form--cancel" style="margin-left: 2px;" @onclick="() => DeleteModel(model.ItemTypeId)">Delete</button>
                     </div>
                 </div>
 
@@ -151,21 +174,8 @@
 </div>
 
 <style>
-    .btn-plus {
-        background-image: url('Images/plus.png');
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: 15px;
-        margin-left: 5px;
-        height: 35px;
-    }
-
-    .input-container--content-2 {
-        border: none;
-        background-color: #dddddd;
-        padding: 5px;
-        border-radius: 3px;
-        width: 94%;
+    .no-focus-outline:focus{
+        outline: none !important;
     }
 </style>
 
@@ -201,7 +211,9 @@
     private async Task RemoveExistingSize(SizeModelDTO sizeToRemove)
     {
         await _sizeService.Delete(sizeToRemove);
-        await LoadItemTypes();
+        ShownTypeModel = await _itemTypeService.GetById(ShownTypeModel.ItemTypeId);
+        ItemTypeModelList = await _itemTypeService.GetAll();
+        ItemSizeList = await _sizeService.GetAll();
         StateHasChanged();
     }
 
@@ -259,7 +271,7 @@
     [Parameter]
     public string? HeaderText { get; set; }
 
-    public async void Show(int id)
+    public async void ShowPopup(int id)
     {
         ShownTypeModel = await _itemTypeService.GetById(id);
         HeaderText = ShownTypeModel.Model;
@@ -267,7 +279,7 @@
         StateHasChanged();
     }
 
-    private void Close()
+    private void ClosePopup()
     {
         HeaderText = string.Empty;
         IsVisible = false;
@@ -275,10 +287,12 @@
     }
 
     private bool IsEditingHeaderText = false;
+    private bool IsEditingExistingSize = false;
 
-    private void StartEditingHeaderText()
+    private async Task StartEditingHeaderText()
     {
         IsEditingHeaderText = true;
+        await _jsRuntime.InvokeVoidAsync("focusInputText", ".input-for-focus");
     }
 
     private void StopEditingHeaderText()
@@ -293,5 +307,28 @@
         ItemTypeModelList = await _itemTypeService.GetAll();
         StateHasChanged();
         IsEditingHeaderText = false;
+    }
+
+    private async Task StartEditingExistingSizes()
+    {
+        IsEditingExistingSize = true;
+        await _jsRuntime.InvokeVoidAsync("focusInputText", ".input-for-focus-2");
+    }
+
+    private void StopEditingExistingSizes()
+    {
+        IsEditingExistingSize = false;
+    }
+
+    private async Task SaveEditingExistingSizes()
+    {
+        await _sizeService.Create(SizeModel, ShownTypeModel.ItemTypeId);
+        await _itemTypeService.Update(ShownTypeModel);
+        ShownTypeModel = await _itemTypeService.GetById(ShownTypeModel.ItemTypeId);
+        ItemTypeModelList = await _itemTypeService.GetAll();
+        SizeModel.ItemSize = "";
+        SizeModel = await _sizeService.GetById(SizeModel.Id);
+        StateHasChanged();
+        IsEditingExistingSize = false;
     }
 }

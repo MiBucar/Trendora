@@ -1,0 +1,48 @@
+﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+
+@keyframes ldio-4kmgy2v2hm7 {
+    0% {
+        background: var(--color-primary)
+    }
+
+    12.5% {
+        background: var(--color-primary)
+    }
+
+    12.625% {
+        background: var(--color-primary-light)
+    }
+
+    100% {
+        background: var(--color-primary-light)
+    }
+}
+
+.ldio-4kmgy2v2hm7 div {
+    position: absolute;
+    width: 28.799999999999997px;
+    height: 28.799999999999997px;
+    background: var(--color-primary);
+    animation: ldio-4kmgy2v2hm7 2.6315789473684212s linear infinite;
+}
+
+.loadingio-spinner-blocks-49enh9aem {
+    width: 144px;
+    height: 144px;
+    display: inline-block;
+    overflow: hidden;
+    background: none;
+}
+
+.ldio-4kmgy2v2hm7 {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform: translateZ(0) scale(1);
+    backface-visibility: hidden;
+    transform-origin: 0 0; /* see note above */
+}
+
+    .ldio-4kmgy2v2hm7 div {
+        box-sizing: content-box;
+    }
