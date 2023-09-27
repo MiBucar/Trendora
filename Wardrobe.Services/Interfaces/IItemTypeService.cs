@@ -10,10 +10,10 @@ namespace Wardrobe.Services.Interfaces
 {
     public interface IItemTypeService
     {
-        public Task<ItemTypeModelDTO> Create(ItemTypeModelDTO item);
-        public Task<ItemTypeModelDTO> Update(ItemTypeModelDTO item);
+        public Task<ItemTypeDTO> Create(ItemTypeDTO item);
+        public Task<ItemTypeDTO> Update(ItemTypeDTO item);
         public Task<int> Delete(int id);
-        public Task<ItemTypeModelDTO> GetById(int id);
-        public Task<IEnumerable<ItemTypeModelDTO>> GetAll();
+        public Task<ItemTypeDTO> GetById(int id);
+        public Task<IEnumerable<ItemTypeDTO>> GetAll();
     }
 }

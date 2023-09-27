@@ -12,26 +12,26 @@ using Wardrobe.Services.Interfaces;
 
 namespace Wardrobe.Services.Implementations
 {
-    public class WardrobeService : IWardrobeService
+    public class ProductService : IProductService
     {
         private readonly ApplicationDbContext _db;
         private readonly IMapper _mapper;
 
-        public WardrobeService(IMapper mapper, ApplicationDbContext db)
+        public ProductService(IMapper mapper, ApplicationDbContext db)
         {
             _db = db;
             _mapper = mapper;   
         }
 
-        public async Task<WardrobeDTO> Create(WardrobeDTO wDto)
+        public async Task<ProductDTO> Create(ProductDTO wDto)
         {
-            var obj = _mapper.Map<WardrobeDTO, WardrobeModel>(wDto);
+            var obj = _mapper.Map<ProductDTO, Product>(wDto);
             obj.DateCreated = DateTime.Now;
 
             var createdObj = _db.WardrobeList.Add(obj);
             await _db.SaveChangesAsync();
 
-            return _mapper.Map<WardrobeModel, WardrobeDTO>(createdObj.Entity);
+            return _mapper.Map<Product, ProductDTO>(createdObj.Entity);
         }
 
         public async Task<int> Delete(int id)
@@ -45,22 +45,22 @@ namespace Wardrobe.Services.Implementations
             return 0;
         }
 
-        public async Task<IEnumerable<WardrobeDTO>> GetAll()
+        public async Task<IEnumerable<ProductDTO>> GetAll()
         {
-            return _mapper.Map<IEnumerable<WardrobeModel>, IEnumerable<WardrobeDTO>>(_db.WardrobeList.Include(x => x.ItemType));
+            return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(_db.WardrobeList.Include(x => x.ItemType));
         }
 
-        public async Task<WardrobeDTO> GetById(int id)
+        public async Task<ProductDTO> GetById(int id)
         {
             var obj = await _db.WardrobeList.FirstOrDefaultAsync(x => x.WardrobeModelId == id);
             if (obj != null)
             {
-                return _mapper.Map<WardrobeModel, WardrobeDTO>(obj);
+                return _mapper.Map<Product, ProductDTO>(obj);
             }
-            return new WardrobeDTO();
+            return new ProductDTO();
         }
 
-        public async Task<IEnumerable<WardrobeDTO>> SearchByText(string text)
+        public async Task<IEnumerable<ProductDTO>> SearchByText(string text)
         {
             var searchTerms = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             var query = _db.WardrobeList.AsQueryable();
@@ -71,25 +71,25 @@ namespace Wardrobe.Services.Implementations
             }
 
             var results = await query.ToListAsync();
-            return _mapper.Map<IEnumerable<WardrobeModel>, IEnumerable<WardrobeDTO>>(results);
+            return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(results);
         }
 
-        public async Task<IEnumerable<WardrobeDTO>> SortByPrice(string type)
+        public async Task<IEnumerable<ProductDTO>> SortByPrice(string type)
         {
             if (type == "ascending")
             {
                 var results = await _db.WardrobeList.OrderBy(x => x.Price).ToListAsync();
-                return _mapper.Map<IEnumerable<WardrobeModel>, IEnumerable<WardrobeDTO>>(results);
+                return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(results);
             }
             else if (type == "descending")
             {
                 var results = await _db.WardrobeList.OrderByDescending(x => x.Price).ToListAsync();
-                return _mapper.Map<IEnumerable<WardrobeModel>, IEnumerable<WardrobeDTO>>(results);
+                return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(results);
             }
-            return new List<WardrobeDTO>();
+            return new List<ProductDTO>();
         }
 
-        public async Task<WardrobeDTO> Update(WardrobeDTO wDto)
+        public async Task<ProductDTO> Update(ProductDTO wDto)
         {
             var obj = await _db.WardrobeList.FirstOrDefaultAsync(x => x.WardrobeModelId == wDto.WardrobeModelId);
             if ( obj != null)
@@ -100,7 +100,7 @@ namespace Wardrobe.Services.Implementations
                 obj.ImageData = wDto.ImageData;
                 _db.WardrobeList.Update(obj);
                 await _db.SaveChangesAsync();
-                return _mapper.Map<WardrobeModel, WardrobeDTO>(obj);
+                return _mapper.Map<Product, ProductDTO>(obj);
             }
             return wDto;
         }

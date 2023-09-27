@@ -8,12 +8,12 @@ using Wardrobe.Models.DTOs;
 
 namespace Wardrobe.Models.Models
 {
-    public class ItemTypeModel
+    public class ItemType
     {
         [Key]
         public int ItemTypeId { get; set; }
         public string Model { get; set; }
         public DateTime DateCreated { get; set; }
-        public List<SizeModel> Sizes { get; set; }
+        public List<Size> Sizes { get; set; }
     }
 }

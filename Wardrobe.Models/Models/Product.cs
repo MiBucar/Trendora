@@ -10,14 +10,14 @@ using Wardrobe.Models.DTOs;
 
 namespace Wardrobe.Models.Models
 {
-    public class WardrobeModel
+    public class Product
     {
         [Key]
         public int WardrobeModelId { get; set; }
         public string Color { get; set; }
         public int ItemTypeModelId { get; set; }
         [ForeignKey("ItemTypeModelId")]
-        public ItemTypeModel ItemType { get; set; }
+        public ItemType ItemType { get; set; }
         public int Price { get; set; }
         public byte[] ImageData { get; set; }   
         public DateTime DateCreated { get; set; }

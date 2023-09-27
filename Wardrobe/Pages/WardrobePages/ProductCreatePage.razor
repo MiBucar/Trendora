@@ -1,13 +1,13 @@
-﻿@page "/wardrobe/create"
-@page "/wardrobe/create/{Id:int}"
+﻿@page "/product/create"
+@page "/product/create/{Id:int}"
 
 @inject NavigationManager _navigationManager
-@inject IWardrobeService _wardrobeService
+@inject IProductService _productService
 @inject IItemTypeService _itemTypeService
 @inject ISizeService _sizeService
 
 <div>
-    <h2>@Title Item</h2>
+    <h2>@Title Product</h2>
 </div>
 
 <div>
@@ -45,9 +45,9 @@
                     <InputNumber @bind-Value="WardrobeItem.Price" class="item-container__input"></InputNumber>
                 </div>
                 <div class="input-container">
+                    <p class="input-container--text">Sizes</p>
                     @if (WardrobeItem.ItemTypeModelId != 0)
                     {
-                        <p class="input-container--text">Sizes</p>
                         <div class="input-container" style="margin-top:10px; display: flex; align-items: center; flex-wrap: wrap; flex-direction: row">
                             @foreach (var size in Sizes)
                             {
@@ -56,7 +56,11 @@
                                 </div>
                             }
                         </div>
-                    }                    
+                    }
+                    else
+                    {
+                        <p style="margin: 0px;">Select an item type</p>
+                    }                   
                 </div>
                 <div class="input-container">
                     <p class="input-container--text">Image Upload</p>
@@ -81,19 +85,19 @@
     private string Title { get; set; } = "Create";
     private bool IsLoading { get; set; }
 
-    private WardrobeDTO WardrobeItem { get; set; } = new WardrobeDTO();
-    private IEnumerable<ItemTypeModelDTO> ItemTypeModels { get; set; } = new List<ItemTypeModelDTO>();
-    private IEnumerable<SizeModelDTO> Sizes{ get; set; } = new List<SizeModelDTO>();
+    private ProductDTO WardrobeItem { get; set; } = new ProductDTO();
+    private IEnumerable<ItemTypeDTO> ItemTypeModels { get; set; } = new List<ItemTypeDTO>();
+    private IEnumerable<SizeDTO> Sizes{ get; set; } = new List<SizeDTO>();
 
     private async Task Submit()
     {
         if (Id == 0)
         {
-            await _wardrobeService.Create(WardrobeItem);
+            await _productService.Create(WardrobeItem);
         }
         else
         {
-            await _wardrobeService.Update(WardrobeItem);
+            await _productService.Update(WardrobeItem);
         }
         _navigationManager.NavigateTo("/wardrobe");
     }
@@ -113,7 +117,7 @@
         ItemTypeModels = await _itemTypeService.GetAll();
         if (Id != 0)
         {
-            WardrobeItem = await _wardrobeService.GetById(Id);
+            WardrobeItem = await _productService.GetById(Id);
             Sizes = await _sizeService.GetAllOfId(WardrobeItem.ItemTypeModelId);
             Title = "Update";
         }

@@ -185,30 +185,30 @@
 
     private bool IsLoading { get; set; }
 
-    private ItemTypeModelDTO ItemTypeModel { get; set; } = new ItemTypeModelDTO();
-    private ItemTypeModelDTO ShownTypeModel { get; set; } = new ItemTypeModelDTO();
-    private SizeModelDTO SizeModel { get; set; } = new SizeModelDTO();
-    private IEnumerable<ItemTypeModelDTO> ItemTypeModelList { get; set; } = new List<ItemTypeModelDTO>();
-    private IEnumerable<SizeModelDTO> ItemSizeList { get; set; } = new List<SizeModelDTO>();
+    private ItemTypeDTO ItemTypeModel { get; set; } = new ItemTypeDTO();
+    private ItemTypeDTO ShownTypeModel { get; set; } = new ItemTypeDTO();
+    private SizeDTO SizeModel { get; set; } = new SizeDTO();
+    private IEnumerable<ItemTypeDTO> ItemTypeModelList { get; set; } = new List<ItemTypeDTO>();
+    private IEnumerable<SizeDTO> ItemSizeList { get; set; } = new List<SizeDTO>();
 
     private string NewSizeValue { get; set; } = "";
-    private List<SizeModelDTO> AvailableSizes { get; set; } = new List<SizeModelDTO>() { };
+    private List<SizeDTO> AvailableSizes { get; set; } = new List<SizeDTO>() { };
 
     private void AddNewSize()
     {
         if (NewSizeValue.Length > 0)
         {
-            AvailableSizes.Add(new SizeModelDTO() { ItemSize = NewSizeValue, IsAvailable = true });
+            AvailableSizes.Add(new SizeDTO() { ItemSize = NewSizeValue, IsAvailable = true });
         }
         NewSizeValue = "";
     }
 
-    private void RemoveAvailableSize(SizeModelDTO sizeToRemove)
+    private void RemoveAvailableSize(SizeDTO sizeToRemove)
     {
         AvailableSizes.Remove(sizeToRemove);
     }
 
-    private async Task RemoveExistingSize(SizeModelDTO sizeToRemove)
+    private async Task RemoveExistingSize(SizeDTO sizeToRemove)
     {
         await _sizeService.Delete(sizeToRemove);
         ShownTypeModel = await _itemTypeService.GetById(ShownTypeModel.ItemTypeId);
@@ -219,7 +219,7 @@
 
     private void DeleteAvailableSizes()
     {
-        AvailableSizes = new List<SizeModelDTO>() { };
+        AvailableSizes = new List<SizeDTO>() { };
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -249,10 +249,10 @@
             await _sizeService.Create(size, newModel.ItemTypeId);
         }
 
-        AvailableSizes = new List<SizeModelDTO>();
+        AvailableSizes = new List<SizeDTO>();
         ItemTypeModelList = await _itemTypeService.GetAll();
         StateHasChanged();
-        ItemTypeModel = new ItemTypeModelDTO();
+        ItemTypeModel = new ItemTypeDTO();
     }
 
     private async Task DeleteModel(int id)

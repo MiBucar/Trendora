@@ -9,7 +9,7 @@ using Wardrobe.Models.Models;
 
 namespace Wardrobe.Models.DTOs
 {
-    public class WardrobeDTO
+    public class ProductDTO
     {
         public int WardrobeModelId { get; set; }
         [Required(ErrorMessage = "Please enter the color")]
@@ -19,6 +19,6 @@ namespace Wardrobe.Models.DTOs
         public byte[] ImageData { get; set; }
         [Range(1, int.MaxValue, ErrorMessage = "Please select a type")]
         public int ItemTypeModelId { get; set; }
-        public ItemTypeModelDTO ItemType { get; set; }
+        public ItemTypeDTO ItemType { get; set; }
     }
 }

@@ -24,15 +24,15 @@ namespace Wardrobe.Services.Implementations
             _mapper = mapper;
         }
 
-        public async Task<ItemTypeModelDTO> Create(ItemTypeModelDTO item)
+        public async Task<ItemTypeDTO> Create(ItemTypeDTO item)
         {
-            var obj = _mapper.Map<ItemTypeModelDTO, ItemTypeModel>(item);
+            var obj = _mapper.Map<ItemTypeDTO, ItemType>(item);
             obj.DateCreated = DateTime.Now;
 
             var createdObj = _db.Add(obj);
             await _db.SaveChangesAsync();
 
-            return _mapper.Map<ItemTypeModel, ItemTypeModelDTO>(createdObj.Entity);
+            return _mapper.Map<ItemType, ItemTypeDTO>(createdObj.Entity);
         }
 
         public async Task<int> Delete(int id)
@@ -46,29 +46,29 @@ namespace Wardrobe.Services.Implementations
             return 0;
         }
 
-        public async Task<IEnumerable<ItemTypeModelDTO>> GetAll()
+        public async Task<IEnumerable<ItemTypeDTO>> GetAll()
         {
-            return _mapper.Map<IEnumerable<ItemTypeModel>, IEnumerable<ItemTypeModelDTO>>(_db.ItemTypeList);
+            return _mapper.Map<IEnumerable<ItemType>, IEnumerable<ItemTypeDTO>>(_db.ItemTypeList);
         }
 
-        public async Task<ItemTypeModelDTO> GetById(int id)
+        public async Task<ItemTypeDTO> GetById(int id)
         {
             var obj = await _db.ItemTypeList.FirstOrDefaultAsync(x => x.ItemTypeId == id);
             if (obj != null)
             {
-                return _mapper.Map<ItemTypeModel, ItemTypeModelDTO>(obj);
+                return _mapper.Map<ItemType, ItemTypeDTO>(obj);
             }
-            return new ItemTypeModelDTO();
+            return new ItemTypeDTO();
         }
 
-        public async Task<ItemTypeModelDTO> Update(ItemTypeModelDTO item)
+        public async Task<ItemTypeDTO> Update(ItemTypeDTO item)
         {
             var obj = await _db.ItemTypeList.FirstOrDefaultAsync(x => x.ItemTypeId == item.ItemTypeId);
             if (obj != null)
             {
                 obj.Model = item.Model;
                 await _db.SaveChangesAsync();
-                return _mapper.Map<ItemTypeModel, ItemTypeModelDTO>(obj);                
+                return _mapper.Map<ItemType, ItemTypeDTO>(obj);                
             }
             return item;
         }

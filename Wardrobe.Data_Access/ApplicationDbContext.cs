@@ -7,8 +7,8 @@ namespace Wardrobe.Data_Access
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-        public DbSet<WardrobeModel> WardrobeList { get; set; }
-        public DbSet<ItemTypeModel> ItemTypeList { get; set; }
-        public DbSet<SizeModel> SizeList { get; set; }
+        public DbSet<Product> WardrobeList { get; set; }
+        public DbSet<ItemType> ItemTypeList { get; set; }
+        public DbSet<Size> SizeList { get; set; }
     }
 }
