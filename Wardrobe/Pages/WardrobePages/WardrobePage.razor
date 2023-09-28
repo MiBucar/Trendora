@@ -1,5 +1,5 @@
 ﻿@page "/wardrobe"
-@inject IWardrobeService _wardrobeService
+@inject IProductService _productService
 @inject IItemTypeService _itemTypeService
 @inject IJSRuntime JSRuntime
 
@@ -36,7 +36,7 @@
                 <button class="menu-container--search-button" @onclick="SearchForItem"></button>
             </div>
             <div class="menu-container--content">
-                <NavLink href="/wardrobe/create" style="float: right;">
+                <NavLink href="/product/create" style="float: right;">
                     <button class="btn-form btn-form--submit btn-plus"></button>
                 </NavLink>
             </div>
@@ -72,7 +72,7 @@
                 </div>
 
                 <div class="item-action">
-                    <NavLink href=@($"/wardrobe/create/{item.WardrobeModelId}")>
+                    <NavLink href=@($"/product/create/{item.WardrobeModelId}")>
                         <button class="btn-form btn-form--submit" style="margin-right: 2px;">Edit</button>
                     </NavLink>
                     <button class="btn-form btn-form--cancel" style="margin-left: 2px;" @onclick="() => DeleteItem(item.WardrobeModelId)">Delete</button>
@@ -112,8 +112,8 @@
 </style>
 
 @code {
-    private IEnumerable<WardrobeDTO> WardrobeList { get; set; } = new List<WardrobeDTO>();
-    private WardrobeDTO WardrobeItem { get; set; } = new WardrobeDTO();
+    private IEnumerable<ProductDTO> WardrobeList { get; set; } = new List<ProductDTO>();
+    private ProductDTO WardrobeItem { get; set; } = new ProductDTO();
 
     bool IsLoading { get; set; }
     private string SearchedItem { get; set; } = "";
@@ -130,7 +130,7 @@
     {
         IsLoading = true;
         StateHasChanged();
-        WardrobeList = await _wardrobeService.GetAll();
+        WardrobeList = await _productService.GetAll();
         IsLoading = false;
         StateHasChanged();
     }
@@ -138,7 +138,7 @@
     private async Task DeleteItem(int id)
     {
         IsLoading = true;
-        await _wardrobeService.Delete(id);
+        await _productService.Delete(id);
         await LoadWardrobeList();
         IsLoading = false;
     }
@@ -146,7 +146,7 @@
     private async Task SearchForItem()
     {
         IsLoading = true;
-        WardrobeList = await Task.Run(() => _wardrobeService.SearchByText(SearchedItem));
+        WardrobeList = await Task.Run(() => _productService.SearchByText(SearchedItem));
         IsLoading = false;
     }
 
@@ -184,7 +184,7 @@
 
     private async Task LoadWardrobeItem(int id)
     {
-        WardrobeItem = await _wardrobeService.GetById(id);
+        WardrobeItem = await _productService.GetById(id);
     }
 
     private string ImageData()
@@ -197,7 +197,7 @@
         return "";
     }
 
-    private void HandleFilterApplied(IEnumerable<WardrobeDTO> filteredList)
+    private void HandleFilterApplied(IEnumerable<ProductDTO> filteredList)
     {
         WardrobeList = filteredList;
         StateHasChanged();

@@ -9,10 +9,11 @@ namespace Wardrobe.Services.Interfaces
 {
     public interface ISizeService
     {
-        public Task<SizeModelDTO> Create(SizeModelDTO item, int id);
-        public Task<int> Delete(SizeModelDTO item);
-        public Task<SizeModelDTO> Update(SizeModelDTO item);
-        public Task<SizeModelDTO> GetById(int id);
-        public Task<IEnumerable<SizeModelDTO>> GetAll();
+        public Task<SizeDTO> Create(SizeDTO item, int id);
+        public Task<int> Delete(SizeDTO item);
+        public Task<SizeDTO> Update(SizeDTO item);
+        public Task<SizeDTO> GetById(int id);
+        public Task<IEnumerable<SizeDTO>> GetAll();
+        public Task<IEnumerable<SizeDTO>> GetAllOfId(int id);
     }
 }

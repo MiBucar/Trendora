@@ -1,12 +1,13 @@
-﻿@page "/wardrobe/create"
-@page "/wardrobe/create/{Id:int}"
+﻿@page "/product/create"
+@page "/product/create/{Id:int}"
 
 @inject NavigationManager _navigationManager
-@inject IWardrobeService _wardrobeService
+@inject IProductService _productService
 @inject IItemTypeService _itemTypeService
+@inject ISizeService _sizeService
 
 <div>
-    <h2>@Title Item</h2>
+    <h2>@Title Product</h2>
 </div>
 
 <div>
@@ -20,7 +21,7 @@
     }
     else
     {
-        <EditForm Model="WardrobeItem" OnValidSubmit="@Submit">
+        <EditForm Model="WardrobeItem" OnValidSubmit="@Submit" @onmousemove="UpdateSizes">
             <DataAnnotationsValidator />
             <div class="form">
                 <div class="input-container">
@@ -30,11 +31,13 @@
                 <div class="input-container">
                     <p class="input-container--text">Item Type</p>
                     <InputSelect @bind-Value="WardrobeItem.ItemTypeModelId" class="item-container__input">
-                        <option value="">Select an option</option>
-                        @foreach (var itemType in ItemTypeModels)
+                        @if (ItemTypeModels.Any())
                         {
-                            <option value="@itemType.ItemTypeId">@itemType.Model</option>
-                        }
+                            @foreach (var itemType in ItemTypeModels)
+                            {
+                                <option value="@itemType.ItemTypeId">@itemType.Model</option>
+                            }
+                        }                        
                     </InputSelect>
                 </div>
                 <div class="input-container">
@@ -42,16 +45,22 @@
                     <InputNumber @bind-Value="WardrobeItem.Price" class="item-container__input"></InputNumber>
                 </div>
                 <div class="input-container">
+                    <p class="input-container--text">Sizes</p>
                     @if (WardrobeItem.ItemTypeModelId != 0)
                     {
-                        <form>
-                            @foreach (var size in ItemTypeModel.Sizes)
+                        <div class="input-container" style="margin-top:10px; display: flex; align-items: center; flex-wrap: wrap; flex-direction: row">
+                            @foreach (var size in Sizes)
                             {
-                                <input type="checkbox" class="form-check-input" id="@($"size{size.Id}")" @bind="size.IsAvailable" />
-                                <label class="form-check-label" for="@($"size{size.Id}")">@size.ItemSize</label>
+                                <div class="input-container__size-box">
+                                    <label>@size.ItemSize</label>
+                                </div>
                             }
-                        </form>
-                    }                    
+                        </div>
+                    }
+                    else
+                    {
+                        <p style="margin: 0px;">Select an item type</p>
+                    }                   
                 </div>
                 <div class="input-container">
                     <p class="input-container--text">Image Upload</p>
@@ -76,19 +85,19 @@
     private string Title { get; set; } = "Create";
     private bool IsLoading { get; set; }
 
-    private ItemTypeModelDTO ItemTypeModel { get; set; } = new ItemTypeModelDTO();
-    private WardrobeDTO WardrobeItem { get; set; } = new WardrobeDTO();
-    private IEnumerable<ItemTypeModelDTO> ItemTypeModels { get; set; } = new List<ItemTypeModelDTO>();
+    private ProductDTO WardrobeItem { get; set; } = new ProductDTO();
+    private IEnumerable<ItemTypeDTO> ItemTypeModels { get; set; } = new List<ItemTypeDTO>();
+    private IEnumerable<SizeDTO> Sizes{ get; set; } = new List<SizeDTO>();
 
     private async Task Submit()
     {
         if (Id == 0)
         {
-            await _wardrobeService.Create(WardrobeItem);
+            await _productService.Create(WardrobeItem);
         }
         else
         {
-            await _wardrobeService.Update(WardrobeItem);
+            await _productService.Update(WardrobeItem);
         }
         _navigationManager.NavigateTo("/wardrobe");
     }
@@ -108,13 +117,20 @@
         ItemTypeModels = await _itemTypeService.GetAll();
         if (Id != 0)
         {
-            ItemTypeModel = await _itemTypeService.GetById(WardrobeItem.ItemTypeModelId);
-            WardrobeItem = await _wardrobeService.GetById(Id);
+            WardrobeItem = await _productService.GetById(Id);
+            Sizes = await _sizeService.GetAllOfId(WardrobeItem.ItemTypeModelId);
             Title = "Update";
         }
         IsLoading = false;
         StateHasChanged();
     }
+
+    private async Task UpdateSizes()
+    {
+        Sizes = await _sizeService.GetAllOfId(WardrobeItem.ItemTypeModelId);
+        StateHasChanged();
+    }
+
 
     private async Task HandleFileUpload(InputFileChangeEventArgs e)
     {

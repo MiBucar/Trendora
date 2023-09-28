@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Wardrobe.Models.Models;
 
-namespace Wardrobe.Models.Models
+namespace Wardrobe.Models.DTOs
 {
-    public class SizeModel
+    public class SizeDTO
     {
-        [Key]
         public int Id { get; set; }
         public string ItemSize { get; set; }
         public bool IsAvailable { get; set; }
         public int ItemTypeModelId { get; set; }
-        public ItemTypeModel ItemTypeModel { get; set; }
+        public ItemType ItemTypeModel { get; set; }
+
     }
 }

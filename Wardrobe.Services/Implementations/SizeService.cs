@@ -23,18 +23,18 @@ namespace Wardrobe.Services.Implementations
             _mapper = mapper;   
         }
 
-        public async Task<SizeModelDTO> Create(SizeModelDTO wDto, int id)
+        public async Task<SizeDTO> Create(SizeDTO wDto, int id)
         {
             wDto.ItemTypeModelId = id;
-            var obj = _mapper.Map<SizeModelDTO, SizeModel>(wDto);
+            var obj = _mapper.Map<SizeDTO, Size>(wDto);
 
             var createdObj = _db.SizeList.Add(obj);
             await _db.SaveChangesAsync();
 
-            return _mapper.Map<SizeModel, SizeModelDTO>(createdObj.Entity);
+            return _mapper.Map<Size, SizeDTO>(createdObj.Entity);
         }
 
-        public async Task<int> Delete(SizeModelDTO item)
+        public async Task<int> Delete(SizeDTO item)
         {
             var obj = await _db.SizeList.FirstOrDefaultAsync(x => x.Id == item.Id);
             if (obj != null)
@@ -45,22 +45,27 @@ namespace Wardrobe.Services.Implementations
             return 0;
         }
 
-        public async Task<IEnumerable<SizeModelDTO>> GetAll()
+        public async Task<IEnumerable<SizeDTO>> GetAll()
         {
-            return _mapper.Map<IEnumerable<SizeModel>, IEnumerable<SizeModelDTO>>(_db.SizeList);
+            return _mapper.Map<IEnumerable<Size>, IEnumerable<SizeDTO>>(_db.SizeList);
         }
 
-        public async Task<SizeModelDTO> GetById(int id)
+        public async Task<IEnumerable<SizeDTO>> GetAllOfId(int id)
+        {
+            return _mapper.Map<IEnumerable<Size>, IEnumerable<SizeDTO>>(_db.SizeList.Where(u => u.ItemTypeModelId == id));
+        }
+
+        public async Task<SizeDTO> GetById(int id)
         {
             var obj = await _db.SizeList.FirstOrDefaultAsync(x => x.Id == id);
             if (obj != null)
             {
-                return _mapper.Map<SizeModel, SizeModelDTO>(obj);
+                return _mapper.Map<Size, SizeDTO>(obj);
             }
-            return new SizeModelDTO();
+            return new SizeDTO();
         }
 
-        public async Task<SizeModelDTO> Update(SizeModelDTO wDto)
+        public async Task<SizeDTO> Update(SizeDTO wDto)
         {
             var obj = await _db.SizeList.FirstOrDefaultAsync(x => x.Id == wDto.Id);
             if ( obj != null)
@@ -69,7 +74,7 @@ namespace Wardrobe.Services.Implementations
                 obj.IsAvailable = wDto.IsAvailable;
                 _db.SizeList.Update(obj);
                 await _db.SaveChangesAsync();
-                return _mapper.Map<SizeModel, SizeModelDTO>(obj);
+                return _mapper.Map<Size, SizeDTO>(obj);
             }
             return wDto;
         }
