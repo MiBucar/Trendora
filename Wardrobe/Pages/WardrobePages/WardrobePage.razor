@@ -15,7 +15,19 @@
         </div>
 
         <div class="toast-body popup-container--body">
-            <img src="@ImageData()" class="input-container--image" />
+            @if (ShowingProductImage)
+            {
+                <img src="@ImageData()" class="input-container--image" />
+            }
+            @if (ShowingProductPallete)
+            {
+                <div class="input-container--wrap" style="margin: 0px;">
+                    @foreach (var color in WardrobeItem.Colors)
+                    {
+                        <div class="color-container" style="background-color: @color.ColorCode;"></div>
+                    }
+                </div>
+            }
         </div>
     </div>
 </div>
@@ -48,30 +60,32 @@
     @if (WardrobeList.Any())
     {
         <div class="item-row item-row--info">
-            <div class="item-container__property">Color</div>
+            <div class="item-container__property">Name</div>
             <div class="item-container__property">Item Type</div>
             <div class="item-container__property">Price</div>
             <div class="item-container__property">Image</div>
-            <div class="item-action">Action</div>
+            <div class="item-container__property">Available Colors</div>
+            <div class="item-container__property">Action</div>
         </div>
         @foreach (var item in WardrobeList)
         {
             <div class="item-row item-row--content">
-                <div class="item-container__property">@item.Color</div>
+                <div class="item-container__property">@item.Name</div>
                 <div class="item-container__property">@item.ItemType.Model</div>
                 <div class="item-container__property">@item.Price€</div>
-
                 <div class="item-container__property">
                     @if (item.ImageData.Any()) {
-                        <button class="item-container__property--button" @onclick="() => Show(item.WardrobeModelId)"></button>
+                        <button class="item-container__property-button-image-picture" @onclick="() => ShowProductImage(item.WardrobeModelId)"></button>
                     }
                     else
                     {
                         <span>None</span>
                     }
                 </div>
-
-                <div class="item-action">
+                <div class="item-container__property">
+                    <button class="item-container__property-button-image-pallete" @onclick="() => ShowProductColors(item.WardrobeModelId)"></button>
+                </div>
+                <div class="item-container__property">
                     <NavLink href=@($"/product/create/{item.WardrobeModelId}")>
                         <button class="btn-form btn-form--submit" style="margin-right: 2px;">Edit</button>
                     </NavLink>
@@ -117,6 +131,8 @@
 
     bool IsLoading { get; set; }
     private string SearchedItem { get; set; } = "";
+    private bool ShowingProductImage { get; set; }
+    private bool ShowingProductPallete { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -158,6 +174,26 @@
         }
     }
 
+    public async void ShowProductColors(int id)
+    {
+        await LoadWardrobeItem(id);
+        HeaderText = "Colors";
+        IsVisible = true;
+        ShowingProductPallete = true;
+        ShowingProductImage = false;
+        StateHasChanged();
+    }
+
+    public async void ShowProductImage(int id)
+    {
+        await LoadWardrobeItem(id);
+        HeaderText = "Image";
+        IsVisible = true;
+        ShowingProductPallete = false;
+        ShowingProductImage = true;
+        StateHasChanged();
+    }
+
     [Parameter]
     public bool IsVisible { get; set; } = false;
 
@@ -165,15 +201,7 @@
     public EventCallback<bool> IsVisibleChanged { get; set; }
 
     [Parameter]
-    public string? HeaderText { get; set; }
-
-    public async void Show(int id)
-    {
-        HeaderText = "Image";
-        IsVisible = true;
-        await LoadWardrobeItem(id);
-        StateHasChanged();
-    }
+    public string? HeaderText { get; set; }        
 
     private void Close()
     {

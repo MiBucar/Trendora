@@ -23,10 +23,46 @@ namespace Wardrobe.Services.Implementations
             _mapper = mapper;   
         }
 
-        public async Task<ProductDTO> Create(ProductDTO wDto)
+        public async Task<ProductDTO> AddColor(ProductDTO pDTO, ColorDTO cDTO)
         {
-            var obj = _mapper.Map<ProductDTO, Product>(wDto);
+            var product = await _db.WardrobeList.FirstOrDefaultAsync(x => x.WardrobeModelId == pDTO.WardrobeModelId);
+            var color = await _db.ColorList.FirstOrDefaultAsync(x => x.Id == cDTO.Id);
+            if (product != null && color != null)
+            {
+                product.Colors ??= new List<Color>();
+                if (!product.Colors.Contains(color))
+                {
+                    product.Colors.Add(color);
+                    return _mapper.Map<Product, ProductDTO>(product);
+                }
+            }
+            return pDTO;
+        }
+
+        public async Task<ProductDTO> RemoveColor(ProductDTO pDTO, ColorDTO cDTO)
+        {
+            var product = await _db.WardrobeList.FirstOrDefaultAsync(x => x.WardrobeModelId == pDTO.WardrobeModelId);
+            var color = await _db.ColorList.FirstOrDefaultAsync(x => x.Id == cDTO.Id);
+            if (product != null && color != null)
+            {
+                product.Colors ??= new List<Color>();
+                if (product.Colors.Contains(color))
+                {
+                    product.Colors.Remove(color);
+                    return _mapper.Map<Product, ProductDTO>(product);
+                }
+            }
+            return pDTO;
+        }
+
+        public async Task<ProductDTO> Create(ProductDTO pDTO)
+        {
+            var obj = _mapper.Map<ProductDTO, Product>(pDTO);
             obj.DateCreated = DateTime.Now;
+
+            var colorIds = obj.Colors.Select(c => c.Id).ToList();
+            var existingColors = _db.ColorList.Where(c => colorIds.Contains(c.Id)).ToList();
+            obj.Colors = existingColors;
 
             var createdObj = _db.WardrobeList.Add(obj);
             await _db.SaveChangesAsync();
@@ -36,7 +72,7 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<int> Delete(int id)
         {
-            var obj = await _db.WardrobeList.Include(x => x.ItemType).FirstOrDefaultAsync(x => x.WardrobeModelId == id);
+            var obj = await _db.WardrobeList.FirstOrDefaultAsync(x => x.WardrobeModelId == id);
             if (obj != null)
             {
                 _db.Remove(obj);
@@ -47,12 +83,12 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<IEnumerable<ProductDTO>> GetAll()
         {
-            return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(_db.WardrobeList.Include(x => x.ItemType));
+            return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(_db.WardrobeList.Include(x => x.ItemType).Include(x => x.Colors));
         }
 
         public async Task<ProductDTO> GetById(int id)
         {
-            var obj = await _db.WardrobeList.FirstOrDefaultAsync(x => x.WardrobeModelId == id);
+            var obj = await _db.WardrobeList.Include(x => x.ItemType).Include(x => x.Colors).FirstOrDefaultAsync(x => x.WardrobeModelId == id);
             if (obj != null)
             {
                 return _mapper.Map<Product, ProductDTO>(obj);
@@ -67,7 +103,7 @@ namespace Wardrobe.Services.Implementations
 
             foreach (var term in searchTerms)
             {
-                query = query.Where(x => x.Color.Contains(term) || x.ItemType.Model.Contains(term));
+                query = query.Where(x => x.ItemType.Model.Contains(term));
             }
 
             var results = await query.ToListAsync();
@@ -89,20 +125,20 @@ namespace Wardrobe.Services.Implementations
             return new List<ProductDTO>();
         }
 
-        public async Task<ProductDTO> Update(ProductDTO wDto)
+        public async Task<ProductDTO> Update(ProductDTO pDTO)
         {
-            var obj = await _db.WardrobeList.FirstOrDefaultAsync(x => x.WardrobeModelId == wDto.WardrobeModelId);
+            var obj = await _db.WardrobeList.FirstOrDefaultAsync(x => x.WardrobeModelId == pDTO.WardrobeModelId);
             if ( obj != null)
             {
-                obj.ItemTypeModelId = wDto.ItemTypeModelId;
-                obj.Price = wDto.Price;
-                obj.Color = wDto.Color;
-                obj.ImageData = wDto.ImageData;
+                obj.Name = pDTO.Name;
+                obj.ItemTypeModelId = pDTO.ItemTypeModelId;
+                obj.Price = pDTO.Price;
+                obj.ImageData = pDTO.ImageData;
                 _db.WardrobeList.Update(obj);
                 await _db.SaveChangesAsync();
                 return _mapper.Map<Product, ProductDTO>(obj);
             }
-            return wDto;
+            return pDTO;
         }
     }
 }

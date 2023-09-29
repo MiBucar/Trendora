@@ -14,12 +14,13 @@ namespace Wardrobe.Models.Models
     {
         [Key]
         public int WardrobeModelId { get; set; }
-        public string Color { get; set; }
+        public string Name { get; set; }
         public int ItemTypeModelId { get; set; }
         [ForeignKey("ItemTypeModelId")]
         public ItemType ItemType { get; set; }
         public int Price { get; set; }
         public byte[] ImageData { get; set; }   
         public DateTime DateCreated { get; set; }
+        public List<Color> Colors { get; set; }
     }
 }

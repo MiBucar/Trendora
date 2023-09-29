@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Wardrobe.Data_Access;
 
@@ -11,9 +12,11 @@ using Wardrobe.Data_Access;
 namespace Wardrobe.Data_Access.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230928082903_AddColorsToProduct")]
+    partial class AddColorsToProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,50 +59,6 @@ namespace Wardrobe.Data_Access.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ColorList");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ColorCode = "#fc030f",
-                            Name = "Red"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ColorCode = "#0202d6",
-                            Name = "Blue"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ColorCode = "#04b507",
-                            Name = "Green"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            ColorCode = "#f5f500",
-                            Name = "Yellow"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            ColorCode = "#000000",
-                            Name = "Black"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            ColorCode = "#ffffff",
-                            Name = "White"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            ColorCode = "#e610a9",
-                            Name = "Pink"
-                        });
                 });
 
             modelBuilder.Entity("Wardrobe.Models.Models.ItemType", b =>
@@ -130,6 +89,10 @@ namespace Wardrobe.Data_Access.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WardrobeModelId"));
 
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
@@ -139,10 +102,6 @@ namespace Wardrobe.Data_Access.Migrations
 
                     b.Property<int>("ItemTypeModelId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Price")
                         .HasColumnType("int");
