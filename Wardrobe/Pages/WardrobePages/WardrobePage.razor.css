@@ -8,7 +8,7 @@
 
 .item-row {
     display: grid;
-    grid-template-columns: repeat(5, 1fr); /* 4 columns */
+    grid-template-columns: repeat(6, 1fr); /* 4 columns */
     gap: 10px;
     padding: 10px;
     box-sizing: border-box;
@@ -29,38 +29,6 @@
     .item-row--content:last-child {
         margin-bottom: 30px;
     }
-
-.item-property {
-    padding: 5px 0;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-    .item-property--button {
-        background-image: url('Images/image.png');
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: 25px;
-        background-color: white;
-        height: 30px;
-        width: 30px;
-        border: none;
-        border-top-right-radius: 2px;
-        border-bottom-right-radius: 2px;
-        transition: 1s ease;
-    }
-
-    .item-property--button:hover {
-        background-image: url('Images/image-light.png');
-    }
-
-.item-action {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
 .menu-container {
     margin: 20px;

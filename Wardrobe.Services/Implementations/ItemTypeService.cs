@@ -48,12 +48,12 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<IEnumerable<ItemTypeDTO>> GetAll()
         {
-            return _mapper.Map<IEnumerable<ItemType>, IEnumerable<ItemTypeDTO>>(_db.ItemTypeList);
+            return _mapper.Map<IEnumerable<ItemType>, IEnumerable<ItemTypeDTO>>(_db.ItemTypeList.Include(x => x.Sizes));
         }
 
         public async Task<ItemTypeDTO> GetById(int id)
         {
-            var obj = await _db.ItemTypeList.FirstOrDefaultAsync(x => x.ItemTypeId == id);
+            var obj = await _db.ItemTypeList.Include(x => x.Sizes).FirstOrDefaultAsync(x => x.ItemTypeId == id);
             if (obj != null)
             {
                 return _mapper.Map<ItemType, ItemTypeDTO>(obj);

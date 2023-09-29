@@ -4,7 +4,7 @@
 @inject NavigationManager _navigationManager
 @inject IProductService _productService
 @inject IItemTypeService _itemTypeService
-@inject ISizeService _sizeService
+@inject IColorService _colorService
 
 <div>
     <h2>@Title Product</h2>
@@ -21,62 +21,109 @@
     }
     else
     {
-        <EditForm Model="WardrobeItem" OnValidSubmit="@Submit" @onmousemove="UpdateSizes">
+        <EditForm Model="Product" OnValidSubmit="@Submit">
             <DataAnnotationsValidator />
             <div class="form">
+                <!-- Name -->
                 <div class="input-container">
-                    <p class="input-container--text">Item Color</p>
-                    <InputText @bind-Value="WardrobeItem.Color" class="item-container__input" placeholder="Enter text...">test</InputText>
+                    <p class="input-container--text">Item Name</p>
+                    <InputText @bind-Value="Product.Name" class="item-container__input" placeholder="Enter name..."></InputText>
+                    <ValidationMessage For="() => Product.Name" />
                 </div>
+                <!-- Item Type-->
                 <div class="input-container">
                     <p class="input-container--text">Item Type</p>
-                    <InputSelect @bind-Value="WardrobeItem.ItemTypeModelId" class="item-container__input">
+                    <InputSelect Value="Product.ItemTypeModelId"
+                                 ValueChanged="@(async (int newValue) => await OnItemTypeChanged(newValue))"
+                                 ValueExpression="@(() => Product.ItemTypeModelId)" class="item-container__input">
                         @if (ItemTypeModels.Any())
                         {
                             @foreach (var itemType in ItemTypeModels)
                             {
                                 <option value="@itemType.ItemTypeId">@itemType.Model</option>
                             }
-                        }                        
+                        }
                     </InputSelect>
+                    <ValidationMessage For="() => Product.ItemTypeModelId" />
                 </div>
+                <!-- Price -->
                 <div class="input-container">
                     <p class="input-container--text">Item Price €</p>
-                    <InputNumber @bind-Value="WardrobeItem.Price" class="item-container__input"></InputNumber>
+                    <InputNumber @bind-Value="Product.Price" class="item-container__input"></InputNumber>
                 </div>
+                <!-- Available colors -->
                 <div class="input-container">
-                    <p class="input-container--text">Sizes</p>
-                    @if (WardrobeItem.ItemTypeModelId != 0)
+                    @if (ColorModels.Any())
                     {
-                        <div class="input-container" style="margin-top:10px; display: flex; align-items: center; flex-wrap: wrap; flex-direction: row">
-                            @foreach (var size in Sizes)
-                            {
-                                <div class="input-container__size-box">
-                                    <label>@size.ItemSize</label>
-                                </div>
-                            }
+                        <p class="input-container--text" >Available Colors</p>
+                        <div class="input-container--wrap">
+                                @foreach (var color in ColorModels)
+                                {
+                                    @if (!Product.Colors.Any(x => x.Id == color.Id))
+                                    {
+                                        <div @onclick="() => AddColorToProduct(color)" class="color-container" style="background-color: @color.ColorCode;"></div>
+                                    }
+                                }                                                       
                         </div>
+                    }
+                </div>
+                <!-- Selected colors -->
+                <div class="input-container">
+                    <p class="input-container--text">Selected Colors</p>
+                    <div class="input-container--wrap">
+                        @if (Id != 0)
+                        {
+                            @foreach (var color in Product.Colors)
+                            {
+                                <div @onclick="() => RemoveColorFromProduct(color)" class="color-container" style="background-color: @color.ColorCode;"></div>
+                            }
+                        }
+                        else
+                        {
+                            @foreach (var color in SelectedColors)
+                            {
+                                <div @onclick="() => RemoveColorFromProduct(color)" class="color-container" style="background-color: @color.ColorCode;"></div>
+                            }
+                        }
+                    </div>
+                </div>
+                <!-- Sizes -->
+                <div class="input-container">
+                    <p class="input-container--text" style="margin-bottom: -10px;">Sizes</p>
+                    @if (Product.ItemTypeModelId != 0)
+                    {
+                        @if (ItemType != null && ItemType.Sizes != null)
+                        {
+                            <div class="input-container--wrap">
+                                @foreach (var size in ItemType.Sizes)
+                                {
+                                    <div class="input-container__size-box">
+                                        <label>@size.ItemSize</label>
+                                    </div>
+                                }
+                            </div>
+                        }
                     }
                     else
                     {
                         <p style="margin: 0px;">Select an item type</p>
-                    }                   
+                    }
                 </div>
+                <!-- Image upload -->
                 <div class="input-container">
                     <p class="input-container--text">Image Upload</p>
                     <InputFile OnChange="@HandleFileUpload" class="item-container__input" />
                 </div>
+                <!-- Image -->
                 <div class="input-container">
                     <p class="input-container--text">Image</p>
-                    <img src="@ImageData()" class="input-container--image"/>
+                    <img src="@ImageData()" class="input-container--image" />
                 </div>
             </div>
-            <ValidationMessage For="() => WardrobeItem.Color" />
-            <ValidationMessage For="() => WardrobeItem.ItemTypeModelId" />
             <button type="submit" class="btn-form btn-form--submit">Submit</button>
             <NavLink href="/wardrobe"><button class="btn-form btn-form--cancel">Cancel</button></NavLink>
         </EditForm>
-    }    
+    }
 </div>
 
 @code {
@@ -85,29 +132,29 @@
     private string Title { get; set; } = "Create";
     private bool IsLoading { get; set; }
 
-    private ProductDTO WardrobeItem { get; set; } = new ProductDTO();
+    private ProductDTO Product { get; set; } = new ProductDTO() { Colors = new List<ColorDTO>()};
+    private ItemTypeDTO ItemType { get; set; } = new ItemTypeDTO();
     private IEnumerable<ItemTypeDTO> ItemTypeModels { get; set; } = new List<ItemTypeDTO>();
-    private IEnumerable<SizeDTO> Sizes{ get; set; } = new List<SizeDTO>();
+    private IEnumerable<ColorDTO> ColorModels { get; set; } = new List<ColorDTO>();
+    private List<ColorDTO> SelectedColors { get; set; } = new List<ColorDTO>();
 
     private async Task Submit()
     {
         if (Id == 0)
         {
-            await _productService.Create(WardrobeItem);
+            Product.Colors = SelectedColors;
+            await _productService.Create(Product);
         }
         else
         {
-            await _productService.Update(WardrobeItem);
+            await _productService.Update(Product);
         }
         _navigationManager.NavigateTo("/wardrobe");
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {     
-        if (firstRender)
-        {
-            await LoadItem();
-        }
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadItem();
     }
 
     private async Task LoadItem()
@@ -115,22 +162,42 @@
         IsLoading = true;
         StateHasChanged();
         ItemTypeModels = await _itemTypeService.GetAll();
+        ColorModels = await _colorService.GetAll();
         if (Id != 0)
         {
-            WardrobeItem = await _productService.GetById(Id);
-            Sizes = await _sizeService.GetAllOfId(WardrobeItem.ItemTypeModelId);
+            Product = await _productService.GetById(Id);
+            ItemType = await _itemTypeService.GetById(Product.ItemTypeModelId);
             Title = "Update";
         }
         IsLoading = false;
         StateHasChanged();
     }
 
-    private async Task UpdateSizes()
+    private async Task OnItemTypeChanged(int selectedId)
     {
-        Sizes = await _sizeService.GetAllOfId(WardrobeItem.ItemTypeModelId);
+        Product.ItemTypeModelId = selectedId;
+        ItemType = await _itemTypeService.GetById(selectedId);
         StateHasChanged();
     }
 
+    private async Task AddColorToProduct(ColorDTO color)
+    {
+        if (Id != 0)
+        {
+            Product = await _productService.AddColor(Product, color);
+
+        }
+        else
+        {
+            SelectedColors.Add(color); 
+        }
+        StateHasChanged();
+    }
+
+    private async Task RemoveColorFromProduct(ColorDTO color)
+    {
+        Product = await _productService.RemoveColor(Product, color);
+    }
 
     private async Task HandleFileUpload(InputFileChangeEventArgs e)
     {
@@ -141,16 +208,16 @@
             using (var memoryStream = new MemoryStream())
             {
                 await imageFile.OpenReadStream().CopyToAsync(memoryStream);
-                WardrobeItem.ImageData = memoryStream.ToArray();
+                Product.ImageData = memoryStream.ToArray();
             }
         }
     }
 
     private string ImageData()
     {
-        if (WardrobeItem.ImageData != null && WardrobeItem.ImageData.Length > 0)
+        if (Product.ImageData != null && Product.ImageData.Length > 0)
         {
-            var base64String = Convert.ToBase64String(WardrobeItem.ImageData);
+            var base64String = Convert.ToBase64String(Product.ImageData);
             return $"data:image/jpeg;base64,{base64String}";
         }
         return "";

@@ -16,6 +16,7 @@ namespace Wardrobe.Services.Mapper
             CreateMap<Product, ProductDTO>().ReverseMap();
             CreateMap<ItemType, ItemTypeDTO>().ReverseMap();
             CreateMap<Size, SizeDTO>().ReverseMap();
+            CreateMap<Color, ColorDTO>().ReverseMap();
         }
     }
 }
