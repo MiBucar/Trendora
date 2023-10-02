@@ -30,6 +30,11 @@
                     <InputText @bind-Value="Product.Name" class="item-container__input" placeholder="Enter name..."></InputText>
                     <ValidationMessage For="() => Product.Name" />
                 </div>
+                <!-- Descrption -->
+                <div class="input-container">
+                    <p class="input-container--text">Item Description</p>
+                    <InputTextArea @bind-Value="Product.Description" class="item-container__input" placeholder="Enter text..."></InputTextArea>
+                </div>
                 <!-- Item Type-->
                 <div class="input-container">
                     <p class="input-container--text">Item Type</p>
@@ -115,10 +120,13 @@
                     <InputFile OnChange="@HandleFileUpload" class="item-container__input" />
                 </div>
                 <!-- Image -->
-                <div class="input-container">
-                    <p class="input-container--text">Image</p>
-                    <img src="@ImageData()" class="input-container--image" />
-                </div>
+                @if (Product.ImageData.Any())
+                {
+                    <div class="input-container">
+                        <p class="input-container--text">Image</p>
+                        <img src="@ImageData()" class="input-container--image" />
+                    </div>
+                }                
             </div>
             <button type="submit" class="btn-form btn-form--submit">Submit</button>
             <NavLink href="/wardrobe"><button class="btn-form btn-form--cancel">Cancel</button></NavLink>
@@ -140,9 +148,9 @@
 
     private async Task Submit()
     {
+        Product.Colors = SelectedColors;
         if (Id == 0)
         {
-            Product.Colors = SelectedColors;
             await _productService.Create(Product);
         }
         else
@@ -167,6 +175,7 @@
         {
             Product = await _productService.GetById(Id);
             ItemType = await _itemTypeService.GetById(Product.ItemTypeModelId);
+            SelectedColors = Product.Colors;
             Title = "Update";
         }
         IsLoading = false;
@@ -180,23 +189,16 @@
         StateHasChanged();
     }
 
-    private async Task AddColorToProduct(ColorDTO color)
+    private void AddColorToProduct(ColorDTO color)
     {
-        if (Id != 0)
-        {
-            Product = await _productService.AddColor(Product, color);
-
-        }
-        else
-        {
-            SelectedColors.Add(color); 
-        }
+        SelectedColors.Add(color); 
         StateHasChanged();
     }
 
-    private async Task RemoveColorFromProduct(ColorDTO color)
+    private void RemoveColorFromProduct(ColorDTO color)
     {
-        Product = await _productService.RemoveColor(Product, color);
+        SelectedColors.Remove(color);
+        StateHasChanged();
     }
 
     private async Task HandleFileUpload(InputFileChangeEventArgs e)

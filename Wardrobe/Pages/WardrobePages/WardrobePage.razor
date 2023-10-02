@@ -83,7 +83,15 @@
                     }
                 </div>
                 <div class="item-container__property">
-                    <button class="item-container__property-button-image-pallete" @onclick="() => ShowProductColors(item.WardrobeModelId)"></button>
+                    @if (item.Colors.Any())
+                    {
+                        <button class="item-container__property-button-image-pallete" @onclick="() => ShowProductColors(item.WardrobeModelId)"></button>
+
+                    }
+                    else
+                    {
+                        <span>None</span>
+                    }
                 </div>
                 <div class="item-container__property">
                     <NavLink href=@($"/product/create/{item.WardrobeModelId}")>
