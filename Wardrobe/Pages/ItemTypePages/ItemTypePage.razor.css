@@ -19,7 +19,7 @@
 
 .item-container__row {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);  4 columns 
+    grid-template-columns: repeat(4, 1fr);
     gap: 10px;
     padding: 10px;
     box-sizing: border-box;

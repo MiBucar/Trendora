@@ -67,6 +67,9 @@ namespace Wardrobe.Services.Implementations
             if (obj != null)
             {
                 obj.Model = item.Model;
+                obj.IsAccessory = item.IsAccessory;
+                obj.IsClothing = item.IsClothing;
+                obj.IsShoes = item.IsShoes;
                 await _db.SaveChangesAsync();
                 return _mapper.Map<ItemType, ItemTypeDTO>(obj);                
             }

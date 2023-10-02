@@ -16,6 +16,18 @@
                     {
                         <h5 style="margin: 0;">@HeaderText</h5>
                         <div @onclick="StartEditingHeaderText" class="popup-container__edit-name"></div>
+
+                        <div class="item-container__property-checkbox item-container__property-checkbox--small @(ShownTypeModel.IsClothing ? "item-container__property-checkbox--toggled" : "")" @onclick="() => ToggleCategoryCurrentItem(1)">
+                            <label>Clothing</label>
+                        </div>
+
+                        <div class="item-container__property-checkbox item-container__property-checkbox--small @(ShownTypeModel.IsShoes ? "item-container__property-checkbox--toggled" : "")" @onclick="() => ToggleCategoryCurrentItem(2)">
+                            <label>Shoes</label>
+                        </div>
+
+                        <div class="item-container__property-checkbox item-container__property-checkbox--small @(ShownTypeModel.IsAccessory ? "item-container__property-checkbox--toggled" : "")" @onclick="() => ToggleCategoryCurrentItem(3)">
+                            <label>Accessory</label>
+                        </div>
                     }
                     else
                     {
@@ -75,6 +87,7 @@
                 <div class="item-container__property">
                     <InputText @bind-Value="ItemTypeModel.Model" class="item-container__input" placeholder="Enter new model type..."></InputText>
                 </div>
+                <ValidationMessage For="() => ItemTypeModel.Model" />
                 <div style="text-align:left;">
                     <label>Item Type Size</label>
                 </div>
@@ -82,8 +95,22 @@
                     <InputText @bind-Value="NewSizeValue" class="item-container__input" placeholder="Enter new size..."></InputText>
                     <button class="btn-form btn-form--submit btn-plus" style="margin-left: 5px;" type="submit"></button>
                 </div>
-                <ValidationMessage For="() => ItemTypeModel.Model" />
-                <div style="margin-top: 10px; text-align: left; width: 100%;">
+                <!-- Checkboxes -->
+                <div class="item-container__property">
+                    <div class="item-container__property-checkbox @(ItemTypeModel.IsClothing ? "item-container__property-checkbox--toggled" : "")" @onclick="() => ToggleCategory(1)">
+                        <label>Clothing</label>
+                    </div>
+
+                    <div class="item-container__property-checkbox @(ItemTypeModel.IsShoes ? "item-container__property-checkbox--toggled" : "")" @onclick="() => ToggleCategory(2)">
+                        <label>Shoes</label>
+                    </div>
+
+                    <div class="item-container__property-checkbox @(ItemTypeModel.IsAccessory ? "item-container__property-checkbox--toggled" : "")" @onclick="() => ToggleCategory(3)">
+                        <label>Accessory</label>
+                    </div>                                       
+                </div>
+                <!-- Create Button -->
+                <div style="text-align: left; width: 100%;">
                     <button @onclick="CreateItemType" type="button" class="btn-form btn-form--submit">Create</button>
                     @if (AvailableSizes.Any())
                     {
@@ -113,6 +140,7 @@
             <div class="item-container__row item-container__row--info">
                 <div class="item-container__property" style="font-weight: 700;">Model Type</div>
                 <div class="item-container__property">Sizes</div>
+                <div class="item-container__property">Category</div>
                 <div class="item-container__property">Action</div>
             </div>
             @foreach (var model in ItemTypeModelList)
@@ -142,6 +170,29 @@
                         {
                             <span>None</span>
                         }
+                    </div>
+                    <div class="item-container__property">
+                        <div style="display: flex; flex-direction: column;">
+                            @if (model.IsClothing || model.IsAccessory || model.IsShoes)
+                            {
+                                @if (model.IsClothing)
+                                {
+                                    <span>Clothing</span>
+                                }
+                                @if (model.IsAccessory)
+                                {
+                                    <span>Accessory</span>
+                                }
+                                @if (model.IsShoes)
+                                {
+                                    <span>Shoes</span>
+                                }
+                            }
+                            else
+                            {
+                                <span>None</span>
+                            }
+                        </div>                        
                     </div>
                     <div class="item-container__property">
                         <button class="btn-form btn-form--submit" style="margin-right: 2px;" @onclick="() => ShowPopup(model.ItemTypeId)">Edit</button>
@@ -220,6 +271,42 @@
     private void DeleteAvailableSizes()
     {
         AvailableSizes = new List<SizeDTO>() { };
+    }
+
+    private void ToggleCategory(int type)
+    {
+        switch(type)
+        {
+            case 1:
+                ItemTypeModel.IsClothing = !ItemTypeModel.IsClothing;
+                break;
+            case 2:
+                ItemTypeModel.IsShoes = !ItemTypeModel.IsShoes;
+                break;
+            case 3:
+                ItemTypeModel.IsAccessory = !ItemTypeModel.IsAccessory;
+                break;
+        }
+
+    }
+
+    private async Task ToggleCategoryCurrentItem(int type)
+    {
+        switch (type)
+        {
+            case 1:
+                ShownTypeModel.IsClothing = !ShownTypeModel.IsClothing;
+                break;
+            case 2:
+                ShownTypeModel.IsShoes = !ShownTypeModel.IsShoes;
+                break;
+            case 3:
+                ShownTypeModel.IsAccessory = !ShownTypeModel.IsAccessory;
+                break;
+        }
+        await _itemTypeService.Update(ShownTypeModel);
+        ItemTypeModelList = await _itemTypeService.GetAll();
+        StateHasChanged();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -55,6 +55,21 @@ namespace Wardrobe.Services.Implementations
             return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(_db.WardrobeList.Include(x => x.ItemType).Include(x => x.Colors));
         }
 
+        public async Task<IEnumerable<ProductDTO>> GetByCategory(string category)
+        {
+            switch (category)
+            {
+                case "clothing":
+                    return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(_db.WardrobeList.Include(x => x.ItemType).Include(x => x.Colors).Where(x => x.ItemType.IsClothing == true));
+                case "shoes":
+                    return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(_db.WardrobeList.Include(x => x.ItemType).Include(x => x.Colors).Where(x => x.ItemType.IsShoes == true));
+                case "accessory":
+                    return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(_db.WardrobeList.Include(x => x.ItemType).Include(x => x.Colors).Where(x => x.ItemType.IsAccessory == true));
+                default:
+                    return new List<ProductDTO>();  
+            }
+        }
+
         public async Task<ProductDTO> GetById(int id)
         {
             var obj = await _db.WardrobeList.Include(x => x.ItemType).Include(x => x.Colors).FirstOrDefaultAsync(x => x.WardrobeModelId == id);

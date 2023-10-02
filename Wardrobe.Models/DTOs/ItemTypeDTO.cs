@@ -13,6 +13,9 @@ namespace Wardrobe.Models.DTOs
         public int ItemTypeId { get; set; }
         [Required(ErrorMessage = "Please enter a model type")]
         public string Model { get; set; }
+        public bool IsClothing { get; set; }
+        public bool IsShoes { get; set; }
+        public bool IsAccessory { get; set; }
         public List<SizeDTO> Sizes { get; set; }
     }
 }

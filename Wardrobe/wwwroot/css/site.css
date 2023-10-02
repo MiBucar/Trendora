@@ -128,19 +128,43 @@ a, .btn-link {
     justify-content: center;
 }
 
-.item-container__property-button-image-picture {
-    background-image: url('../Images/image.png');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 25px;
-    background-color: white;
-    height: 30px;
-    width: 30px;
-    border: none;
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
-    transition: 1s ease;
-}
+    .item-container__property-checkbox{
+        margin: 0px 15px 0px 15px;
+        padding: 8px;
+        min-width: 8rem;
+        transition: .5s ease;
+        border-radius: 2px;
+        border: 1px solid var(--color-primary);
+    }
+
+    .item-container__property-checkbox--small {
+        margin: 0px 8px 0px 8px;
+        padding: 5px;
+        min-width: 7rem;
+        transition: .5s ease;
+        border-radius: 2px;
+        border: 1px solid var(--color-primary);
+        text-align: center;
+    }
+
+    .item-container__property-checkbox--toggled {
+        background-color: var(--color-primary);
+        color: white;
+    }
+
+    .item-container__property-button-image-picture {
+        background-image: url('../Images/image.png');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 25px;
+        background-color: white;
+        height: 30px;
+        width: 30px;
+        border: none;
+        border-top-right-radius: 2px;
+        border-bottom-right-radius: 2px;
+        transition: 1s ease;
+    }
 
     .item-container__property-button-image-picture:hover {
         background-image: url('../Images/image-light.png');
