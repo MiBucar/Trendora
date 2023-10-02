@@ -14,6 +14,7 @@ namespace Wardrobe.Models.DTOs
         public int WardrobeModelId { get; set; }
         [Required(ErrorMessage = "Please enter the name")]
         public string Name { get; set; }
+        public string Description { get; set; }
 
         [Required(ErrorMessage = "Please enter the price")]
         public int Price { get; set; }

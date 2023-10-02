@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting;
 using System.Text;
 using System.Threading.Tasks;
 using Wardrobe.Data_Access;
@@ -21,39 +22,7 @@ namespace Wardrobe.Services.Implementations
         {
             _db = db;
             _mapper = mapper;   
-        }
-
-        public async Task<ProductDTO> AddColor(ProductDTO pDTO, ColorDTO cDTO)
-        {
-            var product = await _db.WardrobeList.FirstOrDefaultAsync(x => x.WardrobeModelId == pDTO.WardrobeModelId);
-            var color = await _db.ColorList.FirstOrDefaultAsync(x => x.Id == cDTO.Id);
-            if (product != null && color != null)
-            {
-                product.Colors ??= new List<Color>();
-                if (!product.Colors.Contains(color))
-                {
-                    product.Colors.Add(color);
-                    return _mapper.Map<Product, ProductDTO>(product);
-                }
-            }
-            return pDTO;
-        }
-
-        public async Task<ProductDTO> RemoveColor(ProductDTO pDTO, ColorDTO cDTO)
-        {
-            var product = await _db.WardrobeList.FirstOrDefaultAsync(x => x.WardrobeModelId == pDTO.WardrobeModelId);
-            var color = await _db.ColorList.FirstOrDefaultAsync(x => x.Id == cDTO.Id);
-            if (product != null && color != null)
-            {
-                product.Colors ??= new List<Color>();
-                if (product.Colors.Contains(color))
-                {
-                    product.Colors.Remove(color);
-                    return _mapper.Map<Product, ProductDTO>(product);
-                }
-            }
-            return pDTO;
-        }
+        }        
 
         public async Task<ProductDTO> Create(ProductDTO pDTO)
         {
@@ -130,7 +99,12 @@ namespace Wardrobe.Services.Implementations
             var obj = await _db.WardrobeList.FirstOrDefaultAsync(x => x.WardrobeModelId == pDTO.WardrobeModelId);
             if ( obj != null)
             {
+                var selectedColors = pDTO.Colors.Select(x => x.Id).ToList();
+                var existingColors = _db.ColorList.Where(x => selectedColors.Contains(x.Id)).ToList();  
+
+                obj.Colors = existingColors;
                 obj.Name = pDTO.Name;
+                obj.Description = pDTO.Description;
                 obj.ItemTypeModelId = pDTO.ItemTypeModelId;
                 obj.Price = pDTO.Price;
                 obj.ImageData = pDTO.ImageData;
