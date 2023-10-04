@@ -120,12 +120,15 @@
                     <InputFile OnChange="@HandleFileUpload" class="item-container__input" />
                 </div>
                 <!-- Image -->
-                @if (Product.ImageData.Any())
+                @if (Product.ImageData != null)
                 {
-                    <div class="input-container">
-                        <p class="input-container--text">Image</p>
-                        <img src="@ImageData()" class="input-container--image" />
-                    </div>
+                    if (Product.ImageData.Any())
+                    {
+                            <div class="input-container">
+                                <p class="input-container--text">Image</p>
+                                <img src="@ImageData()" class="input-container--image" />
+                            </div>
+                    }                    
                 }                
             </div>
             <button type="submit" class="btn-form btn-form--submit">Submit</button>

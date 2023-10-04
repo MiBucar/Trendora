@@ -18,15 +18,15 @@
                         <div @onclick="StartEditingHeaderText" class="popup-container__edit-name"></div>
 
                         <div class="item-container__property-checkbox item-container__property-checkbox--small @(ShownTypeModel.IsClothing ? "item-container__property-checkbox--toggled" : "")" @onclick="() => ToggleCategoryCurrentItem(1)">
-                            <label>Clothing</label>
+                            <label class="item-container__property-checkbox-label">Clothing</label>
                         </div>
 
                         <div class="item-container__property-checkbox item-container__property-checkbox--small @(ShownTypeModel.IsShoes ? "item-container__property-checkbox--toggled" : "")" @onclick="() => ToggleCategoryCurrentItem(2)">
-                            <label>Shoes</label>
+                            <label class="item-container__property-checkbox-label">Shoes</label>
                         </div>
 
                         <div class="item-container__property-checkbox item-container__property-checkbox--small @(ShownTypeModel.IsAccessory ? "item-container__property-checkbox--toggled" : "")" @onclick="() => ToggleCategoryCurrentItem(3)">
-                            <label>Accessory</label>
+                            <label class="item-container__property-checkbox-label">Accessory</label>
                         </div>
                     }
                     else
@@ -95,22 +95,25 @@
                     <InputText @bind-Value="NewSizeValue" class="item-container__input" placeholder="Enter new size..."></InputText>
                     <button class="btn-form btn-form--submit btn-plus" style="margin-left: 5px;" type="submit"></button>
                 </div>
+                <div style="text-align:left;">
+                    <label>Select Categories</label>
+                </div>
                 <!-- Checkboxes -->
-                <div class="item-container__property">
+                <div class="item-container__property" style="justify-content: left;">
                     <div class="item-container__property-checkbox @(ItemTypeModel.IsClothing ? "item-container__property-checkbox--toggled" : "")" @onclick="() => ToggleCategory(1)">
-                        <label>Clothing</label>
+                        <label class="item-container__property-checkbox-label">Clothing</label>
                     </div>
 
                     <div class="item-container__property-checkbox @(ItemTypeModel.IsShoes ? "item-container__property-checkbox--toggled" : "")" @onclick="() => ToggleCategory(2)">
-                        <label>Shoes</label>
+                        <label class="item-container__property-checkbox-label">Shoes</label>
                     </div>
 
                     <div class="item-container__property-checkbox @(ItemTypeModel.IsAccessory ? "item-container__property-checkbox--toggled" : "")" @onclick="() => ToggleCategory(3)">
-                        <label>Accessory</label>
+                        <label class="item-container__property-checkbox-label">Accessory</label>
                     </div>                                       
                 </div>
                 <!-- Create Button -->
-                <div style="text-align: left; width: 100%;">
+                <div style="text-align: left; width: 100%; margin-top: 5px;">
                     <button @onclick="CreateItemType" type="button" class="btn-form btn-form--submit">Create</button>
                     @if (AvailableSizes.Any())
                     {

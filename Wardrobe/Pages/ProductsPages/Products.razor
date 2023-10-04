@@ -1,0 +1,82 @@
+﻿@page "/products"
+@inject IProductService _productService
+
+<h2 style="text-align: center;">DISCOVER CATEGORIES</h2>
+
+<div class="product-grid">
+    <div class="product-item">
+        <img src="/Images/clothing.png" />
+        <div class="product-item__info">
+            <h3>Clothing</h3>
+        </div>
+    </div>
+    <div class="product-item">
+        <img src="/Images/shoes.png" />
+        <div class="product-item__info">
+            <h3>Shoes</h3>
+        </div>
+    </div>
+    <div class="product-item">
+        <img src="/Images/accessories.png" />
+        <div class="product-item__info">
+            <h3>Accessories</h3>
+        </div>
+    </div>
+</div>
+<div class="product-more">
+    <div class="product-more__container">
+        <div class="product-more__item">
+            <h2>THE WINTER MUST HAVES</h2>
+            <p>Everything your wardrobe needs this season</p>
+            <NavLink href="">
+                <button>SHOP NEW ARRIVALS</button>
+            </NavLink>
+        </div>
+        <img src="/Images/winter-arrivals.jpg" />
+    </div>
+</div>
+<div class="product-discover">
+    <div class="product-discover__item">
+        <img src="/Images/clothing.png" />
+        <div class="product-discover__item__info">
+            <h3>Shirts</h3>
+        </div>
+    </div>
+    <div class="product-discover__item">
+        <img src="/Images/clothing.png" />
+        <div class="product-discover__item__info">
+            <h3>Boots</h3>
+        </div>
+    </div>
+    <div class="product-discover__item">
+        <img src="/Images/clothing.png" />
+        <div class="product-discover__item__info">
+            <h3>Bags</h3>
+        </div>
+    </div>
+    <div class="product-discover__item">
+        <img src="/Images/clothing.png" />
+        <div class="product-discover__item__info">
+            <h3>Hoodies</h3>
+        </div>
+    </div>
+</div>
+
+@code {
+    private IEnumerable<ProductDTO> ProductList = new List<ProductDTO>();
+    private bool IsLoading { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProducts();
+    }
+
+    private async Task LoadProducts()
+    {
+        IsLoading = true;
+        StateHasChanged();
+        ProductList = await _productService.GetAll();
+        IsLoading = false;
+        StateHasChanged();
+    }
+}

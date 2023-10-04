@@ -33,7 +33,7 @@ namespace Wardrobe.Services.Implementations
             var existingColors = _db.ColorList.Where(c => colorIds.Contains(c.Id)).ToList();
             obj.Colors = existingColors;
 
-            var createdObj = _db.WardrobeList.Add(obj);
+            var createdObj = _db.ProductList.Add(obj);
             await _db.SaveChangesAsync();
 
             return _mapper.Map<Product, ProductDTO>(createdObj.Entity);
@@ -41,7 +41,7 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<int> Delete(int id)
         {
-            var obj = await _db.WardrobeList.FirstOrDefaultAsync(x => x.WardrobeModelId == id);
+            var obj = await _db.ProductList.FirstOrDefaultAsync(x => x.WardrobeModelId == id);
             if (obj != null)
             {
                 _db.Remove(obj);
@@ -52,7 +52,7 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<IEnumerable<ProductDTO>> GetAll()
         {
-            return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(_db.WardrobeList.Include(x => x.ItemType).Include(x => x.Colors));
+            return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(_db.ProductList.Include(x => x.ItemType).Include(x => x.Colors));
         }
 
         public async Task<IEnumerable<ProductDTO>> GetByCategory(string category)
@@ -60,11 +60,11 @@ namespace Wardrobe.Services.Implementations
             switch (category)
             {
                 case "clothing":
-                    return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(_db.WardrobeList.Include(x => x.ItemType).Include(x => x.Colors).Where(x => x.ItemType.IsClothing == true));
+                    return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(_db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).Where(x => x.ItemType.IsClothing == true));
                 case "shoes":
-                    return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(_db.WardrobeList.Include(x => x.ItemType).Include(x => x.Colors).Where(x => x.ItemType.IsShoes == true));
+                    return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(_db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).Where(x => x.ItemType.IsShoes == true));
                 case "accessory":
-                    return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(_db.WardrobeList.Include(x => x.ItemType).Include(x => x.Colors).Where(x => x.ItemType.IsAccessory == true));
+                    return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(_db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).Where(x => x.ItemType.IsAccessory == true));
                 default:
                     return new List<ProductDTO>();  
             }
@@ -72,7 +72,7 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<ProductDTO> GetById(int id)
         {
-            var obj = await _db.WardrobeList.Include(x => x.ItemType).Include(x => x.Colors).FirstOrDefaultAsync(x => x.WardrobeModelId == id);
+            var obj = await _db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).FirstOrDefaultAsync(x => x.WardrobeModelId == id);
             if (obj != null)
             {
                 return _mapper.Map<Product, ProductDTO>(obj);
@@ -83,7 +83,7 @@ namespace Wardrobe.Services.Implementations
         public async Task<IEnumerable<ProductDTO>> SearchByText(string text)
         {
             var searchTerms = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            var query = _db.WardrobeList.AsQueryable();
+            var query = _db.ProductList.AsQueryable();
 
             foreach (var term in searchTerms)
             {
@@ -98,12 +98,12 @@ namespace Wardrobe.Services.Implementations
         {
             if (type == "ascending")
             {
-                var results = await _db.WardrobeList.OrderBy(x => x.Price).ToListAsync();
+                var results = await _db.ProductList.OrderBy(x => x.Price).ToListAsync();
                 return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(results);
             }
             else if (type == "descending")
             {
-                var results = await _db.WardrobeList.OrderByDescending(x => x.Price).ToListAsync();
+                var results = await _db.ProductList.OrderByDescending(x => x.Price).ToListAsync();
                 return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(results);
             }
             return new List<ProductDTO>();
@@ -111,7 +111,7 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<ProductDTO> Update(ProductDTO pDTO)
         {
-            var obj = await _db.WardrobeList.FirstOrDefaultAsync(x => x.WardrobeModelId == pDTO.WardrobeModelId);
+            var obj = await _db.ProductList.FirstOrDefaultAsync(x => x.WardrobeModelId == pDTO.WardrobeModelId);
             if ( obj != null)
             {
                 var selectedColors = pDTO.Colors.Select(x => x.Id).ToList();
@@ -123,7 +123,7 @@ namespace Wardrobe.Services.Implementations
                 obj.ItemTypeModelId = pDTO.ItemTypeModelId;
                 obj.Price = pDTO.Price;
                 obj.ImageData = pDTO.ImageData;
-                _db.WardrobeList.Update(obj);
+                _db.ProductList.Update(obj);
                 await _db.SaveChangesAsync();
                 return _mapper.Map<Product, ProductDTO>(obj);
             }
