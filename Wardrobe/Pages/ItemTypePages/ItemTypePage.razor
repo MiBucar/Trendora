@@ -12,64 +12,89 @@
         <div class="toast show popup-container__content" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
                 <div style="display: flex; align-items: center;">
-                    @if (!IsEditingHeaderText)
+                    @if (ShowingEditControls)
+                    {
+                        @if (!IsEditingHeaderText)
+                        {
+                            <h5 style="margin: 0;">@HeaderText</h5>
+                            <div @onclick="StartEditingHeaderText" class="popup-container__edit-name"></div>
+
+                            <div class="item-container__property-checkbox item-container__property-checkbox--small @(ShownTypeModel.IsClothing ? "item-container__property-checkbox--toggled" : "")" @onclick="() => ToggleCategoryCurrentItem(1)">
+                                <label class="item-container__property-checkbox-label">Clothing</label>
+                            </div>
+
+                            <div class="item-container__property-checkbox item-container__property-checkbox--small @(ShownTypeModel.IsShoes ? "item-container__property-checkbox--toggled" : "")" @onclick="() => ToggleCategoryCurrentItem(2)">
+                                <label class="item-container__property-checkbox-label">Shoes</label>
+                            </div>
+
+                            <div class="item-container__property-checkbox item-container__property-checkbox--small @(ShownTypeModel.IsAccessory ? "item-container__property-checkbox--toggled" : "")" @onclick="() => ToggleCategoryCurrentItem(3)">
+                                <label class="item-container__property-checkbox-label">Accessory</label>
+                            </div>
+                        }
+                        else
+                        {
+                            <EditForm Model="ShownTypeModel" OnValidSubmit="SaveEditingHeaderText" @onfocusout="@(() => StopEditingHeaderText())">
+                                <DataAnnotationsValidator />
+                                <div class="item-property--card-1">
+                                    <input @bind-value="ShownTypeModel.Model" class="item-container__input no-focus-outline input-for-focus" style="width: 50%;" placeholder="Rename..."></input>
+                                </div>
+                                <ValidationMessage For="() => ShownTypeModel.Model" />
+                            </EditForm>
+                        }
+                    }
+                    @if (ShowingItemTypeImage)
                     {
                         <h5 style="margin: 0;">@HeaderText</h5>
-                        <div @onclick="StartEditingHeaderText" class="popup-container__edit-name"></div>
-
-                        <div class="item-container__property-checkbox item-container__property-checkbox--small @(ShownTypeModel.IsClothing ? "item-container__property-checkbox--toggled" : "")" @onclick="() => ToggleCategoryCurrentItem(1)">
-                            <label class="item-container__property-checkbox-label">Clothing</label>
-                        </div>
-
-                        <div class="item-container__property-checkbox item-container__property-checkbox--small @(ShownTypeModel.IsShoes ? "item-container__property-checkbox--toggled" : "")" @onclick="() => ToggleCategoryCurrentItem(2)">
-                            <label class="item-container__property-checkbox-label">Shoes</label>
-                        </div>
-
-                        <div class="item-container__property-checkbox item-container__property-checkbox--small @(ShownTypeModel.IsAccessory ? "item-container__property-checkbox--toggled" : "")" @onclick="() => ToggleCategoryCurrentItem(3)">
-                            <label class="item-container__property-checkbox-label">Accessory</label>
-                        </div>
-                    }
-                    else
-                    {
-                        <EditForm Model="ShownTypeModel" OnValidSubmit="SaveEditingHeaderText" @onfocusout="@(() => StopEditingHeaderText())">
-                            <DataAnnotationsValidator />
-                            <div class="item-property--card-1">
-                                <input @bind-value="ShownTypeModel.Model" class="item-container__input no-focus-outline input-for-focus" style="width: 50%;" placeholder="Rename..."></input>
-                            </div>
-                            <ValidationMessage For="() => ShownTypeModel.Model" />
-                        </EditForm>
                     }
                 </div>
                 <button type="button" class="btn-close" aria-label="Close" @onclick="ClosePopup"></button>
             </div>
 
             <div class="toast-body popup-container__body">
-                @if (IsVisible)
-                {
-                    <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                    @if (ShowingEditControls)
+                    {
                         @foreach (var size in ShownTypeModel.Sizes)
                         {
                             <div class="size-container">
                                 <span style="margin: 1px 3px 0px 2px;">@size.ItemSize</span>
                                 <div @onclick="() => RemoveExistingSize(size)" class="size-container__image"></div>
                             </div>
-                        }                        
+                        }
                         @if (!IsEditingExistingSize)
                         {
                             <div class="size-container size-container--light">
                                 <div @onclick="StartEditingExistingSizes" class="size-container__image--add"></div>
                             </div>
-                        } else
+                        }
+                        else
                         {
                             <EditForm Model="ShownTypeModel" OnValidSubmit="SaveEditingExistingSizes" @onfocusout="@(() => StopEditingExistingSizes())">
                                 <DataAnnotationsValidator />
-                                    <input @bind-value="SizeModel.ItemSize" class="item-container__input no-focus-outline input-for-focus-2" placeholder="Add new Size" style="padding: 3px 5px 3px 5px; margin-right: 10px; margin-top: 5px; width: 54%;"></input>
+                                <input @bind-value="SizeModel.ItemSize" class="item-container__input no-focus-outline input-for-focus-2" placeholder="Add new Size" style="padding: 3px 5px 3px 5px; margin-right: 10px; margin-top: 5px; width: 54%;"></input>
                                 <ValidationMessage For="() => ShownTypeModel.Model" />
                             </EditForm>
                         }
-                    </div>                    
-                }
+                    }
+                    @if (ShowingItemTypeImage)
+                    {
+                        <img src="@ImageDataPopup()" class="input-container--image input-container--image-big" />
+                    }
+                </div>
             </div>
+            @if (ShowingItemTypeImage)
+            {
+                <div class="toast-body popup-container__body">
+                    <EditForm Model="ShownTypeModel">
+                        <div style="text-align:left; margin-bottom: 5px;">
+                            <label>Change Image</label>
+                        </div>
+                        <div style="text-align:left; margin-bottom: 5px;">
+                            <InputFile class="custom-file-input" style="width: 73px;" OnChange="@((InputFileChangeEventArgs e) => LoadImageForShownModel(e, ShownTypeModel.ItemTypeId))" />
+                        </div>
+                    </EditForm>
+                </div>
+            }            
         </div>
     </div>
 }
@@ -95,10 +120,31 @@
                     <InputText @bind-Value="NewSizeValue" class="item-container__input" placeholder="Enter new size..."></InputText>
                     <button class="btn-form btn-form--submit btn-plus" style="margin-left: 5px;" type="submit"></button>
                 </div>
+                <!-- Image Upload -->
+                <div style="text-align:left; margin-bottom: 5px;">
+                    <label>Upload an Image</label>
+                </div>
+                <div style="text-align:left; margin-bottom: 5px;">
+                    <InputFile class="custom-file-input" style="width: 73px;" OnChange="@LoadImage" />
+                </div>
+                <!-- Image -->
+                @if (ItemTypeModel.Image != null)
+                {
+                    @if (ItemTypeModel.Image.Any())
+                    {
+                        <div style="text-align:left; margin-bottom: 5px; display: flex; flex-direction: column;">
+                            <label style="margin-bottom: 5px;">Image</label>
+                            <img src="@ImageData()" class="input-container--image" />
+                        </div>
+                        <div style="text-align:left; margin-bottom: 5px;">
+                            <button type="button" class="btn-form btn-form--cancel" @onclick="RemoveImage">Remove Image</button>
+                        </div>
+                    }
+                }
+                <!-- Checkboxes -->
                 <div style="text-align:left;">
                     <label>Select Categories</label>
                 </div>
-                <!-- Checkboxes -->
                 <div class="item-container__property" style="justify-content: left;">
                     <div class="item-container__property-checkbox @(ItemTypeModel.IsClothing ? "item-container__property-checkbox--toggled" : "")" @onclick="() => ToggleCategory(1)">
                         <label class="item-container__property-checkbox-label">Clothing</label>
@@ -110,8 +156,24 @@
 
                     <div class="item-container__property-checkbox @(ItemTypeModel.IsAccessory ? "item-container__property-checkbox--toggled" : "")" @onclick="() => ToggleCategory(3)">
                         <label class="item-container__property-checkbox-label">Accessory</label>
-                    </div>                                       
+                    </div>
                 </div>
+                <!-- Shown Sizes -->
+                @if (AvailableSizes.Any())
+                {
+                    <div style="text-align:left;">
+                        <label>Created Sizes</label>
+                    </div>
+                    <div style="margin-bottom: 10px; display: flex; align-items: center; flex-wrap: wrap;">
+                        @foreach (var size in AvailableSizes)
+                        {
+                            <div class="size-container">
+                                <span style="margin: 1px 3px 0px 2px;">@size.ItemSize</span>
+                                <div @onclick="() => RemoveAvailableSize(size)" class="size-container__image"></div>
+                            </div>
+                        }
+                    </div>
+                }
                 <!-- Create Button -->
                 <div style="text-align: left; width: 100%; margin-top: 5px;">
                     <button @onclick="CreateItemType" type="button" class="btn-form btn-form--submit">Create</button>
@@ -121,19 +183,6 @@
                     }
                 </div>
             </EditForm>
-            @if (AvailableSizes.Any())
-            {
-                <h5 style="margin: 15px 0 5px 0">Created Sizes</h5>
-                <div style="margin-top:10px; display: flex; align-items: center; flex-wrap: wrap;">
-                    @foreach (var size in AvailableSizes)
-                    {
-                        <div class="size-container">
-                            <span style="margin: 1px 3px 0px 2px;">@size.ItemSize</span>
-                            <div @onclick="() => RemoveAvailableSize(size)" class="size-container__image"></div>
-                        </div>
-                    }
-                </div>
-            }
         </div>
     </div>
     <!-- List of Model Types -->
@@ -144,12 +193,15 @@
                 <div class="item-container__property" style="font-weight: 700;">Model Type</div>
                 <div class="item-container__property">Sizes</div>
                 <div class="item-container__property">Category</div>
+                <div class="item-container__property">Image</div>
                 <div class="item-container__property">Action</div>
             </div>
             @foreach (var model in ItemTypeModelList)
             {
                 <div class="item-container__row item-container__row--content">
+                    <!-- Type Name -->
                     <div class="item-container__property">@model.Model</div>
+                    <!-- Sizes -->
                     <div class="item-container__property">
                         @if (model.Sizes.Any())
                         {
@@ -174,6 +226,7 @@
                             <span>None</span>
                         }
                     </div>
+                    <!-- Categories -->
                     <div class="item-container__property">
                         <div style="display: flex; flex-direction: column;">
                             @if (model.IsClothing || model.IsAccessory || model.IsShoes)
@@ -195,10 +248,22 @@
                             {
                                 <span>None</span>
                             }
-                        </div>                        
+                        </div>
                     </div>
+                    <!-- Image -->
                     <div class="item-container__property">
-                        <button class="btn-form btn-form--submit" style="margin-right: 2px;" @onclick="() => ShowPopup(model.ItemTypeId)">Edit</button>
+                        @if (model.Image.Any())
+                        {
+                            <button class="item-container__property-button-image-picture" @onclick="() => ShowItemImage(model.ItemTypeId)"></button>
+                        }
+                        else
+                        {
+                            <span>None</span>
+                        }
+                    </div>
+                    <!-- Buttons -->
+                    <div class="item-container__property">
+                        <button class="btn-form btn-form--submit" style="margin-right: 2px;" @onclick="() => ShowEditControls(model.ItemTypeId)">Edit</button>
                         <button class="btn-form btn-form--cancel" style="margin-left: 2px;" @onclick="() => DeleteModel(model.ItemTypeId)">Delete</button>
                     </div>
                 </div>
@@ -228,8 +293,31 @@
 </div>
 
 <style>
-    .no-focus-outline:focus{
+    .no-focus-outline:focus {
         outline: none !important;
+    }
+
+
+    .custom-file-input::file-selector-button {
+        background-color: var(--color-primary) !important;
+        color: white;
+        border-radius: 2px;
+        border: none;
+        padding: 5px;
+        transition: .5s ease;
+        cursor: pointer;
+    }
+
+        .custom-file-input::file-selector-button:hover {
+            background-color: var(--color-primary-light) !important;
+        }
+
+    .custom-file-input input[type="file"]::before {
+        content: none !important;
+    }
+
+    .custom-file-input input[type="file"] {
+        color: transparent;
     }
 </style>
 
@@ -247,6 +335,9 @@
 
     private string NewSizeValue { get; set; } = "";
     private List<SizeDTO> AvailableSizes { get; set; } = new List<SizeDTO>() { };
+
+    private bool ShowingItemTypeImage { get; set; }
+    private bool ShowingEditControls { get; set; }
 
     private void AddNewSize()
     {
@@ -278,7 +369,7 @@
 
     private void ToggleCategory(int type)
     {
-        switch(type)
+        switch (type)
         {
             case 1:
                 ItemTypeModel.IsClothing = !ItemTypeModel.IsClothing;
@@ -361,10 +452,22 @@
     [Parameter]
     public string? HeaderText { get; set; }
 
-    public async void ShowPopup(int id)
+    public async void ShowEditControls(int id)
     {
         ShownTypeModel = await _itemTypeService.GetById(id);
+        ShowingEditControls = true;
+        ShowingItemTypeImage = false;
         HeaderText = ShownTypeModel.Model;
+        IsVisible = true;
+        StateHasChanged();
+    }
+
+    public async void ShowItemImage(int id)
+    {
+        ShownTypeModel = await _itemTypeService.GetById(id);
+        ShowingEditControls = false;
+        ShowingItemTypeImage = true;
+        HeaderText = $"{ShownTypeModel.Model} Image";
         IsVisible = true;
         StateHasChanged();
     }
@@ -420,5 +523,58 @@
         SizeModel = await _sizeService.GetById(SizeModel.Id);
         StateHasChanged();
         IsEditingExistingSize = false;
+    }
+
+    private async Task LoadImage(InputFileChangeEventArgs e)
+    {
+        var imageFiles = e.GetMultipleFiles();
+        var imageFile = imageFiles.FirstOrDefault();
+        if (imageFile != null)
+        {
+            using var stream = new MemoryStream();
+            await imageFile.OpenReadStream().CopyToAsync(stream);
+            ItemTypeModel.Image = stream.ToArray();
+        }
+    }
+
+    private async Task LoadImageForShownModel(InputFileChangeEventArgs e, int id)
+    {
+        var imageFiles = e.GetMultipleFiles();
+        var imageFile = imageFiles.FirstOrDefault();
+        if (imageFile != null)
+        {
+            using var stream = new MemoryStream();
+            await imageFile.OpenReadStream().CopyToAsync(stream);
+            ShownTypeModel.Image = stream.ToArray();
+        }
+        await _itemTypeService.Update(ShownTypeModel);
+        ShownTypeModel = await _itemTypeService.GetById(ShownTypeModel.ItemTypeId);
+        ItemTypeModelList = await _itemTypeService.GetAll();
+        StateHasChanged();
+    }
+
+    private string ImageData()
+    {
+        if (ItemTypeModel.Image != null && ItemTypeModel.Image.Length > 0)
+        {
+            var base64String = Convert.ToBase64String(ItemTypeModel.Image);
+            return $"data:image/jpeg;base64,{base64String}";
+        }
+        return "";
+    }
+
+    private string ImageDataPopup()
+    {
+        if (ShownTypeModel.Image != null && ShownTypeModel.Image.Length > 0)
+        {
+            var base64String = Convert.ToBase64String(ShownTypeModel.Image);
+            return $"data:image/jpeg;base64,{base64String}";
+        }
+        return "";
+    }
+
+    private void RemoveImage()
+    {
+        ItemTypeModel.Image = null;
     }
 }

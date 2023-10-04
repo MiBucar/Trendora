@@ -70,6 +70,7 @@ namespace Wardrobe.Services.Implementations
                 obj.IsAccessory = item.IsAccessory;
                 obj.IsClothing = item.IsClothing;
                 obj.IsShoes = item.IsShoes;
+                obj.Image = item.Image;
                 await _db.SaveChangesAsync();
                 return _mapper.Map<ItemType, ItemTypeDTO>(obj);                
             }

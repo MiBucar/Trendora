@@ -20,6 +20,7 @@ namespace Wardrobe.Models.Models
         [ForeignKey("ItemTypeModelId")]
         public ItemType ItemType { get; set; }
         public int Price { get; set; }
+        [Required(ErrorMessage = "Image is required.")]
         public byte[] ImageData { get; set; }   
         public DateTime DateCreated { get; set; }
         public List<Color> Colors { get; set; }

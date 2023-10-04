@@ -16,6 +16,7 @@ namespace Wardrobe.Models.DTOs
         public bool IsClothing { get; set; }
         public bool IsShoes { get; set; }
         public bool IsAccessory { get; set; }
+        public byte[] Image { get; set; }
         public List<SizeDTO> Sizes { get; set; }
     }
 }
