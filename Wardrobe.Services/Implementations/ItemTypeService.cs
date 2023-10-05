@@ -61,6 +61,16 @@ namespace Wardrobe.Services.Implementations
             return new ItemTypeDTO();
         }
 
+        public async Task<IEnumerable<ItemTypeDTO>> GetRandom(int num)
+        {
+            if (_db.ItemTypeList.Count() >= num)
+            {
+                var randomItems = _db.ItemTypeList.OrderBy(x => Guid.NewGuid()).Take(num).Include(x => x.Sizes);
+                return _mapper.Map<IEnumerable<ItemType>, IEnumerable<ItemTypeDTO>>(randomItems);
+            }
+            return new List<ItemTypeDTO>();
+        }
+
         public async Task<ItemTypeDTO> Update(ItemTypeDTO item)
         {
             var obj = await _db.ItemTypeList.FirstOrDefaultAsync(x => x.ItemTypeId == item.ItemTypeId);

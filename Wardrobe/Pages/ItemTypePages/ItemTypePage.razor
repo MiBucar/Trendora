@@ -104,7 +104,7 @@
     <!-- Create New Model Type -->
     <div class="item-container__card">
         <div style=" height: 100%;">
-            <EditForm Model="ItemTypeModel" OnValidSubmit="@AddNewSize">
+            <EditForm Model="ItemTypeModel" OnValidSubmit="@CreateItemType">
                 <DataAnnotationsValidator />
                 <div style="text-align:left;">
                     <label>Item Type Name</label>
@@ -113,19 +113,21 @@
                     <InputText @bind-Value="ItemTypeModel.Model" class="item-container__input" placeholder="Enter new model type..."></InputText>
                 </div>
                 <ValidationMessage For="() => ItemTypeModel.Model" />
+                <!-- Adding sizes -->
                 <div style="text-align:left;">
                     <label>Item Type Size</label>
                 </div>
                 <div class="item-container__property">
                     <InputText @bind-Value="NewSizeValue" class="item-container__input" placeholder="Enter new size..."></InputText>
-                    <button class="btn-form btn-form--submit btn-plus" style="margin-left: 5px;" type="submit"></button>
+                    <button @onclick="@AddNewSize" class="btn-form btn-form--submit btn-plus" style="margin-left: 5px;" type="button"></button>
                 </div>
                 <!-- Image Upload -->
                 <div style="text-align:left; margin-bottom: 5px;">
                     <label>Upload an Image</label>
                 </div>
                 <div style="text-align:left; margin-bottom: 5px;">
-                    <InputFile class="custom-file-input" style="width: 73px;" OnChange="@LoadImage" />
+                    <InputFile class="custom-file-input" OnChange="@LoadImage" />
+                    <ValidationMessage For="() => ItemTypeModel.Image" />
                 </div>
                 <!-- Image -->
                 @if (ItemTypeModel.Image != null)
@@ -176,7 +178,7 @@
                 }
                 <!-- Create Button -->
                 <div style="text-align: left; width: 100%; margin-top: 5px;">
-                    <button @onclick="CreateItemType" type="button" class="btn-form btn-form--submit">Create</button>
+                    <button type="submit" class="btn-form btn-form--submit">Create</button>
                     @if (AvailableSizes.Any())
                     {
                         <button @onclick="@DeleteAvailableSizes" type="button" class="btn-form btn-form--cancel" style="margin-left: 5px;">Delete sizes</button>
@@ -311,14 +313,6 @@
         .custom-file-input::file-selector-button:hover {
             background-color: var(--color-primary-light) !important;
         }
-
-    .custom-file-input input[type="file"]::before {
-        content: none !important;
-    }
-
-    .custom-file-input input[type="file"] {
-        color: transparent;
-    }
 </style>
 
 @code {
@@ -532,7 +526,7 @@
         if (imageFile != null)
         {
             using var stream = new MemoryStream();
-            await imageFile.OpenReadStream().CopyToAsync(stream);
+            await imageFile.OpenReadStream(2 * 1024 * 1024).CopyToAsync(stream);
             ItemTypeModel.Image = stream.ToArray();
         }
     }
@@ -544,7 +538,7 @@
         if (imageFile != null)
         {
             using var stream = new MemoryStream();
-            await imageFile.OpenReadStream().CopyToAsync(stream);
+            await imageFile.OpenReadStream(2 * 1024 * 1024).CopyToAsync(stream);
             ShownTypeModel.Image = stream.ToArray();
         }
         await _itemTypeService.Update(ShownTypeModel);
