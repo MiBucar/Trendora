@@ -2,61 +2,80 @@
 @inject IProductService _productService
 @inject IItemTypeService _itemTypeService
 
-<h2 style="text-align: center;">DISCOVER CATEGORIES</h2>
+<h2 class="component-header">DISCOVER CATEGORIES</h2>
 
-<div class="product-grid">
-    <div class="product-item">
-        <img src="/Images/clothing.png" />
-        <div class="product-item__info">
-            <h3>Clothing</h3>
-        </div>
-    </div>
-    <div class="product-item">
-        <img src="/Images/shoes.png" />
-        <div class="product-item__info">
-            <h3>Shoes</h3>
-        </div>
-    </div>
-    <div class="product-item">
-        <img src="/Images/accessories.png" />
-        <div class="product-item__info">
-            <h3>Accessories</h3>
-        </div>
-    </div>
-</div>
-<div class="product-more">
-    <div class="product-more__container">
-        <div class="product-more__item">
-            <h2>THE WINTER MUST HAVES</h2>
-            <p>Everything your wardrobe needs this season</p>
-            <NavLink href="">
-                <button>SHOP NEW ARRIVALS</button>
-            </NavLink>
-        </div>
-        <img src="/Images/winter-arrivals.jpg" />
-    </div>
-</div>
-<h2>Discover new clothes!</h2>
-<div class="product-discover">
-    @foreach(var itemType in ItemTypeListFour)
-    {
-        <div class="product-discover__item">
-            <img src="@ImageData(itemType.Image)" />
-            <div class="product-discover__item__info">
-                <h3>@itemType.Model</h3>
+@if (!IsLoading)
+{
+    <div class="product-grid">
+        <div class="product-item">
+            <img src="/Images/clothing.png" />
+            <div class="product-item__info">
+                <h3>Clothing</h3>
             </div>
         </div>
-    }    
-</div>
+        <div class="product-item">
+            <img src="/Images/shoes.png" />
+            <div class="product-item__info">
+                <h3>Shoes</h3>
+            </div>
+        </div>
+        <div class="product-item">
+            <img src="/Images/accessories.png" />
+            <div class="product-item__info">
+                <h3>Accessories</h3>
+            </div>
+        </div>
+    </div>
+    <div class="product-more">
+        <div class="product-more__container">
+            <div class="product-more__item">
+                <h2>THE WINTER MUST HAVES</h2>
+                <p>Everything your wardrobe needs this season</p>
+                <NavLink href="">
+                    <button>SHOP NEW ARRIVALS</button>
+                </NavLink>
+            </div>
+            <img src="/Images/winter-arrivals.jpg" />
+        </div>
+    </div>
+    <div class="component-header">
+        <h2>FIND YOUR STYLE</h2>
+    </div>
+    <div class="product-discover">
+        @foreach (var itemType in ItemTypeListFour)
+        {
+            <div class="product-discover__item">
+                <img src="@ImageData(itemType.Image)" />
+                <div class="product-discover__item__info">
+                    <h3>@itemType.Model</h3>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div style="height: 80vh; display: flex; justify-content:center; align-items: center;">
+        <div class="loadingio-spinner-ripple-kzrhxmj307">
+            <div class="ldio-i6ylih2ekth">
+                <div></div><div></div>
+            </div>
+        </div>
+    </div>
+}
+
 
 @code {
     private IEnumerable<ProductDTO> ProductList = new List<ProductDTO>();
     private IEnumerable<ItemTypeDTO> ItemTypeListFour = new List<ItemTypeDTO>();
     private bool IsLoading { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await LoadProducts();
+        if (firstRender)
+        {
+            await LoadProducts();
+        }
     }
 
     private async Task LoadProducts()

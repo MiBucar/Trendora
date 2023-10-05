@@ -33,7 +33,7 @@
                         }
                         else
                         {
-                            <EditForm Model="ShownTypeModel" OnValidSubmit="SaveEditingHeaderText" @onfocusout="@(() => StopEditingHeaderText())">
+                            <EditForm Model="ShownTypeModel" OnValidSubmit="SaveEditingHeaderText" @onfocusout="@(() => SaveEditingHeaderText())">
                                 <DataAnnotationsValidator />
                                 <div class="item-property--card-1">
                                     <input @bind-value="ShownTypeModel.Model" class="item-container__input no-focus-outline input-for-focus" style="width: 50%;" placeholder="Rename..."></input>
@@ -78,7 +78,20 @@
                     }
                     @if (ShowingItemTypeImage)
                     {
-                        <img src="@ImageDataPopup()" class="input-container--image input-container--image-big" />
+                        if (IsLoadingImage)
+                        {
+                            <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
+                                <div class="loadingio-spinner-blocks-49enh9aem">
+                                    <div class="ldio-4kmgy2v2hm7">
+                                        <div style='left:25.919999999999998px;top:25.919999999999998px;animation-delay:0s'></div><div style='left:57.599999999999994px;top:25.919999999999998px;animation-delay:0.32894736842105265s'></div><div style='left:89.28px;top:25.919999999999998px;animation-delay:0.6578947368421053s'></div><div style='left:25.919999999999998px;top:57.599999999999994px;animation-delay:2.3026315789473686s'></div><div style='left:89.28px;top:57.599999999999994px;animation-delay:0.9868421052631579s'></div><div style='left:25.919999999999998px;top:89.28px;animation-delay:1.9736842105263157s'></div><div style='left:57.599999999999994px;top:89.28px;animation-delay:1.644736842105263s'></div><div style='left:89.28px;top:89.28px;animation-delay:1.3157894736842106s'></div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <img src="@ImageDataPopup()" class="input-container--image input-container--image-big" />
+                        }
                     }
                 </div>
             </div>
@@ -276,11 +289,9 @@
         {
             if (IsLoading)
             {
-                <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
-                    <div class="loadingio-spinner-blocks-49enh9aem">
-                        <div class="ldio-4kmgy2v2hm7">
-                            <div style='left:25.919999999999998px;top:25.919999999999998px;animation-delay:0s'></div><div style='left:57.599999999999994px;top:25.919999999999998px;animation-delay:0.32894736842105265s'></div><div style='left:89.28px;top:25.919999999999998px;animation-delay:0.6578947368421053s'></div><div style='left:25.919999999999998px;top:57.599999999999994px;animation-delay:2.3026315789473686s'></div><div style='left:89.28px;top:57.599999999999994px;animation-delay:0.9868421052631579s'></div><div style='left:25.919999999999998px;top:89.28px;animation-delay:1.9736842105263157s'></div><div style='left:57.599999999999994px;top:89.28px;animation-delay:1.644736842105263s'></div><div style='left:89.28px;top:89.28px;animation-delay:1.3157894736842106s'></div>
-                        </div>
+                <div class="loadingio-spinner-ripple-kzrhxmj307">
+                    <div class="ldio-i6ylih2ekth">
+                        <div></div><div></div>
                     </div>
                 </div>
             }
@@ -320,6 +331,7 @@
     public int Id { get; set; }
 
     private bool IsLoading { get; set; }
+    private bool IsLoadingImage { get; set; }
 
     private ItemTypeDTO ItemTypeModel { get; set; } = new ItemTypeDTO();
     private ItemTypeDTO ShownTypeModel { get; set; } = new ItemTypeDTO();
@@ -482,11 +494,6 @@
         await _jsRuntime.InvokeVoidAsync("focusInputText", ".input-for-focus");
     }
 
-    private void StopEditingHeaderText()
-    {
-        IsEditingHeaderText = false;
-    }
-
     private async Task SaveEditingHeaderText()
     {
         await _itemTypeService.Update(ShownTypeModel);
@@ -533,6 +540,8 @@
 
     private async Task LoadImageForShownModel(InputFileChangeEventArgs e, int id)
     {
+        IsLoadingImage = true;
+        StateHasChanged();
         var imageFiles = e.GetMultipleFiles();
         var imageFile = imageFiles.FirstOrDefault();
         if (imageFile != null)
@@ -544,6 +553,7 @@
         await _itemTypeService.Update(ShownTypeModel);
         ShownTypeModel = await _itemTypeService.GetById(ShownTypeModel.ItemTypeId);
         ItemTypeModelList = await _itemTypeService.GetAll();
+        IsLoadingImage = false;
         StateHasChanged();
     }
 

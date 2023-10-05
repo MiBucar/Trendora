@@ -36,7 +36,6 @@
     }
 
     .product-more__item p {
-        font-size: 1em;
         color: white;
         margin-bottom: 15px;
     }
@@ -145,3 +144,14 @@
             height: 300px;
         }
 }
+
+.component-header {
+    padding: 20px;
+    font-weight: bold;
+    font-size: 1.75em;
+    text-align: center;
+}
+
+    .component-header h2 {
+        margin-bottom: 0px;
+    }

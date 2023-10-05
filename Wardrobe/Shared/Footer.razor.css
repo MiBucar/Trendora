@@ -1,0 +1,41 @@
+﻿body {
+    font-family: Arial, sans-serif;
+}
+
+footer {
+    background-color: var(--color-primary-dark);
+    color: white;
+    text-align: center;
+    padding: 1em;
+    bottom: 0;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.footer-tab {
+    list-style-type: none;
+    padding: 0;
+}
+
+    .footer-tab li {
+        margin-bottom: 0.5em;
+    }
+
+        .footer-tab li:last-child {
+            margin-bottom: 0;
+        }
+
+.first-li{
+    padding: 10px;
+    background-color: white;
+    min-width: 10rem;
+    border-radius: 1px;
+    color: var(--color-primary-dark);
+    font-size: 1.5rem;
+}
