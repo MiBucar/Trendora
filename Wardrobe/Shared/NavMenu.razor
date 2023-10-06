@@ -1,43 +1,37 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Wardrobe</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
+﻿<div class="navigation">
+    <a class="navbar-brand" href="">Wardrobe</a>
+    <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 </div>
 
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/wardrobe">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Wardrobe Iventory
-            </NavLink>
+    <nav>
+        <div class="nav-item">
+            <a class="nav-link" href="/wardrobe">
+                Wardrobe Inventory
+            </a>
         </div>
-    </nav>
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/itemtypes">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Item Types
-            </NavLink>
+        <div class="nav-item">
+            <a class="nav-link" href="/itemtypes">
+                Item Types
+            </a>
         </div>
-    </nav>
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/products">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Products
-            </NavLink>
+        <div class="nav-item">
+            <a class="nav-link" href="/products">
+                Products
+            </a>
         </div>
     </nav>
 </div>
 
 @code {
-    private bool collapseNavMenu = true;
+    private bool IsNavMenuVisible = false;
 
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private string NavMenuCssClass => IsNavMenuVisible ? "nav nav-visible" : "nav";
 
     private void ToggleNavMenu()
     {
-        collapseNavMenu = !collapseNavMenu;
+        IsNavMenuVisible = !IsNavMenuVisible;
     }
 }

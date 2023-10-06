@@ -1,3 +1,109 @@
-body{
-    color: black;
+:root {
+    --color-primary: #your_primary_color_here;
+}
+
+.navigation {
+    background-color: var(--color-primary);
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #fff;
+}
+
+.navbar-brand {
+    color: #fff;
+    font-size: 24px;
+    text-decoration: none;
+}
+
+.navbar-toggler {
+    background-color: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.navbar-toggler-icon {
+    display: inline-block;
+    width: 20px;
+    height: 2px;
+    background-color: var(--color-primary);
+    position: relative;
+}
+
+    .navbar-toggler-icon::before,
+    .navbar-toggler-icon::after {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 2px;
+        background-color: var(--color-primary);
+        left: 0;
+    }
+
+    .navbar-toggler-icon::before {
+        top: -6px;
+    }
+
+    .navbar-toggler-icon::after {
+        bottom: -6px;
+    }
+
+.nav {
+    overflow-y: hidden;
+    max-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--color-primary-light);
+    transition: max-height 0.5s ease-in-out;
+}
+
+.nav-visible {
+    max-height: 300px;
+}
+
+.nav-item {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    text-align: left;
+    min-width: 12rem;
+    border-radius: 2px;
+    color: white !important;
+    transition: .3s ease;
+}
+
+    .nav-item:hover {
+        background-color: white;
+        color: var(--color-primary);
+        transform: scale(1.05);
+        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+        .nav-item:hover .nav-link {
+            color: var(--color-primary);
+        }
+
+    .nav-item:first-child {
+        margin-top: 10px;
+    }
+
+    .nav-item:last-child {
+        margin-bottom: 10px;
+    }
+
+.nav-link {
+    text-decoration: none;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    color: white;
+}
+
+.collapse {
+    display: none;
 }
