@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Wardrobe.Data_Access;
 using Wardrobe.Services.Implementations;
 using Wardrobe.Services.Interfaces;
+using Radzen;
+using Blazored.LocalStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,8 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IItemTypeService, ItemTypeService>();
 builder.Services.AddScoped<ISizeService, SizeService>();
 builder.Services.AddScoped<IColorService, ColorService>();
+builder.Services.AddRadzenComponents();
+builder.Services.AddBlazoredLocalStorage();
 
 var app = builder.Build();
 

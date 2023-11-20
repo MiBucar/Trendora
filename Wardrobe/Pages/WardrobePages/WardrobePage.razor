@@ -75,7 +75,7 @@
                 <div class="item-container__property">@item.Price€</div>
                 <div class="item-container__property">
                     @if (item.ImageData.Any()) {
-                        <button class="item-container__property-button-image-picture" @onclick="() => ShowProductImage(item.WardrobeModelId)"></button>
+                        <button class="item-container__property-button-image-picture" @onclick="() => ShowProductImage(item.Id)"></button>
                     }
                     else
                     {
@@ -85,7 +85,7 @@
                 <div class="item-container__property">
                     @if (item.Colors.Any())
                     {
-                        <button class="item-container__property-button-image-pallete" @onclick="() => ShowProductColors(item.WardrobeModelId)"></button>
+                        <button class="item-container__property-button-image-pallete" @onclick="() => ShowProductColors(item.Id)"></button>
 
                     }
                     else
@@ -94,10 +94,10 @@
                     }
                 </div>
                 <div class="item-container__property">
-                    <NavLink href=@($"/product/create/{item.WardrobeModelId}")>
+                    <NavLink href=@($"/product/create/{item.Id}")>
                         <button class="btn-form btn-form--submit" style="margin-right: 2px;">Edit</button>
                     </NavLink>
-                    <button class="btn-form btn-form--cancel" style="margin-left: 2px;" @onclick="() => DeleteItem(item.WardrobeModelId)">Delete</button>
+                    <button class="btn-form btn-form--cancel" style="margin-left: 2px;" @onclick="() => DeleteItem(item.Id)">Delete</button>
                 </div>
             </div>
         }

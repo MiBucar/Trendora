@@ -1,0 +1,97 @@
+﻿@page "/product/{ProductName}/{Guid:guid}"
+@inject IProductService _productService
+@inject IItemTypeService _itemTypeService
+@inject Blazored.LocalStorage.ILocalStorageService _localStorage
+
+@if (!IsLoading)
+{
+    <div class="product-details-grid">
+        <!-- Left side: Product image -->
+        <div class="product-image-container">
+            <img class="product-image" src="data:image/png;base64,@Convert.ToBase64String(Product.ImageData)" alt="@Product.Name" />
+        </div>
+
+        <!-- Right side: Product details -->
+        <div class="product-info-container">
+            <h4 class="product-name">@Product.Name</h4>
+
+            <label class="product-label">Size</label>
+            <div class="size">
+                @foreach (var size in ItemType.Sizes)
+                {
+                    <span>@size.ItemSize</span>
+                }
+            </div>
+
+            <label class="product-label">Colors</label>
+            <div class="color">
+                @foreach (var color in Product.Colors)
+                {
+                    <div class="color-container" style="background-color: @color.ColorCode;"></div>
+                }
+            </div>
+
+            <div class="button-container">
+                <button class="add-to-basket-button" @onclick="AddToCard">ADD TO CART</button>
+            </div>
+
+            <div class="button-container">
+                <button class="buy-now-button">BUY NOW</button>
+            </div>
+
+            <p class="description">@Product.Description</p>
+
+            <div class="info-container">
+                <div class="info-container__image image__1"></div>
+                <div class="info-container__text"><label>Return of Items within 30 days from the day of purchase</label></div>
+            </div>
+
+            <div class="info-container">
+                <div class="info-container__image image__2"></div>
+                <div class="info-container__text"><label>Free shipping for orders above 100,00 EUR</label></div>
+            </div>
+            <div class="info-container">
+                <div class="info-container__image image__3"></div>
+                <div class="info-container__text"><label>Secure payment on collection and by card</label></div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <_LoadingAnimation></_LoadingAnimation>
+}
+
+
+@code {
+    [Parameter]
+    public string ProductName { get; set; }
+
+    [Parameter]
+    public Guid Guid { get; set; }
+
+    public ProductDTO Product { get; set; } = new ProductDTO();
+    public ItemTypeDTO ItemType { get; set; } = new ItemTypeDTO();
+
+    private bool IsLoading { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProducts();
+    }
+
+    private async Task LoadProducts()
+    {
+        IsLoading = true;
+        StateHasChanged();
+        Product = await _productService.GetByName(ProductName);
+        ItemType = await _itemTypeService.GetById(Product.ItemTypeModelId);
+        IsLoading = false;
+        StateHasChanged();
+    }
+
+    private async void AddToCard()
+    {
+        await _localStorage.SetItemAsync(Product.Id.ToString(), Product);
+    }
+}

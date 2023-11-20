@@ -13,7 +13,8 @@ namespace Wardrobe.Models.Models
     public class Product
     {
         [Key]
-        public int WardrobeModelId { get; set; }
+        public int Id { get; set; }
+        public Guid IdGuid { get; set; }
         public string Name { get; set; }
         public string Description { get; set; } 
         public int ItemTypeModelId { get; set; }

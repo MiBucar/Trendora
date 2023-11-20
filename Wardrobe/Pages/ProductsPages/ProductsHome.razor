@@ -1,4 +1,4 @@
-﻿@page "/products"
+﻿@page "/"
 @inject IProductService _productService
 @inject IItemTypeService _itemTypeService
 
@@ -7,24 +7,30 @@
 @if (!IsLoading)
 {
     <div class="product-grid">
-        <div class="product-item">
-            <img src="/Images/clothing.png" />
-            <div class="product-item__info">
-                <h3>Clothing</h3>
+        <a href="products/clothing" class="no-underline">
+            <div class="product-item">
+                <img src="/Images/clothing.png" />
+                <div class="product-item__info">
+                    <h3>Clothing</h3>
+                </div>
             </div>
-        </div>
-        <div class="product-item">
-            <img src="/Images/shoes.png" />
-            <div class="product-item__info">
-                <h3>Shoes</h3>
+        </a>
+        <a href="products/shoes" class="no-underline">
+            <div class="product-item">
+                <img src="/Images/shoes.png" />
+                <div class="product-item__info">
+                    <h3>Shoes</h3>
+                </div>
             </div>
-        </div>
-        <div class="product-item">
-            <img src="/Images/accessories.png" />
-            <div class="product-item__info">
-                <h3>Accessories</h3>
+        </a>
+        <a href="products/accessories" class="no-underline">
+            <div class="product-item">
+                <img src="/Images/accessories.png" />
+                <div class="product-item__info">
+                    <h3>Accessories</h3>
+                </div>
             </div>
-        </div>
+        </a>        
     </div>
     <div class="product-more">
         <div class="product-more__container">
@@ -44,30 +50,45 @@
     <div class="product-discover">
         @foreach (var itemType in ItemTypeListFour)
         {
-            <div class="product-discover__item">
-                <img src="@ImageData(itemType.Image)" />
-                <div class="product-discover__item__info">
-                    <h3>@itemType.Model</h3>
+            @if (itemType.IsClothing)
+            {
+                DiscoverItemType = "clothing";
+            }
+            @if (itemType.IsAccessory)
+            {
+                DiscoverItemType = "accessories";
+            }
+            @if (itemType.IsShoes)
+            {
+                DiscoverItemType = "shoes";
+            }
+
+            <a href=@($"/products/{DiscoverItemType}/{itemType.Model}") class="no-underline">
+                <div class="product-discover__item">
+                    <img src="@ImageData(itemType.Image)" />
+                    <div class="product-discover__item__info">
+                        <h3>@itemType.Model</h3>
+                    </div>
                 </div>
-            </div>
+            </a>
         }
     </div>
 }
 else
 {
-    <div style="height: 80vh; display: flex; justify-content:center; align-items: center;">
-        <div class="loadingio-spinner-ripple-kzrhxmj307">
-            <div class="ldio-i6ylih2ekth">
-                <div></div><div></div>
-            </div>
-        </div>
-    </div>
+    <_LoadingAnimation></_LoadingAnimation>
 }
 
 
 @code {
+    private string DetermineItemType()
+    {
+        return "test";
+    }
+
     private IEnumerable<ProductDTO> ProductList = new List<ProductDTO>();
     private IEnumerable<ItemTypeDTO> ItemTypeListFour = new List<ItemTypeDTO>();
+    private string DiscoverItemType { get; set; }
     private bool IsLoading { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

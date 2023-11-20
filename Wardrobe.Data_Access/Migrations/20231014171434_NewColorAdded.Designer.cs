@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Wardrobe.Data_Access;
 
@@ -11,9 +12,11 @@ using Wardrobe.Data_Access;
 namespace Wardrobe.Data_Access.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231014171434_NewColorAdded")]
+    partial class NewColorAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,12 +30,12 @@ namespace Wardrobe.Data_Access.Migrations
                     b.Property<int>("ColorsId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductsId")
+                    b.Property<int>("ProductsWardrobeModelId")
                         .HasColumnType("int");
 
-                    b.HasKey("ColorsId", "ProductsId");
+                    b.HasKey("ColorsId", "ProductsWardrobeModelId");
 
-                    b.HasIndex("ProductsId");
+                    b.HasIndex("ProductsWardrobeModelId");
 
                     b.ToTable("ColorProduct");
                 });
@@ -105,12 +108,6 @@ namespace Wardrobe.Data_Access.Migrations
                             Id = 8,
                             ColorCode = "#964B00",
                             Name = "Brown"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            ColorCode = "#800080",
-                            Name = "Purple"
                         });
                 });
 
@@ -149,11 +146,11 @@ namespace Wardrobe.Data_Access.Migrations
 
             modelBuilder.Entity("Wardrobe.Models.Models.Product", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("WardrobeModelId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WardrobeModelId"));
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
@@ -161,9 +158,6 @@ namespace Wardrobe.Data_Access.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("IdGuid")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<byte[]>("ImageData")
                         .IsRequired()
@@ -179,7 +173,7 @@ namespace Wardrobe.Data_Access.Migrations
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("WardrobeModelId");
 
                     b.HasIndex("ItemTypeModelId");
 
@@ -221,7 +215,7 @@ namespace Wardrobe.Data_Access.Migrations
 
                     b.HasOne("Wardrobe.Models.Models.Product", null)
                         .WithMany()
-                        .HasForeignKey("ProductsId")
+                        .HasForeignKey("ProductsWardrobeModelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

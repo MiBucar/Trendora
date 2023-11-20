@@ -1,0 +1,188 @@
+﻿@inject IJSRuntime JSRuntime
+@inject IColorService _colorService
+@inject IItemTypeService _itemTypeService
+
+<div class="filter-container">
+    <div class="filter-container__selector" @onclick="ToggleFilter">
+        <div class="product-filter__image"></div>
+        <p class="product-filter__text">Filter & Sort</p>
+    </div>
+    <input type="checkbox" class="product-filter__checkbox" id="filter-toggle" />
+
+    <div class="filter-container__background"></div>
+
+    <div class="filter-container__content">
+        <div class="product-filter__close-button-container">
+            <div class="product-filter__close-button" @onclick="ToggleFilter"></div>
+        </div>
+        <div class="filter-container--middle">
+            <h2 class="product-filter__heading">FILTER</h2>
+        </div>
+       
+        <!-- Price Filter -->
+        <div class="filter-container--middle">
+            <div class="product-filter__container">
+                <label class="product-filter__label">Price</label>
+                <div class="rz-text-align-center">
+                    <RadzenDropDown @bind-Value=@SelectedFilter Data=@PriceFilter
+                                    AllowClear=true Placeholder="Filter By" Style="width: 100%; max-width: 400px;" />
+                </div>
+            </div>
+        </div>        
+
+        <!-- Colors -->
+        <div class="filter-container--middle">
+            <div class="product-filter__container">
+                <label class="product-filter__label">Select Colors</label>
+                <div class="rz-text-align-center">
+                    <RadzenDropDown @bind-Value=@SelectedColors Data=@ColorList Chips=true TextProperty="Name" ValueProperty="Id"
+                                    Multiple=true AllowClear=true Placeholder="Select" Style="width: 100%; max-width: 400px;" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="filter-container--middle">
+            <div class="product-filter__container">
+                <label class="product-filter__label">Category</label>
+                <div class="rz-text-align-center">
+                    <RadzenDropDown @bind-Value=@SelectedItemTypes Data=@ItemTypes Chips=true TextProperty="Model" ValueProperty="ItemTypeId"
+                                    Multiple=true AllowClear=true Placeholder="Select" Style="width: 100%; max-width: 400px;" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Price Range -->
+        <div class="filter-container--middle">
+            <div class="product-filter__container">
+                <label class="product-filter__label">Price Range</label>
+                <div class="product-filter__container-content">
+                    <div class="product-filter__container-range">
+                        <div class="product-filter__container-range-prices">
+                            <p style="margin: 0">@ProductMinMaxPrices.ElementAt(0)</p>
+                            <p style="margin: 0">@ProductMinMaxPrices.ElementAt(1)</p>
+                        </div>
+                    </div>
+                    <div class="rz-text-align-center">
+                        <RadzenSlider Range="true" @bind-Value="@ProductMinMaxPrices" TValue="IEnumerable<int>"
+                                      Min="@MinPrice" Max="@MaxPrice"
+                                      Change="@FilterProductByPrice" class="--rz-primary" />
+                    </div>
+                </div>                
+            </div>
+        </div>      
+        
+        <div class="filter-container--middle">
+            <button class="product-pages__button product-pages__button--bigger" @onclick="ApplyFilter">
+                Apply
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Category { get; set; }
+
+    [Parameter]
+    public IEnumerable<ProductDTO> ProductList { get; set; }
+
+    [Parameter]
+    public EventCallback<IEnumerable<ProductDTO>> OnFilterApplied { get; set; }
+
+    // Item Types
+    public IEnumerable<ItemTypeDTO> ItemTypes { get; set; }
+    public IEnumerable<int> SelectedItemTypes { get; set; } = new List<int>();
+
+    // Colors
+    public IEnumerable<ColorDTO> ColorList { get; set; } = new List<ColorDTO>();
+    public IEnumerable<int> SelectedColors { get; set; } = new List<int>();
+
+    // Prices
+    public IEnumerable<string> PriceFilter { get; set; } = new List<string> { "Price Ascending", "Price Descending" };
+    public IEnumerable<int> ProductMinMaxPrices { get; set; } = new List<int>();
+    public string? SelectedFilter { get; set; }
+    private int MinPrice { get; set; }
+    private int MaxPrice { get; set; }
+
+    private bool IsFilterVisible { get; set; } = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ColorList = await _colorService.GetAll();
+        var tempItemTypes = await _itemTypeService.GetAll();
+
+        switch (Category)
+        {
+            case "clothing":
+                ItemTypes = tempItemTypes.Where(x => x.IsClothing).ToList();
+                break;
+            case "shoes":
+                ItemTypes = tempItemTypes.Where(x => x.IsShoes).ToList();
+                break;
+            case "accessories":
+                ItemTypes = tempItemTypes.Where(x => x.IsAccessory).ToList();
+                break;
+        }        
+
+        MinPrice = ProductList.Min(x => x.Price);
+        MaxPrice = ProductList.Max(x => x.Price);
+        ProductMinMaxPrices = new List<int>() { MinPrice, MaxPrice };
+    }
+
+    private void FilterProductByPrice()
+    {
+        if (ProductMinMaxPrices != null && ProductMinMaxPrices.Count() == 2)
+        {
+            var lowerBound = ProductMinMaxPrices.ElementAt(0);
+            var upperBound = ProductMinMaxPrices.ElementAt(1);
+        }
+    }
+
+    private void ApplyFilter()
+    {
+        var filteredProducts = ProductList.AsEnumerable();
+
+        if (SelectedItemTypes.Any())
+            filteredProducts = filteredProducts.Where(x => SelectedItemTypes.Contains(x.ItemTypeModelId));
+
+        if (SelectedColors.Any())
+            filteredProducts = filteredProducts.Where(x => x.Colors.Any(color => SelectedColors.Contains(color.Id)));
+
+        if (ProductMinMaxPrices != null && ProductMinMaxPrices.Count() == 2)
+        {
+            var lowerBound = ProductMinMaxPrices.First();
+            var upperBound = ProductMinMaxPrices.Last();
+            filteredProducts = filteredProducts.Where(x => x.Price >= lowerBound && x.Price <= upperBound);
+        }
+
+        if (SelectedFilter == "Price Ascending")
+            filteredProducts = filteredProducts.OrderBy(x => x.Price);
+
+        if (SelectedFilter == "Price Descending")
+            filteredProducts = filteredProducts.OrderByDescending(x => x.Price);
+
+        OnFilterApplied.InvokeAsync(filteredProducts.ToList());
+    }
+
+    [JSInvokable]
+    public async Task ToggleFilter()
+    {
+        var dotNetObjectReference = DotNetObjectReference.Create(this);
+        await JSRuntime.InvokeVoidAsync("setupOutsideClickListener", dotNetObjectReference, IsFilterVisible);
+
+        if (IsFilterVisible)
+        {
+            await JSRuntime.InvokeVoidAsync("eval", "document.querySelector('.filter-container').style.zIndex = '6';");
+        }        
+        else
+            await JSRuntime.InvokeVoidAsync("eval", "setTimeout(() => { document.querySelector('.filter-container').style.zIndex = ''; }, 300);");
+    }
+
+    [JSInvokable]
+    public void OutsideClickHandler()
+    {
+        IsFilterVisible = !IsFilterVisible;
+        StateHasChanged();
+    }
+}

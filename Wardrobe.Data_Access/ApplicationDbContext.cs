@@ -21,7 +21,9 @@ namespace Wardrobe.Data_Access
                 new Color { Id=4, Name="Yellow", ColorCode= "#f5f500" },
                 new Color { Id=5, Name="Black", ColorCode= "#000000" },
                 new Color { Id=6, Name="White", ColorCode= "#ffffff" },
-                new Color { Id=7, Name="Pink", ColorCode= "#e610a9" }
+                new Color { Id=7, Name="Pink", ColorCode= "#e610a9" },
+                new Color { Id=8, Name="Brown", ColorCode= "#964B00" },
+                new Color { Id=9, Name="Purple", ColorCode= "#800080" }
             );
         }
     }

@@ -1,0 +1,171 @@
+﻿.product-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.product-image-container{
+    text-align: right;
+    margin-right: 15px;
+}
+
+.product-info-container {
+    width: 35%;
+    margin-left: 15px;
+}
+
+.product-image {
+    border: 2px solid var(--color-primary);
+    width: 270px;
+    margin-top: 20px;
+}
+
+.size, .color {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+    .size span {
+        padding: 5px 10px;
+        border: 1px solid #6d6d6d;
+        border-radius: 2px;
+        min-width: 60px;
+        text-align: center;
+        transition: background-color 0.3s ease;
+        color: #6d6d6d;
+    }
+
+        .size span:hover, .color span:hover {
+            background-color: #eee;
+        }
+
+.button-container {
+    margin-top: 20px;
+    width: 100%;
+}
+
+    .button-container button {
+        padding: 10px 20px;
+        border-radius: 2px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100%;
+    }
+
+.add-to-basket-button {
+    background-color: #dfdfdf;
+    color: #6d6d6d;
+    border: 1px solid #6d6d6d;
+}
+
+    .add-to-basket-button:hover {
+        background-color: #e7e6e6;
+    }
+
+.buy-now-button {
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+}
+
+    .buy-now-button:hover {
+        background-color: var(--color-primary-light);
+    }
+
+.description {
+    margin-top: 20px;
+    font-size: 1.1rem;
+    color: #6d6d6d;
+}
+
+.product-name {
+    color: #6d6d6d;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.product-label {
+    margin-bottom: 5px;
+    font-size: 1.2rem;
+    color: #6d6d6d;
+}
+
+.info-container {
+    background-color: #dfdfdf;
+    width: 100%;
+    height: 80px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+.info-container__image {
+    height: 80px;
+    width: 105px;
+    margin-right: 10px;
+    background-size: 50px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.image__1 {
+    background-image: url('Images/ProductDetails/return.png');
+}
+
+.image__2 {
+    background-image: url('Images/ProductDetails/truck.png');
+}
+
+.image__3 {
+    background-image: url(Images/ProductDetails/credit-card.png);
+}
+
+.info-container__text {
+   color: #6d6d6d;
+}
+
+@media (max-width: 1500px) {
+    .product-info-container {
+        width: 60%;
+    }
+}
+
+@media (max-width: 900px) {
+    .product-details-grid {
+        display: flex;
+        align-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    .product-info-container {
+        width: 70%;
+    }
+    .product-image {
+        width: 450px;
+        margin-top: 20px;
+    }
+
+    .product-image-container {
+        margin: 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .product-info-container {
+        width: 80%;
+    }
+
+    .product-image {
+        width: 350px;
+        margin-top: 20px;
+    }
+
+    .product-image-container {
+        margin: 0;
+    }
+}
