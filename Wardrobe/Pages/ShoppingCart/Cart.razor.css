@@ -1,0 +1,127 @@
+﻿.container{
+    display: flex;
+    justify-content: center;
+}
+
+.wizard-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.container h4 {
+    font-size: 1.5rem;
+}
+
+.container li{
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+
+.main-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.cart-items__container{
+    width: 60%;
+}
+
+.cart-order__container {
+    width: 35%;
+}
+
+.cart-order__container-content {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    height: 22rem;
+    border-radius: 3px;
+    box-shadow: 1px 2px 10px 0.1px #4b4a4a4d;
+    margin-bottom: 10px;
+}
+
+.cart-order__container-row{
+    display: flex;
+    justify-content: space-between;
+}
+
+.cart-order__container-row p{
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.info-color {
+    color: var(--color-primary-light);
+}
+
+.cart-order__container-button {
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    transition: .5s ease;
+    height: 2.2rem;
+    margin-bottom: 10px;
+}
+
+    .cart-order__container-button:hover {
+        background-color: var(--color-primary-light);
+    }
+
+.empty-cart__container {
+    height: 68vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .empty-cart__container h3 {
+        margin: 0;
+        border: 1px dotted black;
+        padding: 30px;
+    }
+
+.keep-purchasing-button {
+    background-color: #dfdfdf;
+    color: #6d6d6d;
+    transition: .5s ease;
+    padding: 5px;
+    width: 100%;
+    border: none;
+}
+
+    .keep-purchasing-button:hover {
+        background-color: #e7e6e6;
+    }
+
+@media (max-width: 1080px) {
+    .main-container {
+        width: 80%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .cart-items__container {
+        width: 100%;
+    }
+
+    .cart-order__container {
+        width: 100%;
+        height: auto;
+    }
+
+    .keep-purchasing-button {
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 540px){
+    .main-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+}

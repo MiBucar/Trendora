@@ -3,6 +3,17 @@
 :root {
     --rz-primary: var(--color-primary, #59009f) !important;
     --rz-slider-horizontal-width: 90% !important;
+    --rz-steps-number-selected-background: var(--color-primary, #59009f) !important;
+    --rz-steps-title-selected-color: var(--color-primary, #59009f) !important;
+}
+
+.rz-steps-next, .rz-steps-prev{
+    display: none !important;
+}
+
+.rz-menuitem-link{
+    pointer-events: none;
+    cursor: auto;
 }
 
 html, body {
@@ -10,10 +21,23 @@ html, body {
     background-color: #f3f3f3;
 }
 
+#toast-container .toast-success {
+    background-color: #59009f !important;
+    color: white !important;
+}
+
+#toast-container .toast-error {
+    background-color: #59009f !important;
+    color: white !important;
+}
+
+#toast-container .toast {
+    border: none !important;
+}
+
 h4 {
     font-size: 30px;
 }
-
 
 h1:focus {
     outline: none;

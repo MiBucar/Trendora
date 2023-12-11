@@ -1,0 +1,126 @@
+﻿@page "/ShoppingCart"
+@inject ILocalStorageService _localStorage
+@inject IProductService _productService
+
+@if (ShoppingCart.Any())
+{
+    <div class="container">
+        <div style="width: 80%">
+            <RadzenSteps SelectedIndex="CurrentIndex" @bind-value="CurrentIndex">
+                <Steps>
+                    <RadzenStepsItem Text="Cart Overview">
+                        <div class="wizard-container">
+                            <div class="main-container">
+                                <div class="cart-items__container">
+                                    @foreach (var item in ShoppingCart)
+                                    {
+                                        <_CartItem OnCartChanged="HandleCartChanged" Item="item"></_CartItem>
+                                    }
+                                </div>
+                                <div class="cart-order__container">
+                                    <div class="cart-order__container-content">
+                                        <h4>In Total</h4>
+                                        <div class="cart-order__container-row">
+                                            <p>Base:</p>
+                                            <p>@GetBase() €</p>
+                                        </div>
+                                        <div class="cart-order__container-row">
+                                            <p>Tax:</p>
+                                            <p>@GetTax() €</p>
+                                        </div>
+                                        <div class="cart-order__container-row">
+                                            <p>Total:</p>
+                                            <p>@TotalPrice €</p>
+                                        </div>
+                                        <div class="cart-order__container-row info-color" style="margin-bottom: 10px;">
+                                            <p>Shipping:</p>
+                                            <p>2,43 €</p>
+                                        </div>
+                                        <button class="cart-order__container-button" @onclick="FinishOrder">Finish Order</button>
+                                        <h4>Accepted Payments</h4>
+                                        <li>Payment on Delivery</li>
+                                        <li>By General Payment</li>
+                                        <li>Credit and Debit Cards</li>
+                                    </div>
+                                    <button class="keep-purchasing-button">Keep Purchasing</button>
+                                </div>
+                            </div>
+                        </div>
+                    </RadzenStepsItem>
+                    <RadzenStepsItem Text="Delivery Info">
+
+                    </RadzenStepsItem>
+                    <RadzenStepsItem Text="Order Summary">
+
+                    </RadzenStepsItem>
+                </Steps>
+            </RadzenSteps>
+        </div>
+    </div>
+}
+else
+{
+    <div class="empty-cart__container">
+        <h3>Add products to cart</h3>
+    </div>
+}
+
+
+@code {
+    private List<ShoppingCartItem> ShoppingCart = new List<ShoppingCartItem>();
+    private int TotalPrice { get; set; }
+    private bool IsProcessing { get; set; } = false;
+    private int CurrentIndex { get; set; } = 0;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadCart();
+            StateHasChanged(); // This will notify the component that it needs to re-render.
+        }
+    }
+
+    private async Task LoadCart()
+    {
+        if (await _localStorage.LengthAsync() > 0)
+            ShoppingCart = await _localStorage.GetItemAsync<List<ShoppingCartItem>>(SD.ShoppingCart);
+
+        TotalPrice = 0;
+        if (ShoppingCart.Any())
+        {
+            foreach (var item in ShoppingCart)
+            {
+                item.Product = await _productService.GetById(item.ProductId);
+                TotalPrice += (item.ProductPrice * item.Count);
+            }
+        }
+    }
+
+    private void FinishOrder()
+    {
+        CurrentIndex = 1;
+        StateHasChanged();
+    }
+
+    private double GetTax()
+    {
+        return TotalPrice * 0.25;
+    }
+
+    private double GetBase()
+    {
+        return TotalPrice - GetTax();
+    }
+
+    private async Task HandleCartChanged()
+    {
+        await LoadCart();
+        StateHasChanged();
+    }
+
+    private void OnChange()
+    {
+        var test = "sdasd";
+    }
+}

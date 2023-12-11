@@ -29,17 +29,30 @@
 
     .size span {
         padding: 5px 10px;
-        border: 1px solid #6d6d6d;
+        border: 1px solid #bbbbbb;
         border-radius: 2px;
         min-width: 60px;
         text-align: center;
         transition: background-color 0.3s ease;
         color: #6d6d6d;
+        cursor: pointer;
+        user-select: none;
     }
+
+        .size span:hover {
+            border-color: var(--color-primary);
+            color: #6d6d6d !important;
+        }
+
 
         .size span:hover, .color span:hover {
             background-color: #eee;
         }
+
+.size-selected {
+    background-color: var(--color-primary);
+    color: white !important;
+}
 
 .button-container {
     margin-top: 20px;

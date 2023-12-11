@@ -15,10 +15,10 @@ namespace Wardrobe.Services.Implementations
 {
     public class ItemTypeService : IItemTypeService
     {
-        private readonly ApplicationDbContext _db;
+        private readonly ApplicationDatabaseContext _db;
         private readonly IMapper _mapper;
 
-        public ItemTypeService(ApplicationDbContext db, IMapper mapper)
+        public ItemTypeService(ApplicationDatabaseContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;

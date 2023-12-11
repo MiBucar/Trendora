@@ -14,10 +14,10 @@ namespace Wardrobe.Services.Implementations
 {
     public class ColorService : IColorService
     {
-        private readonly ApplicationDbContext _db;
+        private readonly ApplicationDatabaseContext _db;
         private readonly IMapper _mapper;
 
-        public ColorService(ApplicationDbContext db, IMapper mapper)
+        public ColorService(ApplicationDatabaseContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
