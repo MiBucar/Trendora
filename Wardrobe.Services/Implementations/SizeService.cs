@@ -14,10 +14,10 @@ namespace Wardrobe.Services.Implementations
 {
     public class SizeService : ISizeService
     {
-        private readonly ApplicationDbContext _db;
+        private readonly ApplicationDatabaseContext _db;
         private readonly IMapper _mapper;
 
-        public SizeService(IMapper mapper, ApplicationDbContext db)
+        public SizeService(IMapper mapper, ApplicationDatabaseContext db)
         {
             _db = db;
             _mapper = mapper;   

@@ -7,7 +7,7 @@ using Wardrobe.Models.DTOs;
 
 namespace Wardrobe.Models.ViewModels
 {
-    public class ShoppingCart
+    public class ShoppingCartItem
     {
         public int ProductId { get; set; }
         public ProductDTO Product { get; set; }

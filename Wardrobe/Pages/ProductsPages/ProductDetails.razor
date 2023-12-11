@@ -1,7 +1,10 @@
 ﻿@page "/product/{ProductName}/{Guid:guid}"
+@using Wardrobe.Models.ViewModels;
 @inject IProductService _productService
 @inject IItemTypeService _itemTypeService
-@inject Blazored.LocalStorage.ILocalStorageService _localStorage
+@inject IShoppingCartService _shoppingCartService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager _navigationManager
 
 @if (!IsLoading)
 {
@@ -14,15 +17,20 @@
         <!-- Right side: Product details -->
         <div class="product-info-container">
             <h4 class="product-name">@Product.Name</h4>
-
-            <label class="product-label">Size</label>
-            <div class="size">
-                @foreach (var size in ItemType.Sizes)
-                {
-                    <span>@size.ItemSize</span>
-                }
-            </div>
-
+            @if (ItemType.Sizes.Any())
+            {
+                <label class="product-label">Size</label>
+                <div class="size">
+                    @foreach (var size in ItemType.Sizes)
+                    {
+                        <span class="@(SelectedSize == size.ItemSize ? "size-selected" : "")"
+                              onclick="@(() => SelectSize(size.ItemSize))">
+                            @size.ItemSize
+                        </span>
+                    }
+                </div>
+            }
+            
             <label class="product-label">Colors</label>
             <div class="color">
                 @foreach (var color in Product.Colors)
@@ -71,7 +79,9 @@ else
     public Guid Guid { get; set; }
 
     public ProductDTO Product { get; set; } = new ProductDTO();
+    public ProductCount ProductAmount { get; set; } = new ProductCount();
     public ItemTypeDTO ItemType { get; set; } = new ItemTypeDTO();
+    public string SelectedSize { get; set; }
 
     private bool IsLoading { get; set; }
 
@@ -92,6 +102,37 @@ else
 
     private async void AddToCard()
     {
-        await _localStorage.SetItemAsync(Product.Id.ToString(), Product);
+        if (ItemType.Sizes.Any() && SelectedSize == null)
+        {
+            await JSRuntime.InvokeVoidAsync("ShowToastr", "error", "Select a size");
+            return;
+        }
+
+        try
+        {
+            if (SelectedSize == null)
+                SelectedSize = "None";
+
+            ShoppingCartItem shoppingCart = new ShoppingCartItem()
+            {
+                ProductId = Product.Id,
+                ProductPrice = Product.Price,
+                Count = ProductAmount.Count,
+            };
+
+            await _shoppingCartService.IncrementCart(shoppingCart);
+            await JSRuntime.InvokeVoidAsync("ShowToastr", "success", "Item added to cart");
+            _navigationManager.NavigateTo("/ShoppingCart");
+        } 
+        catch (Exception e)
+        {
+            await JSRuntime.InvokeVoidAsync("ShowToastr", "error", "Error adding idem to cart");
+        }
+    }
+
+    private void SelectSize(string size)
+    {
+        SelectedSize = size;
+        StateHasChanged();
     }
 }

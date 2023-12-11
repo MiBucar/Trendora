@@ -1,16 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Wardrobe.Models.Models;
 
 namespace Wardrobe.Data_Access
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDatabaseContext : IdentityDbContext<ApplicationUser>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+        public ApplicationDatabaseContext(DbContextOptions<ApplicationDatabaseContext> options) : base(options) { }
 
         public DbSet<Product> ProductList { get; set; }
         public DbSet<ItemType> ItemTypeList { get; set; }
         public DbSet<Size> SizeList { get; set; }
         public DbSet<Color> ColorList { get; set; }
+        public DbSet<ApplicationUser> UserList { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -25,6 +28,8 @@ namespace Wardrobe.Data_Access
                 new Color { Id=8, Name="Brown", ColorCode= "#964B00" },
                 new Color { Id=9, Name="Purple", ColorCode= "#800080" }
             );
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

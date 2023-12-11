@@ -11,7 +11,7 @@ using Wardrobe.Data_Access;
 
 namespace Wardrobe.Data_Access.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    [DbContext(typeof(ApplicationDatabaseContext))]
     [Migration("20230913113420_ItemTypeFirstMigration")]
     partial class ItemTypeFirstMigration
     {
