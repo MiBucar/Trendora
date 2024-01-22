@@ -1,10 +1,11 @@
-﻿@page "/product/create"
-@page "/product/create/{Id:int}"
+﻿@page "/wardrobe/create"
+@page "/wardrobe/create/{Id:int}"
 
 @inject NavigationManager _navigationManager
 @inject IProductService _productService
 @inject IItemTypeService _itemTypeService
 @inject IColorService _colorService
+@attribute [Authorize(Roles = SD.Role_Admin)]
 
 <div>
     <h2>@Title Product</h2>

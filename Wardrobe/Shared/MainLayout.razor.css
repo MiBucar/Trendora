@@ -1,10 +1,14 @@
-.page {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    color: black;
+html, body{
+    height: 100%;
+    margin: 0;
 }
 
 main {
     flex: 1;
+}
+
+.app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }

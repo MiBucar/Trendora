@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Wardrobe.Models.DTOs;
 using Wardrobe.Models.Models;
+using Wardrobe.Models.ViewModels;
 
 namespace Wardrobe.Services.Mapper
 {
@@ -17,6 +18,9 @@ namespace Wardrobe.Services.Mapper
             CreateMap<ItemType, ItemTypeDTO>().ReverseMap();
             CreateMap<Size, SizeDTO>().ReverseMap();
             CreateMap<Color, ColorDTO>().ReverseMap();
+            CreateMap<OrderInfo, OrderInfoDTO>().ReverseMap();
+            CreateMap<OrderDetail, OrderDetailDTO>().ReverseMap();
+            CreateMap<Order, OrderDTO>().ReverseMap();
         }
     }
 }

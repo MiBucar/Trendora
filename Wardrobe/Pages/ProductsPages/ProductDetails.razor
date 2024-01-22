@@ -118,6 +118,7 @@ else
                 ProductId = Product.Id,
                 ProductPrice = Product.Price,
                 Count = ProductAmount.Count,
+                Size = SelectedSize
             };
 
             await _shoppingCartService.IncrementCart(shoppingCart);
