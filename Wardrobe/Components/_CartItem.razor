@@ -10,6 +10,7 @@
     <div class="cart-container__information">
         <h3 class="cart-container__name">@Item.Product.Name</h3>
         <p class="cart-container__description">@Item.Product.Description</p>
+        <p class="cart-container__description">@Item.Size</p>
         <button @onclick="() => RemoveItem(Item.ProductId)" class="cart-container__button">Delete</button>
     </div>
 

@@ -2,6 +2,7 @@
 @inject IOrderService _orderService
 @inject AuthenticationStateProvider _authState
 @inject UserManager<ApplicationUser> _userManager
+@inject NavigationManager _navigationManager
 
 @page "/identity/orders"
 
@@ -27,9 +28,9 @@ else{
                         <div class="item-row item-row--content">
                             <div class="item-container__property">#@order.OrderInfo.Id</div>
                             <div class="item-container__property">@order.OrderInfo.OrderDate.ToString("dd.MM.yyyy")</div>
-                            <div class="item-container__property">@order.OrderInfo.OrderTotal</div>
+                            <div class="item-container__property">@order.OrderInfo.OrderTotal€</div>
                             <div class="item-container__property">
-                                <button class="view-order__button">View Order</button>
+                                <button @onclick="(() => ViewOrderSummary(order.OrderInfo.Id))" class="view-order__button">View Order</button>
                             </div>
                         </div>                    
                     }
@@ -65,5 +66,9 @@ else{
         var authorizationState = await _authState.GetAuthenticationStateAsync();
         var user = authorizationState.User;
         User = await _userManager.FindByEmailAsync(user.Identity.Name);
+    }
+
+    private void ViewOrderSummary(int id){
+        _navigationManager.NavigateTo($"/identity/orders/{id}");
     }
 }
