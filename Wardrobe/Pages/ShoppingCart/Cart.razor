@@ -1,11 +1,21 @@
 ﻿@page "/ShoppingCart"
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.Extensions.Caching.Memory
 @inject ILocalStorageService _localStorage
 @inject IProductService _productService
+@inject IOrderService _orderService
+@inject UserManager<ApplicationUser> _userManager
+@inject AuthenticationStateProvider _authState
+@inject NavigationManager _navigationManager
+@inject IApplicationUserService _ApplicationUserService
+@inject IJSRuntime JSRuntime
+@inject IMemoryCache _cache
 
 @if (ShoppingCart.Any())
 {
     <div class="container">
-        <div style="width: 80%">
+        <div style="width: 100%">
             <RadzenSteps SelectedIndex="CurrentIndex" @bind-value="CurrentIndex">
                 <Steps>
                     <RadzenStepsItem Text="Cart Overview">
@@ -38,25 +48,223 @@
                                         </div>
                                         <button class="cart-order__container-button" @onclick="FinishOrder">Finish Order</button>
                                         <h4>Accepted Payments</h4>
-                                        <li>Payment on Delivery</li>
-                                        <li>By General Payment</li>
-                                        <li>Credit and Debit Cards</li>
-                                    </div>
-                                    <button class="keep-purchasing-button">Keep Purchasing</button>
+                        <li>Payment on Delivery</li>
+                        <li>By General Payment</li>
+                        <li>Credit and Debit Cards</li>
+        </div>
+        <button class="keep-purchasing-button">Keep Purchasing</button>
+    </div>
+                                                    </div>
+                                                </div>
+                                            </RadzenStepsItem>
+    <RadzenStepsItem Text="Delivery Info">
+        <div class="wizard-container">
+            <div class="main-container">
+                <div class="cart-order__container cart-order__container-50">
+                    <div class="cart-order__container-content" style="background-color: white;">
+                        <h4>Your Order</h4>
+                                        @foreach (var item in ShoppingCart)
+                                        {
+                            <div class="item-details">
+                                <div class="cart-container__image-container">
+                                    <img class="cart-container__image" src="data:image/png;base64,@Convert.ToBase64String(item.Product.ImageData)"
+                                         alt="@item.Product.Name" />
+                                </div>
+                                <div class="cart-container__information">
+                                    <h3>@item.Product.Name</h3>
+                                    <p>@item.Count PCS</p>
+                                </div>
+                                <div class="cart-container__price">
+                                    <p>@item.ProductPrice €</p>
                                 </div>
                             </div>
+                                        }
+                        <h4>In Total</h4>
+                        <div class="cart-order__container-row">
+                            <p>Base:</p>
+                            <p>@GetBase() €</p>
                         </div>
-                    </RadzenStepsItem>
-                    <RadzenStepsItem Text="Delivery Info">
+                        <div class="cart-order__container-row">
+                            <p>Tax:</p>
+                            <p>@GetTax() €</p>
+                        </div>
+                        <div class="cart-order__container-row">
+                            <p>Total:</p>
+                            <p>@TotalPrice €</p>
+                        </div>
+                        <div class="cart-order__container-row info-color" style="margin-bottom: 10px;">
+                            <p>Shipping:</p>
+                            <p>2,43 €</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="identity__container-information">
+                    <RadzenCard>
+                        <EditForm Model="User" OnValidSubmit="@ConfirmDelivery">
+                            <h3 style="text-align: center;">User Data</h3>
+                            <DataAnnotationsValidator />
+                            <div class="identity__container-block">
+                                <div class="identity__container-title">
+                                    <RadzenText TagName="TagName.H3">Email</RadzenText>
+                                    <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
+                                </div>
+                                                @if (UserIsAuthenticated)
+                                                {
+                                    <RadzenTextBox ReadOnly="true" @bind-Value="User.Email" class="w-100" aria-label="Default TextBox" />
 
-                    </RadzenStepsItem>
-                    <RadzenStepsItem Text="Order Summary">
-
-                    </RadzenStepsItem>
-                </Steps>
-            </RadzenSteps>
+                                                }
+                                                else
+                                                {
+                                    <RadzenTextBox @bind-Value="User.Email" class="w-100" aria-label="Default TextBox" />
+                                                }
+                                <ValidationMessage For="() => User.Email" />
+                            </div>
+                            <div class="identity__container-block">
+                                <div class="identity__container-title">
+                                    <RadzenText TagName="TagName.H3">First Name</RadzenText>
+                                    <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
+                                </div>
+                                <RadzenTextBox @bind-Value="User.FirstName" class="w-100" aria-label="Default TextBox" />
+                                <ValidationMessage For="() => User.FirstName" />
+                            </div>
+                            <div class="identity__container-block">
+                                <div class="identity__container-title">
+                                    <RadzenText TagName="TagName.H3">Last Name</RadzenText>
+                                    <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
+                                </div>
+                                <RadzenTextBox @bind-Value="User.LastName" class="w-100" aria-label="Default TextBox" />
+                                <ValidationMessage For="() => User.LastName" />
+                            </div>
+                            <div class="identity__container-block">
+                                <div class="identity__container-title">
+                                    <RadzenText TagName="TagName.H3">Phone Number</RadzenText>
+                                    <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
+                                </div>
+                                <RadzenTextBox @bind-Value="User.PhoneNumber" class="w-100" aria-label="Default TextBox" />
+                                <ValidationMessage For="() => User.PhoneNumber" />
+                            </div>
+                            <div class="identity__container-block">
+                                <div class="identity__container-title">
+                                    <RadzenText TagName="TagName.H3">Town</RadzenText>
+                                    <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
+                                </div>
+                                <RadzenTextBox @bind-Value="User.Town" class="w-100" aria-label="Default TextBox" />
+                                <ValidationMessage For="() => User.Town" />
+                            </div>
+                            <div class="identity__container-block">
+                                <div class="identity__container-title">
+                                    <RadzenText TagName="TagName.H3">Address</RadzenText>
+                                    <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
+                                </div>
+                                <RadzenTextBox @bind-Value="User.Address" class="w-100" aria-label="Default TextBox" />
+                                <ValidationMessage For="() => User.Address" />
+                            </div>
+                            <div class="identity__container-block">
+                                <div class="identity__container-title">
+                                    <RadzenText TagName="TagName.H3">Zip Code</RadzenText>
+                                    <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
+                                </div>
+                                <RadzenTextBox @bind-Value="User.ZipCode" class="w-100" aria-label="Default TextBox" />
+                                <ValidationMessage For="() => User.ZipCode" />
+                            </div>
+                            <div class="identity__container-block">
+                                <div class="identity__container-title">
+                                    <RadzenText TagName="TagName.H3">Country</RadzenText>
+                                    <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
+                                </div>
+                                <RadzenDropDown @bind-Value=@User.Country Data=@AvailableCountries
+                                                AllowClear=true Placeholder="Select a country" Style="width: 100%;" />
+                                <ValidationMessage For="() => User.Country" />
+                            </div>
+                            <button class="submit-button" typeof="submit">Confirm Order</button>
+                        </EditForm>
+                    </RadzenCard>
+                </div>
+            </div>
         </div>
-    </div>
+    </RadzenStepsItem>
+    <RadzenStepsItem Text="Order Summary">
+        <div class="wizard-container">
+            <div class="main-container__column">
+                <div class="order-summary__info-container">
+                    <div class="info-container__holder">
+                        <h3>order / bill</h3>
+                        <div class="info-container__address">
+                            <h4>Delivery Address</h4>
+                            <p>@User.FirstName @User.LastName</p>
+                            <p>@User.Address</p>
+                            <p>@User.ZipCode @User.Town</p>
+                                            @if (!string.IsNullOrEmpty(User.PhoneNumber))
+                                            {
+                                <p>@User.PhoneNumber</p>
+                                            }
+                            <p>@User.Email</p>
+                        </div>
+                    </div>
+                    <div class="info-container__delivery-date">
+                        <h4>Expected Delivery: </h4>
+                        <p>@MinDate - @MaxDate</p>
+                    </div>
+                </div>
+                <div class="order-summary__payment-delivery-container">
+                    <div class="payment-delivery-container">
+                        <h3>Select the payment method</h3>
+                                        @foreach (var paymentMethod in PaymentMethods)
+                                        {
+                            <div class="custom-radio-button">
+                                <input type="radio" id="@paymentMethod.Id" name="paymentMethod"
+                                       value="@paymentMethod.Id" @onchange="HandlePaymentMethodChange"
+                                       checked="@IsPaymentMethodSelected(paymentMethod.Id)">
+                                <label class="custom-radio-button__label" for="@paymentMethod.Id">@paymentMethod.Name</label>
+                                                @if (!string.IsNullOrWhiteSpace(paymentMethod.Description))
+                                                {
+                                    <div><p class="payment-method__description">@paymentMethod.Description</p></div>
+                                                }
+                            </div>
+                                        }
+                    </div>
+                    <div class="payment-delivery-container">
+                        <h3>Select the delivery method</h3>
+                                        @foreach (var deliveryMethod in DeliveryMethods)
+                                        {
+                            <div class="custom-radio-button">
+                                <input type="radio" id="@deliveryMethod.Id" name="deliveryMethod"
+                                       value="@deliveryMethod.Id" @onchange="HandleDeliveryMethodChange"
+                                       checked="@IsDeliveryMethodSelected(deliveryMethod.Id)">
+                                <label class="custom-radio-button__label" for="@deliveryMethod.Id">@deliveryMethod.Name</label>
+                                                @if (!string.IsNullOrWhiteSpace(deliveryMethod.Description))
+                                                {
+                                    <div><p class="payment-method__description">@deliveryMethod.Description</p></div>
+                                                }
+                            </div>
+                                        }
+                    </div>
+                </div>
+                <div class="order-summary__bill-container">
+                    <h3>Summary</h3>
+                    <div class="bill-container-cost">
+                        <div class="bill-container-cost__holder">
+                            <p>Base:</p>
+                            <p>Tax:</p>
+                            <p>@SelectedDeliveryMethodName :</p>
+                            <p class="bill-container-cost__main">Total:</p>
+                        </div>
+                        <div class="bill-container-cost__holder">
+                            <p>@GetBase() €</p>
+                            <p>@GetTax() €</p>
+                            <p>2,43 €</p>
+                            <p class="bill-container-cost__main">@TotalPrice €</p>
+                        </div>
+                    </div>
+                    <button class="submit-button" @onclick="OrderSummary">Finish Order</button>
+                </div>
+            </div>
+        </div>
+    </RadzenStepsItem>
+                                        </Steps>
+                                    </RadzenSteps>
+                                </div>
+                            </div>
 }
 else
 {
@@ -67,17 +275,65 @@ else
 
 
 @code {
+    [Parameter]
+    public bool IsGuest { get; set; }
+
     private List<ShoppingCartItem> ShoppingCart = new List<ShoppingCartItem>();
+    private IEnumerable<ProductDTO> Products {get;set;} = new List<ProductDTO>();
     private int TotalPrice { get; set; }
     private bool IsProcessing { get; set; } = false;
     private int CurrentIndex { get; set; } = 0;
+    private List<string> AvailableCountries { get; set; }
+    private bool UserIsAuthenticated { get; set; } = false;
+    private string MinDate { get; set; }
+    private string MaxDate { get; set; }
+    private int ButtonListValue { get; set; } = 1;
+
+    private ApplicationUser? User { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        AvailableCountries = new List<string>()
+        {
+            "Croatia", "Italy", "Switzerland", "Germany"
+        };
+        Products = await _productService.GetAll();
+        DetermineDates();
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            await CheckAuthentication();
+
             await LoadCart();
-            StateHasChanged(); // This will notify the component that it needs to re-render.
+            StateHasChanged();
+            SelectedPaymentMethod = PaymentMethods.First().Id;
+            SelectedDeliveryMethod = DeliveryMethods.First().Id;
+
+            SelectedPaymentMethodName = PaymentMethods.First().Name;
+            SelectedDeliveryMethodName = DeliveryMethods.First().Name;
+        }
+    }
+
+    private async Task CheckAuthentication()
+    {
+        var authorizationState = await _authState.GetAuthenticationStateAsync();
+        var user = authorizationState.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            UserIsAuthenticated = true;
+            User = await _userManager.FindByEmailAsync(user.Identity.Name);
+        }
+        else
+        {
+            _cache.TryGetValue("guest", out string guestEmail);
+            if (!string.IsNullOrEmpty(guestEmail))
+            {
+                User = new ApplicationUser() { Email = guestEmail };
+                CurrentIndex = 1;
+            }
         }
     }
 
@@ -97,10 +353,90 @@ else
         }
     }
 
-    private void FinishOrder()
+    private async Task FinishOrder()
     {
-        CurrentIndex = 1;
+        if (UserIsAuthenticated)
+        {
+            CurrentIndex = 1;
+        }
+        else
+        {
+            _navigationManager.NavigateTo("/Identity/Account/UserCheckout", true);
+        }
         StateHasChanged();
+    }
+
+    private async Task ConfirmDelivery()
+    {
+        if (UserIsAuthenticated)
+            await _ApplicationUserService.UpdateUser(User);
+
+        CurrentIndex = 2;
+    }
+
+    private async Task OrderSummary()
+    {
+        await CreateNewOrder();
+        await _localStorage.ClearAsync();
+        _navigationManager.NavigateTo("/purchasesummary");
+    }
+
+    private async Task CreateNewOrder()
+    {
+        var newOrder = new OrderDTO()
+        {
+            OrderInfo = new()
+            {
+                OrderTotal = 0,
+                Status = SD.Status_Pending
+            },
+            OrderDetails = new List<OrderDetailDTO>()
+        };
+
+        await FillNewOrder(newOrder);
+
+        await _orderService.Create(newOrder);
+    }
+
+    private async Task FillNewOrder(OrderDTO newOrder)
+    {
+        foreach (var item in ShoppingCart)
+        {
+            ProductDTO product = Products.FirstOrDefault(x => x.Id == item.ProductId);
+
+            OrderDetailDTO orderDetail = new()
+                {
+                    ProductId = product.Id,
+                    Product = product,
+                    Price = product.Price,
+                    ProductName = product.Name,
+                    Count = item.Count,
+                    Size = item.Size,
+                    ImageData = product.ImageData, 
+                };
+            newOrder.OrderDetails.Add(orderDetail);
+        }
+
+        if (UserIsAuthenticated)
+            newOrder.OrderInfo.UserId = User.Id;
+        else
+            newOrder.OrderInfo.UserId = "GuestUser";
+        
+        newOrder.OrderInfo.OrderTotal = TotalPrice;
+        newOrder.OrderInfo.OrderDate = DateTime.UtcNow;
+        newOrder.OrderInfo.FirstName = User.FirstName;
+        newOrder.OrderInfo.LastName = User.LastName;
+        newOrder.OrderInfo.PhoneNumber = User.PhoneNumber;
+        newOrder.OrderInfo.Town = User.Town;
+        newOrder.OrderInfo.Address = User.Address;
+        newOrder.OrderInfo.ZipCode = User.ZipCode;
+        newOrder.OrderInfo.Country = User.Country;
+    }
+
+    private void DetermineDates()
+    {
+        MinDate = DateTime.UtcNow.AddDays(3).ToString("dd.M.yyyy");
+        MaxDate = DateTime.UtcNow.AddDays(6).ToString("dd.M.yyyy");
     }
 
     private double GetTax()
@@ -119,8 +455,52 @@ else
         StateHasChanged();
     }
 
-    private void OnChange()
+    // PAYMENT
+    private string SelectedPaymentMethod { get; set; }
+    private string SelectedDeliveryMethod { get; set; }
+
+    private string SelectedPaymentMethodName { get; set; }
+    private string SelectedDeliveryMethodName { get; set; }
+
+    private class RadioButtonInfo
     {
-        var test = "sdasd";
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+    }
+
+    private List<RadioButtonInfo> PaymentMethods = new List<RadioButtonInfo>
+    {
+        new RadioButtonInfo { Id = "1", Name = "Online Card Payment", Description = "Use your credit or debit card" },
+        new RadioButtonInfo { Id = "2", Name = "Paypal", Description = "Pay securely through your PayPal account" },
+        new RadioButtonInfo { Id = "3", Name = "Cash Payment", Description = "Pay with cash upon delivery" }
+    };
+
+    private List<RadioButtonInfo> DeliveryMethods = new List<RadioButtonInfo>
+    {
+        new RadioButtonInfo { Id = "1", Name = "Overseas Express (2,43€)", Description = "Fast And Safe Delivery" },
+        new RadioButtonInfo { Id = "2", Name = "In Post Office (2,43€)", Description = "Delivery At Your Nearest Post Office" },
+    };
+
+    private void HandlePaymentMethodChange(ChangeEventArgs e)
+    {
+        SelectedPaymentMethod = e.Value.ToString();
+        SelectedPaymentMethodName = PaymentMethods.FirstOrDefault(x => x.Id == SelectedPaymentMethod).Name;
+    }
+
+    private bool IsPaymentMethodSelected(string paymentMethodId)
+    {
+        return SelectedPaymentMethod == paymentMethodId;
+    }
+
+    private void HandleDeliveryMethodChange(ChangeEventArgs e)
+    {
+        SelectedDeliveryMethod = e.Value.ToString();
+        SelectedDeliveryMethodName = DeliveryMethods.FirstOrDefault(x => x.Id == SelectedDeliveryMethod).Name;
+    }
+
+    private bool IsDeliveryMethodSelected(string deliveryMethodId)
+    {
+        return SelectedDeliveryMethod == deliveryMethodId;
     }
 }

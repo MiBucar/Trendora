@@ -7,6 +7,12 @@
     }
 }
 
+function toggleMobileMenu(menu) {
+    var isOpen = menu.classList.contains('hamburger-open');
+    menu.classList.toggle('hamburger-open');
+    document.body.style.overflowY = isOpen ? 'auto' : 'hidden';
+}
+
 function focusInputText(element) {
     setTimeout(function () {
         var inputElement = document.querySelector(element);
@@ -15,10 +21,6 @@ function focusInputText(element) {
         }
     }, 10);
 }
-
-window.toggleBodyOverflowY = (isChecked) => {
-    document.body.style.overflowY = isChecked ? 'hidden' : 'auto';
-};
 
 // For _ProductFilter
 let filterIsOpened;
@@ -46,3 +48,11 @@ document.addEventListener('click', function (event) {
         }
     }
 });
+
+window.SetSessionStorage = (key, data) => {
+    return sessionStorage.setItem(key, data);
+}
+
+window.GetSessionStorage = (key) => {
+    return sessionStorage.getItem(key);
+}

@@ -13,5 +13,8 @@ namespace Wardrobe.Models.ViewModels
         public ProductDTO Product { get; set; }
         public int ProductPrice { get; set; }
         public int Count { get; set; }
+        public int OrderId { get; set; }
+        public string Size { get; set; }
+        public OrderDTO Order { get; set; }
     }
 }

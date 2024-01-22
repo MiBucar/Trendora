@@ -1,0 +1,59 @@
+﻿@page
+@model UserCheckoutModel
+
+@{
+    ViewData["Title"] = "User Checkout";
+}
+
+<div class="login-container">
+    <div class="login-main-container">        
+        <div class="login-main-container__content">
+            <form method="post" asp-page-handler="ContinueAsGuest">
+                <h4 class="login-column__header">Not Yet Registered</h4>
+                <div class="login-input">
+                    <h4 style="margin: 0;">Continue Without Registration</h4>
+                </div>
+                <div class="login-input">
+                    <input asp-for="GuestInput.Email" class="login-input-container" autocomplete="username" aria-required="true" placeholder="Email" />
+                    <label asp-for="GuestInput.Email" class="login-form-floating">Email</label>
+                    <span asp-validation-for="GuestInput.Email" class="text-danger"></span>
+                </div>
+                <div class="login-input">
+                    <button type="submit" class="login-button">Continue as Guest</button>
+                </div>
+            </form>            
+        </div>
+        <div class="login-main-container__content">
+            <form id="account" method="post" asp-page-handler="Login">
+                <h4 class="login-column__header">Registered users, log in</h4>
+                <div class="login-input">
+                    <input asp-for="LoginInput.Email" class="login-input-container" autocomplete="username" aria-required="true" placeholder="Email" />
+                    <label asp-for="LoginInput.Email" class="login-form-floating">Email</label>
+                    <span asp-validation-for="LoginInput.Email" class="text-danger"></span>
+                </div>
+                <div class="login-input">
+                    <input asp-for="LoginInput.Password" class="login-input-container" autocomplete="current-password" aria-required="true" placeholder="password" />
+                    <label asp-for="LoginInput.Password" class="login-form-floating">Password</label>
+                    <span asp-validation-for="LoginInput.Password" class="text-danger"></span>
+                </div>
+                <div class="login-input">
+                    <label asp-for="LoginInput.RememberMe" class="form-label user-select-none">
+                        <input type="checkbox" class="login-checkbox-container" asp-for="LoginInput.RememberMe" />
+                        @Html.DisplayNameFor(m => m.LoginInput.RememberMe)
+                    </label>
+                </div>
+                <div class="login-input login-button__container">
+                    <button id="login-submit" type="submit" class="login-button">Log in</button>
+                    <p style="margin: 0;">
+                        <a style="color: black; text-decoration: underline; text-decoration-color: black;" id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+                    </p>
+                </div>
+                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

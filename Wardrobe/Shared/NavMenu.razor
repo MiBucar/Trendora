@@ -2,26 +2,61 @@
 @inject NavigationManager _navigationManager
 @inject ILocalStorageService _localStorage
 
-<div class="navigation">
-    <div class="navigation-container" style="width: 5rem;">
-        <div class="image image-linkedin"></div>
-    </div>
-    <div class="navigation-container" style="width: 15rem;">
-        <a href="/" class="navigation-container__link">Products</a>
-        <a class="navigation-container__link">About</a>
-    </div>
+<div class="navigation navigation-desktop">
+    <div class="navigation-main__container">
+        <div class="navigation-container" style="width: 5rem;">
+            <div class="image image-linkedin"></div>
+        </div>
+        <div class="navigation-container" style="width: 15rem;">
+            <a href="/" class="navigation-container__link">Products</a>
+            <a class="navigation-container__link">About</a>
+        </div>
 
-    <div class="navigation-container">
-        <a href="/"><h4>trendora</h4></a>
+        <div class="navigation-container">
+            <a href="/"><h4>trendora</h4></a>
+        </div>
+        <div class="navigation-container" style="width: 15rem;">
+            <a class="navigation-container__link">Contacts</a>
+            <a class="navigation-container__link">Map</a>
+        </div>        
+        <div class="navigation-container" style="width: 5rem;">
+            <div class="tooltip-container image image-cart" @onclick="NavigateToShoppingCart"></div>
+            <div class="image image-user" @onclick="NavigateToUser"></div>
+        </div>
     </div>
-    <div class="navigation-container" style="width: 15rem;">
-        <a class="navigation-container__link">Contacts</a>
-        <a class="navigation-container__link">Map</a>
-    </div>
-    <div class="navigation-container" style="width: 5rem;">
-        <div class="tooltip-container image image-cart" @onclick="NavigateToShoppingCart"></div>
-        <div class="image image-user" @onclick="NavigateToUser"></div>
-    </div>
+    <AuthorizeView Roles="@SD.Role_Admin">
+        <div class="navigation-container admin-container" style="width: 15rem;">
+            <a href="/wardrobe" class="navigation-container__link">Wardrobe</a>
+            <a href="/itemtypes" class="navigation-container__link">Item Types</a>
+        </div>
+    </AuthorizeView>
+</div>
+
+<div class="navigation navigation-phones">
+    <div class="navigation-phones__row-one">
+        <div class="navigation-container">
+            <a href="/"><h4>trendora</h4></a>
+        </div>
+        <div class="hamburger-icon" onclick="toggleMobileMenu(this)">
+            <div class="bar-1"></div>
+            <div class="bar-2"></div>
+            <div class="bar-3"></div>
+            <ul class="mobile-menu">
+                <li><a href="/">Products</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/contacts">Contacts</a></li>
+                <li><a href="/map">Map</a></li>
+                <AuthorizeView Roles="@SD.Role_Admin">
+                    <li><a href="/wardrobe">Wardrobe</a></li>
+                    <li><a href="/itemtypes">Item Types</a></li>
+                </AuthorizeView>
+            </ul>
+        </div>
+        <div class="navigation-container">
+            <div class="tooltip-container image image-cart" @onclick="NavigateToShoppingCart"></div>
+            <div class="image image-user" @onclick="NavigateToUser"></div>
+        </div>
+    </div>       
 </div>
 
 @code {

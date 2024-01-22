@@ -2,6 +2,7 @@
 @inject IProductService _productService
 @inject IItemTypeService _itemTypeService
 @inject IJSRuntime JSRuntime
+@attribute [Authorize(Roles = SD.Role_Admin)]
 
 @{
     var showClass = IsVisible ? "d-block" : "d-none";
@@ -48,7 +49,7 @@
                 <button class="menu-container--search-button" @onclick="SearchForItem"></button>
             </div>
             <div class="menu-container--content">
-                <NavLink href="/product/create" style="float: right;">
+                <NavLink href="/wardrobe/create" style="float: right;">
                     <button class="btn-form btn-form--submit btn-plus"></button>
                 </NavLink>
             </div>
@@ -94,7 +95,7 @@
                     }
                 </div>
                 <div class="item-container__property">
-                    <NavLink href=@($"/product/create/{item.Id}")>
+                    <NavLink href=@($"/wardrobe/create/{item.Id}")>
                         <button class="btn-form btn-form--submit" style="margin-right: 2px;">Edit</button>
                     </NavLink>
                     <button class="btn-form btn-form--cancel" style="margin-left: 2px;" @onclick="() => DeleteItem(item.Id)">Delete</button>

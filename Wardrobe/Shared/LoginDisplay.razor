@@ -1,15 +1,17 @@
-﻿@page "/loginDisplay"
+﻿@inject NavigationManager _navigationManager
+@inject AuthenticationStateProvider _authenticationStateProvider
 
-<AuthorizeView>
-    <Authorized>
-        <a href="Identity/Account/Logout">Logout</a>
-    </Authorized>
-    <NotAuthorized>
-        <a href="Identity/Account/Register">Register</a>
-        <a href="Identity/Account/Login">Login</a>
-    </NotAuthorized>
-</AuthorizeView>
+@page "/loginDisplay"
 
 @code {
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
 
+        if (!user.Identity.IsAuthenticated)
+            _navigationManager.NavigateTo("/Identity/Account/Login", true);
+        else
+            _navigationManager.NavigateTo("/identity/manage");
+    }
 }

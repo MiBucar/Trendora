@@ -64,6 +64,7 @@ namespace Wardrobe.Services.Implementations
                     itemInCart = true;
                     item.Count += cartToAdd.Count;
                     item.ProductPrice = cartToAdd.ProductPrice;
+                    item.Size = cartToAdd.Size;
                 }
             }
 
@@ -74,6 +75,7 @@ namespace Wardrobe.Services.Implementations
                     ProductId = cartToAdd.ProductId,
                     Count = cartToAdd.Count,
                     ProductPrice = cartToAdd.ProductPrice,
+                    Size = cartToAdd.Size
                 });
             }
 

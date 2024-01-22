@@ -14,6 +14,8 @@ namespace Wardrobe.Data_Access
         public DbSet<Size> SizeList { get; set; }
         public DbSet<Color> ColorList { get; set; }
         public DbSet<ApplicationUser> UserList { get; set; }
+        public DbSet<OrderDetail> OrderDetailList { get; set; }
+        public DbSet<OrderInfo> OrderInfoList { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

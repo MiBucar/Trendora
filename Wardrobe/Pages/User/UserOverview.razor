@@ -1,0 +1,123 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Wardrobe.Components
+@inject UserManager<ApplicationUser> _UserManager
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject IApplicationUserService _ApplicationUserService
+@inject IJSRuntime JSRuntime
+
+@page "/identity/manage"
+
+@if (IsUserLoaded)
+{
+    <div class="main-identity__container">
+        <div class="identity__navigation">
+            <_UserNavigation></_UserNavigation>
+        </div> 
+        <div class="identity__container">
+            <div class="identity__container-information">
+                <EditForm Model="User" OnValidSubmit="@Submit">
+                    <div style="margin-bottom: 10px;">
+                        <h4 class="user-nav__heading">User Data</h4>
+                    </div>                    
+                    <DataAnnotationsValidator />
+                    <div class="identity__container-block">
+                        <div class="identity__container-title">
+                            <RadzenText TagName="TagName.H3">First Name</RadzenText>
+                            <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
+                        </div>
+                        <RadzenTextBox @bind-Value="User.FirstName" class="w-100" aria-label="Default TextBox" />
+                        <ValidationMessage For="() => User.FirstName" />
+                    </div>
+                    <div class="identity__container-block">
+                        <div class="identity__container-title">
+                            <RadzenText TagName="TagName.H3">Last Name</RadzenText>
+                            <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
+                        </div>
+                        <RadzenTextBox @bind-Value="User.LastName" class="w-100" aria-label="Default TextBox" />
+                        <ValidationMessage For="() => User.LastName" />
+                    </div>
+                    <div class="identity__container-block">
+                        <RadzenText TagName="TagName.H3">Phone Number</RadzenText>
+                        <RadzenTextBox @bind-Value="User.PhoneNumber" class="w-100" aria-label="Default TextBox" />
+                    </div>
+                    <div class="identity__container-block">
+                        <div class="identity__container-title">
+                            <RadzenText TagName="TagName.H3">Town</RadzenText>
+                            <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
+                        </div>
+                        <RadzenTextBox @bind-Value="User.Town" class="w-100" aria-label="Default TextBox" />
+                        <ValidationMessage For="() => User.Town" />
+                    </div>
+                    <div class="identity__container-block">
+                        <div class="identity__container-title">
+                            <RadzenText TagName="TagName.H3">Address</RadzenText>
+                            <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
+                        </div>
+                        <RadzenTextBox @bind-Value="User.Address" class="w-100" aria-label="Default TextBox" />
+                        <ValidationMessage For="() => User.Address" />
+                    </div>
+                    <div class="identity__container-block">
+                        <div class="identity__container-title">
+                            <RadzenText TagName="TagName.H3">Zip Code</RadzenText>
+                            <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
+                        </div>
+                        <RadzenTextBox @bind-Value="User.ZipCode" class="w-100" aria-label="Default TextBox" />
+                        <ValidationMessage For="() => User.ZipCode" />
+                    </div>
+                    <div class="identity__container-block">
+                        <div class="identity__container-title">
+                            <RadzenText TagName="TagName.H3">Country</RadzenText>
+                            <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
+                        </div>
+                        <RadzenDropDown @bind-Value=@User.Country Data=@AvailableCountries
+                                        AllowClear=true Placeholder="Select a country" Style="width: 100%;" />
+                        <ValidationMessage For="() => User.Country" />
+                    </div>
+                    <button class="submit-button" typeof="submit">Submit</button>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <_LoadingAnimation></_LoadingAnimation>
+}
+
+@code {
+    private ApplicationUser? User { get; set; }
+    private bool IsUserLoaded { get; set; } = false;
+
+    private List<string> AvailableCountries { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        AvailableCountries = new List<string>()
+        {
+            "Croatia", "Italy", "Switzerland", "Germany"
+        };
+
+        IsUserLoaded = false;
+        var authState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState?.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            User = await _UserManager.FindByEmailAsync(user.Identity.Name);
+            IsUserLoaded = true;
+        }
+    }
+
+    public async Task Submit()
+    {
+        IsUserLoaded = false;
+        StateHasChanged();
+
+        await _ApplicationUserService.UpdateUser(User);
+
+        IsUserLoaded = true;
+        StateHasChanged();
+
+        await JSRuntime.InvokeVoidAsync("ShowToastr", "success", "Profile Saved");
+    }
+}

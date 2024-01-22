@@ -1,5 +1,6 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+
 :root {
     --rz-primary: var(--color-primary, #59009f) !important;
     --rz-slider-horizontal-width: 90% !important;
@@ -16,18 +17,22 @@
     cursor: auto;
 }
 
+.bg-primary-color {
+    background-color: var(--color-primary, #59009f);
+}
+
 html, body {
     font-family: CovesBold;
     background-color: #f3f3f3;
 }
 
 #toast-container .toast-success {
-    background-color: #59009f !important;
+    background-color: green !important;
     color: white !important;
 }
 
 #toast-container .toast-error {
-    background-color: #59009f !important;
+    background-color: red !important;
     color: white !important;
 }
 
@@ -501,4 +506,14 @@ a, .btn-link {
 .product-pages__button--bigger {
     min-width: 100px;
     height: 40px;
+}
+
+.navbar-brand {
+    margin: 0;
+    font-size: 1.5rem;
+    cursor: pointer;
+    border: 2px solid white;
+    padding: 10px 10px 8px 10px;
+    text-transform: uppercase;
+    color: white;
 }

@@ -1,0 +1,62 @@
+﻿@inject NavigationManager _navigationManager
+
+<div class="user-nav__container">
+    <div>
+        <h4 class="user-nav__heading">My Account</h4>
+    </div>
+    <div class="user-nav__content">
+        <div @onclick="SetUserInfoActive" class="@((IsUserInfoActive) ? "user-nav__content-item content-item__active" : "user-nav__content-item")">
+            <div class="user-image info"></div>
+            <p class="user-nav__content-p">User Info</p>
+        </div>
+        <div @onclick="SetOrderOverviewActive" class="@((IsOrderOverviewActive) ? "user-nav__content-item content-item__active" : "user-nav__content-item")">
+            <div class="user-image orders"></div>
+            <p class="user-nav__content-p">Order Overview</p>
+        </div>
+        <div @onclick="SetChangePasswordActive" class="@((IsChangePasswordActive) ? "user-nav__content-item content-item__active" : "user-nav__content-item")">
+            <div class="user-image settings"></div>
+            <p class="user-nav__content-p">Change Password</p>
+        </div>
+        <div>
+            <button @onclick="Logout" class="logout-button">Logout</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private bool IsUserInfoActive { get; set; }
+    private bool IsOrderOverviewActive { get; set; }
+    private bool IsChangePasswordActive { get; set; }
+
+    private void Logout()
+    {
+        _navigationManager.NavigateTo("/Identity/Account/Logout", true);
+    }
+
+    public void SetUserInfoActive()
+    {
+        IsUserInfoActive = true;
+        IsOrderOverviewActive = false;
+        IsChangePasswordActive = false;
+
+        _navigationManager.NavigateTo("/identity/manage");
+    }
+
+    public void SetOrderOverviewActive()
+    {
+        IsUserInfoActive = false;
+        IsOrderOverviewActive = true;
+        IsChangePasswordActive = false;
+
+        _navigationManager.NavigateTo("/identity/orders");
+    }
+
+    public void SetChangePasswordActive()
+    {
+        IsUserInfoActive = false;
+        IsOrderOverviewActive = false;
+        IsChangePasswordActive = true;
+
+        _navigationManager.NavigateTo("/identity/changepassword");
+    }
+}
