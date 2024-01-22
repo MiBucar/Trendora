@@ -1,0 +1,85 @@
+﻿@inject IOrderService _orderService
+
+@page "/identity/orders/{Id:int}"
+
+@if (IsLoading)
+{
+    <_LoadingAnimation></_LoadingAnimation>
+}
+else
+{
+    <div class="main-container">
+        <div class="order-summary__container">
+            <div class="order-info">
+                <div class="order-info__container">
+                    <p class="order-info__main-paragraph">Order Total: </p>
+                    <p>@Order.OrderInfo.OrderTotal€</p>
+                </div>
+                <div class="order-info__container">
+                    <p class="order-info__main-paragraph">Order Date: </p>
+                    <p>@Order.OrderInfo.OrderDate.ToString("dd.MM.yyyy")</p>
+                </div>
+                <div class="order-info__container">
+                    <p class="order-info__main-paragraph">Town: </p>
+                    <p>@Order.OrderInfo.Town</p>
+                </div>
+                <div class="order-info__container">
+                    <p class="order-info__main-paragraph">Address: </p>
+                    <p>@Order.OrderInfo.Address</p>
+                </div>
+                <div class="order-info__container">
+                    <p class="order-info__main-paragraph">Country: </p>
+                    <p>@Order.OrderInfo.Country</p>
+                </div>                
+            </div>
+            <div class="order-details">
+                @if (Order.OrderDetails.Any())
+                {
+                    @foreach (var detail in Order.OrderDetails)
+                    {
+                        <div class="order-detail__container">
+                            <div class="order-detail__primary">
+                                <img class="product-image" src="data:image/png;base64,@Convert.ToBase64String(detail.ImageData)" alt="@detail.ProductName" />
+                                <h4>@detail.ProductName</h4>
+                            </div>
+                            <div class="order-detail__secondary">
+                                <div class="order-detail__secondary-container">
+                                    <p class="order-info__main-paragraph">Price: </p>
+                                    <p>@detail.Price€</p>
+                                </div>
+                                <div class="order-detail__secondary-container">
+                                    <p class="order-info__main-paragraph">Amount: </p>
+                                    <p>@detail.Count</p>
+                                </div>
+                                <div class="order-detail__secondary-container">
+                                    <p class="order-info__main-paragraph">Size: </p>
+                                    <p>@detail.Size</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }                
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    public OrderDTO Order { get; set; }
+
+    private bool IsLoading { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+        StateHasChanged();
+
+        Order = await _orderService.Get(Id);
+
+        IsLoading = false;
+        StateHasChanged();
+    }
+}

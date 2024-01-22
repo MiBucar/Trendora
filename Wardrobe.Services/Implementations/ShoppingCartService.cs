@@ -59,7 +59,7 @@ namespace Wardrobe.Services.Implementations
 
             foreach (var item in cart)
             {
-                if (item.ProductId == cartToAdd.ProductId)
+                if (item.ProductId == cartToAdd.ProductId && item.Size == cartToAdd.Size)
                 {
                     itemInCart = true;
                     item.Count += cartToAdd.Count;
