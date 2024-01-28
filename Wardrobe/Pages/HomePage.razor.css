@@ -127,6 +127,18 @@
         margin-bottom: 0px;
     }
 
+.product-discover__empty-item{
+    border: 2px dotted gray;
+    height: 20rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.product-discover__empty-item p{
+    margin: 0;
+}
+
 .product-discover__item__info {
     height: 2rem;
     display: flex;

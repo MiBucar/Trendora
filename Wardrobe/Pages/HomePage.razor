@@ -48,30 +48,41 @@
         <h2>FIND YOUR STYLE</h2>
     </div>
     <div class="product-discover">
-        @foreach (var itemType in ItemTypeListFour)
+        @if (ItemTypeListFour.Any())
         {
-            @if (itemType.IsClothing)
+            @foreach (var itemType in ItemTypeListFour)
             {
-                DiscoverItemType = "clothing";
-            }
-            @if (itemType.IsAccessory)
-            {
-                DiscoverItemType = "accessories";
-            }
-            @if (itemType.IsShoes)
-            {
-                DiscoverItemType = "shoes";
-            }
+                @if (itemType.IsClothing)
+                {
+                    DiscoverItemType = "clothing";
+                }
+                @if (itemType.IsAccessory)
+                {
+                    DiscoverItemType = "accessories";
+                }
+                @if (itemType.IsShoes)
+                {
+                    DiscoverItemType = "shoes";
+                }
 
-            <a href=@($"/products/{DiscoverItemType}/{itemType.Model}") class="no-underline">
-                <div class="product-discover__item">
-                    <img src="@ImageData(itemType.Image)" />
-                    <div class="product-discover__item__info">
-                        <h3>@itemType.Model</h3>
+                <a href=@($"/products/{DiscoverItemType}/{itemType.Model}") class="no-underline">
+                    <div class="product-discover__item">
+                        <img src="@ImageData(itemType.Image)" />
+                        <div class="product-discover__item__info">
+                            <h3>@itemType.Model</h3>
+                        </div>
                     </div>
-                </div>
-            </a>
+                </a>
+            }
         }
+        else
+        {
+            <div class="product-discover__empty-item"><p>Empty Item Type</p></div>
+            <div class="product-discover__empty-item"><p>Empty Item Type</p></div>
+            <div class="product-discover__empty-item"><p>Empty Item Type</p></div>
+            <div class="product-discover__empty-item"><p>Empty Item Type</p></div>
+        }
+
     </div>
 }
 else
