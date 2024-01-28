@@ -1,0 +1,204 @@
+﻿* {
+    margin: 0;
+    color: white;
+}
+
+.careers-main__container {
+    display: flex;
+    justify-content: center;
+}
+
+.careers-content__container {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px;
+}
+
+.title__container{
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+    .title__container h3 {
+        color: white;
+        text-transform: uppercase;
+        font-size: 2rem;
+        padding: 10px;
+        background-color: var(--color-primary, #59009f);
+        width: 10rem;
+        border-radius: 3px;
+    }
+
+.careers-content__card-image{
+    width: 18rem;
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+}
+
+.careers-content__card-info{
+    padding: 10px;
+}
+
+.careers-image {
+    height: 8rem;
+    width: 8rem;
+    border: none;
+    border-radius: 500px;
+}
+
+.cashier {
+    background-image: url('../Images/trendora.jpg');
+}
+
+.careers-content__card {
+    flex-wrap: wrap;
+    display: flex;
+    box-shadow: 0 4px 21px -12px rgba(0, 0, 0, 0.66);
+    border-radius: 10px;
+    margin: 0 0 2rem 0;
+    overflow: hidden;
+    position: relative;
+    color: #ffffff;
+    background-color: var(--color-primary, #59009f);
+    min-height: 16rem;
+}
+
+    .careers-content__card:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-image: linear-gradient(-40deg, var(--color-primary-light));
+        opacity: 1;
+        border-radius: 10px;
+    }
+
+.card__text {
+    padding: 1.5rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.card__title {
+    font-size: 1.75rem;
+}
+
+.card__img {
+    max-height: 180px;
+    width: 100%;
+    object-fit: cover;
+    position: relative;
+}
+
+    .card__img:hover {
+        transform: scale(1.1);
+    }
+
+.card__img_link {
+    display: contents;
+}
+
+.card__bar {
+    width: 50px;
+    height: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    background-color: var(--color-primary-light, #59009f);
+    transition: width 0.2s ease;
+}
+
+.careers-content__card:hover .card__bar {
+    width: 100px;
+}
+
+.card__preview-txt {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: justify;
+    height: 100%;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+}
+
+@media (max-width: 900px) {
+    .careers-content__container {
+        width: 100%;
+    }
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+@media screen and (min-width: 769px) {
+    .careers-content__card{
+        flex-wrap: inherit;
+    }
+
+    .card__text {
+        padding: 3rem;
+        width: 100%;
+    }
+
+    .card__img {
+        max-width: 300px;
+        max-height: 100%;
+        transition: transform 0.3s ease;
+    }
+
+    .careers-content__card:hover .card__img {
+        transform: scale(1.1);
+    }
+
+    .careers-content__card:nth-child(2n+1) {
+        flex-direction: row;
+    }
+
+    .careers-content__card:nth-child(2n+0) {
+        flex-direction: row-reverse;
+    }
+
+    .careers-content__card:nth-child(2n+1) .card__text::before {
+        left: -12px !important;
+        transform: rotate(2deg);
+    }
+
+    .careers-content__card:nth-child(2n+0) .card__text::before {
+        right: -12px !important;
+        transform: rotate(-2deg);
+    }
+
+    .careers-content__card .card__text:before {
+        content: "";
+        position: absolute;
+        display: block;
+        background: var(--color-primary, #59009f);
+        top: -20%;
+        height: 130%;
+        width: 50px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .card__text {
+        padding: 2rem 3.5rem;
+    }
+
+        .card__text:before {
+            content: "";
+            position: absolute;
+            display: block;
+            top: -20%;
+            height: 130%;
+            width: 55px;
+        }
+}

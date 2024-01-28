@@ -120,7 +120,7 @@ namespace Wardrobe.Services.Implementations
 
             foreach (var term in searchTerms)
             {
-                query = query.Where(x => x.ItemType.Model.Contains(term));
+                query = query.Where(x => x.ItemType.Model.Contains(term) || x.Name.Contains(term) || x.Price.ToString().Contains(term));
             }
 
             var results = await query.ToListAsync();
