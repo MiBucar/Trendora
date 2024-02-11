@@ -61,6 +61,26 @@ namespace Wardrobe.Services.Implementations
             return new ItemTypeDTO();
         }
 
+        public async Task<IEnumerable<string>> GetModelsByIds(List<int> ids)
+        {
+            var newItemTypeList = new List<string>();
+            foreach (var id in ids)
+            {
+                var obj = await _db.ItemTypeList.FirstOrDefaultAsync(x => x.ItemTypeId == id);
+                if (obj != null)
+                    newItemTypeList.Add(obj.Model);
+            }
+            return newItemTypeList;
+        }
+
+        public async Task<IEnumerable<ItemTypeDTO>> GetModelsBySection(string section)
+        {
+            var productsThatIncludeSection = _db.ProductList.Where(x => x.Section == section);
+            var uniqueItemTypes = productsThatIncludeSection.Select(x => x.ItemType)
+                        .Distinct().Select(x => x);
+            return _mapper.Map<IEnumerable<ItemType>, IEnumerable<ItemTypeDTO>>(uniqueItemTypes);
+        }
+
         public async Task<IEnumerable<ItemTypeDTO>> GetRandom(int num)
         {
             if (_db.ItemTypeList.Count() >= num)

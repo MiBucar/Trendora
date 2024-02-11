@@ -9,6 +9,15 @@
         public const string Status_Refunded = "Refunded";
         public const string Status_Cancelled = "Cancelled";
 
+        public const string Section_Kids = "Kids";
+        public const string Section_Men = "Men";
+        public const string Section_Women = "Women";
+        public const string Section_AllProducts = "AllProducts";
+
+        public const string Category_Clothing = "clothing";
+        public const string Category_Accessories = "accessories";
+        public const string Category_Shoes = "shoes";
+
         public const string Role_Admin = "Admin";
         public const string Role_Customer = "Customer";
     }

@@ -25,5 +25,6 @@ namespace Wardrobe.Models.Models
         public byte[] ImageData { get; set; }   
         public DateTime DateCreated { get; set; }
         public List<Color> Colors { get; set; }
+        public string Section { get; set; }
     }
 }

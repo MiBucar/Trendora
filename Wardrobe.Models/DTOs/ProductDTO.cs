@@ -24,5 +24,6 @@ namespace Wardrobe.Models.DTOs
         public int ItemTypeModelId { get; set; }
         public ItemTypeDTO ItemType { get; set; }
         public List<ColorDTO> Colors { get; set; }
+        public string Section { get; set; }
     }
 }

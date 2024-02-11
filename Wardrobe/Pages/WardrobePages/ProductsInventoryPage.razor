@@ -2,6 +2,7 @@
 @inject IProductService _productService
 @inject IItemTypeService _itemTypeService
 @inject IJSRuntime JSRuntime
+@inject IImageService _imageService
 @attribute [Authorize(Roles = SD.Role_Admin)]
 
 @{
@@ -34,7 +35,7 @@
 </div>
 
 <div class="header-container">
-    <h2>Wardrobe Iventory</h2>    
+    <h2>Products Inventory</h2>    
 </div>
 
 @if (!IsLoading)
@@ -224,12 +225,7 @@
 
     private string ImageData()
     {
-        if (WardrobeItem.ImageData != null && WardrobeItem.ImageData.Length > 0)
-        {
-            var base64String = Convert.ToBase64String(WardrobeItem.ImageData);
-            return $"data:image/jpeg;base64,{base64String}";
-        }
-        return "";
+        return _imageService.GetImage(WardrobeItem.ImageData);
     }
 
     private void HandleFilterApplied(IEnumerable<ProductDTO> filteredList)
