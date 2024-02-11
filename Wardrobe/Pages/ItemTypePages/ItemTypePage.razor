@@ -3,6 +3,7 @@
 @inject IItemTypeService _itemTypeService
 @inject ISizeService _sizeService
 @inject IJSRuntime _jsRuntime
+@inject IImageService _imageService
 @attribute [Authorize(Roles = SD.Role_Admin)]
 
 <h2 style="text-align:center">Create new Item Type</h2>
@@ -150,7 +151,7 @@
                     {
                         <div style="text-align:left; margin-bottom: 5px; display: flex; flex-direction: column;">
                             <label style="margin-bottom: 5px;">Image</label>
-                            <img src="@ImageData()" class="input-container--image" />
+                            <img src="@ImageData(ItemTypeModel.Image)" class="input-container--image" />
                         </div>
                         <div style="text-align:left; margin-bottom: 5px;">
                             <button type="button" class="btn-form btn-form--cancel" @onclick="RemoveImage">Remove Image</button>
@@ -558,14 +559,9 @@
         StateHasChanged();
     }
 
-    private string ImageData()
+    private string ImageData(byte[] image)
     {
-        if (ItemTypeModel.Image != null && ItemTypeModel.Image.Length > 0)
-        {
-            var base64String = Convert.ToBase64String(ItemTypeModel.Image);
-            return $"data:image/jpeg;base64,{base64String}";
-        }
-        return "";
+        return _imageService.GetImage(image);
     }
 
     private string ImageDataPopup()

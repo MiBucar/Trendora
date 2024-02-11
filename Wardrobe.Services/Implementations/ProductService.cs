@@ -156,11 +156,32 @@ namespace Wardrobe.Services.Implementations
                 obj.ItemTypeModelId = pDTO.ItemTypeModelId;
                 obj.Price = pDTO.Price;
                 obj.ImageData = pDTO.ImageData;
+                obj.Section = pDTO.Section;
                 _db.ProductList.Update(obj);
                 await _db.SaveChangesAsync();
                 return _mapper.Map<Product, ProductDTO>(obj);
             }
             return pDTO;
+        }
+
+        public async Task<(IEnumerable<ProductDTO>, int)> GetBySectionAndItemType(string section, string itemType, int pageNumber, int pageSize)
+        {
+            var query = _db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).Where(x => x.ItemType.Model == itemType && x.Section == section);
+
+            int totalCount = await query.CountAsync();
+            var products = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            return (_mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(products), totalCount);
+        }
+
+        public async Task<IEnumerable<string>> GetSectionsForItemType(string itemTypeModel)
+        {
+            var productsThatIncludeSection = _db.ProductList.Where(x => x.ItemType.Model == itemTypeModel);
+
+            var uniqueSections = productsThatIncludeSection.Select(x => x.Section)
+                        .Distinct().Select(x => x);
+
+            return uniqueSections.ToList();
         }
     }
 }

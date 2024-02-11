@@ -1,13 +1,14 @@
 ﻿@page "/"
 @inject IProductService _productService
 @inject IItemTypeService _itemTypeService
+@inject IImageService _imageService
 
 <h2 class="component-header">DISCOVER CATEGORIES</h2>
 
 @if (!IsLoading)
 {
     <div class="product-grid">
-        <a href="products/clothing" class="no-underline">
+        <a href="categories/clothing" class="no-underline">
             <div class="product-item">
                 <img src="/Images/clothing.png" />
                 <div class="product-item__info">
@@ -15,7 +16,7 @@
                 </div>
             </div>
         </a>
-        <a href="products/shoes" class="no-underline">
+        <a href="categories/shoes" class="no-underline">
             <div class="product-item">
                 <img src="/Images/shoes.png" />
                 <div class="product-item__info">
@@ -23,7 +24,7 @@
                 </div>
             </div>
         </a>
-        <a href="products/accessories" class="no-underline">
+        <a href="categories/accessories" class="no-underline">
             <div class="product-item">
                 <img src="/Images/accessories.png" />
                 <div class="product-item__info">
@@ -54,15 +55,15 @@
             {
                 @if (itemType.IsClothing)
                 {
-                    DiscoverItemType = "clothing";
+                    DiscoverItemType = SD.Category_Clothing;
                 }
                 @if (itemType.IsAccessory)
                 {
-                    DiscoverItemType = "accessories";
+                    DiscoverItemType = SD.Category_Accessories;
                 }
                 @if (itemType.IsShoes)
                 {
-                    DiscoverItemType = "shoes";
+                    DiscoverItemType = SD.Category_Shoes;
                 }
 
                 <a href=@($"/products/{DiscoverItemType}/{itemType.Model}") class="no-underline">
@@ -117,11 +118,6 @@ else
 
     private string ImageData(byte[] image)
     {
-        if (image != null && image.Length > 0)
-        {
-            var base64String = Convert.ToBase64String(image);
-            return $"data:image/jpeg;base64,{base64String}";
-        }
-        return "";
+        return _imageService.GetImage(image);
     }
 }

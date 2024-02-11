@@ -16,5 +16,7 @@ namespace Wardrobe.Services.Interfaces
         public Task<ItemTypeDTO> GetById(int id);
         public Task<IEnumerable<ItemTypeDTO>> GetAll();
         public Task<IEnumerable<ItemTypeDTO>> GetRandom(int num);
+        public Task<IEnumerable<string>> GetModelsByIds(List<int> ids);
+        public Task<IEnumerable<ItemTypeDTO>> GetModelsBySection(string section);
     }
 }

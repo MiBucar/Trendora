@@ -1,19 +1,31 @@
-﻿@page "/products/{Category}"
-@page "/products/{Category}/{ItemType}"
+﻿@page "/products/{SelectedSection}/{ItemType}"
 @inject IProductService _productService
+@inject IItemTypeService _itemTypeService
+@inject IColorService _colorService
 @inject IJSRuntime JSRuntime
 
-<h2 class="component-header">@Title.ToUpper()</h2>
-@if (!String.IsNullOrEmpty(ItemType))
-{
-    <h3 class="component-header-2">@ItemType.ToUpper()</h3>
-}
+<h2 class="component-header">@ItemType.ToUpper() FOR @SelectedSection.ToUpper()</h2>
 
 @if (!IsLoading)
 { 
     @if (ProductList.Any())
     {
-        <_ProductFilter ProductList="@StartingList" Category="@Category" OnFilterApplied="HandleFilterApplied"></_ProductFilter>
+        <_ProductFilter ProductList="@StartingList" SelectedSection="@SelectedSection" OnSelectedColors="HandleOnSelectedColors"
+        OnFilterApplied="HandleFilterApplied"></_ProductFilter>
+
+        @if (FilteredColors.Any()){
+            <div class="tag-container">
+                @if (FilteredColors.Any())
+                {
+                    foreach (var color in FilteredColors)
+                    {
+                        <div class="tag-container__item">
+                            <p>@color</p>
+                        </div>
+                    }
+                }
+            </div>            
+        }
         <div class="product-grid">
             @foreach (var product in ProductList)
             {
@@ -30,7 +42,7 @@
     }
     else
     {
-        <p class="component-header--no-items">No Items To Display</p>
+        <p class="component-header--no-items">Collection is Empty</p>
     }
 }
 else
@@ -41,14 +53,14 @@ else
 
 @code {
     [Parameter]
-    public string Category { get; set; }
+    public string SelectedSection { get; set; }
 
     [Parameter]
     public string ItemType { get; set; }
 
     private IEnumerable<ProductDTO> ProductList { get; set; } = new List<ProductDTO>();
     private IEnumerable<ProductDTO> StartingList { get; set; } = new List<ProductDTO>();
-    private string Title { get; set; }
+    private IEnumerable<string> FilteredColors { get; set; } = new List<string>();
 
     private int CurrentPage { get; set; } = 1;
     private int TotalPages { get; set; } = 1;
@@ -69,16 +81,13 @@ else
         IsLoading = true;
         StateHasChanged();
 
-        Title = Category;
         (IEnumerable<ProductDTO> products, int totalCount) result;
-        if (!String.IsNullOrEmpty(ItemType))
-        {
-            result = await _productService.GetByItemType(ItemType, CurrentPage, ItemsPerPage);
-        }
+
+        if (!String.IsNullOrEmpty(ItemType) && !String.IsNullOrEmpty(SelectedSection))
+            result = await _productService.GetBySectionAndItemType(SelectedSection, ItemType, CurrentPage, ItemsPerPage);
         else
-        {
-            result = await _productService.GetByCategory(Category, CurrentPage, ItemsPerPage);
-        }
+            result = (new List<ProductDTO>(), 0);
+
         ProductList = result.products;
         StartingList = result.products;
         TotalPages = (int)Math.Ceiling((double)result.totalCount / ItemsPerPage);
@@ -108,6 +117,18 @@ else
     private void HandleFilterApplied(IEnumerable<ProductDTO> filteredProducts)
     {
         ProductList = filteredProducts;
+        StateHasChanged();
+    }
+
+    private async Task HandleOnSelectedColors(List<int> colors)
+    {
+        var tempColors = await _colorService.GetColorsByIds(colors);
+
+        if (colors.Any())
+            FilteredColors = tempColors.Select(x => x.Name).ToList();
+        else
+            FilteredColors = new List<string>();
+
         StateHasChanged();
     }
 }
