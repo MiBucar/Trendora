@@ -21,6 +21,7 @@ namespace Wardrobe.Services.Mapper
             CreateMap<OrderInfo, OrderInfoDTO>().ReverseMap();
             CreateMap<OrderDetail, OrderDetailDTO>().ReverseMap();
             CreateMap<Order, OrderDTO>().ReverseMap();
+            CreateMap<Tag, TagDTO>().ReverseMap();
         }
     }
 }

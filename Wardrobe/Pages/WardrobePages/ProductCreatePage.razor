@@ -6,6 +6,7 @@
 @inject IItemTypeService _itemTypeService
 @inject IColorService _colorService
 @inject IImageService _imageService
+@inject ITagService _tagService
 @attribute [Authorize(Roles = SD.Role_Admin)]
 
 <div>
@@ -38,10 +39,16 @@
                     <InputTextArea @bind-Value="Product.Description" class="item-container__input" placeholder="Enter text..."></InputTextArea>
                 </div>
                 <!-- Section -->                
-                    <div class="input-container">
+                <div class="input-container">
                     <RadzenLabel Text="Select Section" Component="DropDownSection" />
                     <RadzenDropDown Placeholder="Select" @bind-Value=@Product.Section Data=@AvailableSections Name="DropDownSection" />
-                    </div>
+                </div
+                <!-- Tags -->                
+                <div class="input-container">
+                    <RadzenLabel Text="Select Tags" Component="DropDownSection" />
+                    <RadzenDropDown @bind-Value=@SelectedTags Data=@TagModels Chips=true TextProperty="Title"
+                                    Multiple=true AllowClear=false Placeholder="Select" />
+                </div>
                 <!-- Item Type-->
                 <div class="input-container">
                     @* <p class="input-container--text">Item Type</p>
@@ -157,12 +164,15 @@
     private ItemTypeDTO ItemType { get; set; } = new ItemTypeDTO();
     private IEnumerable<ItemTypeDTO> ItemTypeModels { get; set; } = new List<ItemTypeDTO>();
     private IEnumerable<ColorDTO> ColorModels { get; set; } = new List<ColorDTO>();
+    private IEnumerable<TagDTO> TagModels { get; set; } = new List<TagDTO>();
     private List<ColorDTO> SelectedColors { get; set; } = new List<ColorDTO>();
+    private List<TagDTO> SelectedTags { get; set; } = new List<TagDTO>();
     private List<string> AvailableSections { get; set; } = new List<string>();
 
     private async Task Submit()
     {
         Product.Colors = SelectedColors;
+        Product.Tags = SelectedTags;
         if (Id == 0)
         {
             await _productService.Create(Product);
@@ -195,6 +205,7 @@
         IsLoading = true;
         StateHasChanged();
         ItemTypeModels = await _itemTypeService.GetAll();
+        TagModels = await _tagService.GetAllTags();
         ColorModels = await _colorService.GetAll();
         if (Id != 0)
         {

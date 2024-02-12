@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ namespace Wardrobe.Models.DTOs
         [Range(1, int.MaxValue, ErrorMessage = "Please select a type")]
         public int ItemTypeModelId { get; set; }
         public ItemTypeDTO ItemType { get; set; }
+        public List<TagDTO> Tags { get; set; }
         public List<ColorDTO> Colors { get; set; }
         public string Section { get; set; }
     }

@@ -95,6 +95,9 @@
     private int MinPrice { get; set; }
     private int MaxPrice { get; set; }
 
+    // Item Types
+    private IEnumerable<ItemTypeDTO> ItemTypes { get; set; } = new List<ItemTypeDTO>();
+
     private bool IsFilterVisible { get; set; } = false;
 
     protected override async Task OnInitializedAsync()

@@ -19,6 +19,7 @@ namespace Wardrobe.Services.Interfaces
         public Task<IEnumerable<ProductDTO>> SortByPrice(string type);
         public Task<(IEnumerable<ProductDTO>, int)> GetByCategory(string category, int pageNumber, int pageSize);
         public Task<(IEnumerable<ProductDTO>, int)> GetByItemType(string category, int pageNumber, int pageSize);
+        public Task<(IEnumerable<ProductDTO>, int)> GetBySection(string section, int pageNumber, int pageSize);
         public Task<(IEnumerable<ProductDTO>, int)> GetBySectionAndItemType(string section, string itemType, int pageNumber, int pageSize);
         public Task<IEnumerable<string>> GetSectionsForItemType(string itemTypeModel);
     }

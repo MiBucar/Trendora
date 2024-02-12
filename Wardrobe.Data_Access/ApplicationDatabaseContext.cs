@@ -16,6 +16,7 @@ namespace Wardrobe.Data_Access
         public DbSet<ApplicationUser> UserList { get; set; }
         public DbSet<OrderDetail> OrderDetailList { get; set; }
         public DbSet<OrderInfo> OrderInfoList { get; set; }
+        public DbSet<Tag> TagList { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
