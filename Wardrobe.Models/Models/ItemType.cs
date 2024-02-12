@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Wardrobe.Models.DTOs;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Wardrobe.Models.Models
 {
@@ -22,7 +16,3 @@ namespace Wardrobe.Models.Models
         public List<Size> Sizes { get; set; }
     }
 }
-
-// ADJUST ITEM TYPE PAGE
-// MAKE IMAGES MANDATORY
-// ELEMENTS SCALE ACCORDING TO SCREEN RESOLUTION

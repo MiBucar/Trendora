@@ -42,6 +42,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
 builder.Services.AddScoped<IApplicationUserService, ApplicationUserService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddRadzenComponents();
 builder.Services.AddBlazoredLocalStorage();
 

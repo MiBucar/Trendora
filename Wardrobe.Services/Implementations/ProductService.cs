@@ -34,6 +34,10 @@ namespace Wardrobe.Services.Implementations
             var existingColors = _db.ColorList.Where(c => colorIds.Contains(c.Id)).ToList();
             obj.Colors = existingColors;
 
+            var tagIds = obj.Tags.Select(x => x.TagId).ToList();
+            var existingTags = _db.TagList.Where(x => tagIds.Contains(x.TagId)).ToList();
+            obj.Tags = existingTags;
+
             var createdObj = _db.ProductList.Add(obj);
             await _db.SaveChangesAsync();
 
@@ -53,7 +57,7 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<IEnumerable<ProductDTO>> GetAll()
         {
-            return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(_db.ProductList.Include(x => x.ItemType).Include(x => x.Colors));
+            return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(_db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).Include(x => x.Tags));
         }
 
         public async Task<(IEnumerable<ProductDTO>, int)> GetByCategory(string category, int pageNumber, int pageSize)
@@ -63,13 +67,13 @@ namespace Wardrobe.Services.Implementations
             switch (category)
             {
                 case "clothing":
-                    query = _db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).Where(x => x.ItemType.IsClothing == true);
+                    query = _db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).Include(x => x.Tags).Where(x => x.ItemType.IsClothing == true);
                     break;
                 case "shoes":
-                    query = _db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).Where(x => x.ItemType.IsShoes == true);
+                    query = _db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).Include(x => x.Tags).Where(x => x.ItemType.IsShoes == true);
                     break;
                 case "accessories":
-                    query = _db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).Where(x => x.ItemType.IsAccessory == true);
+                    query = _db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).Include(x => x.Tags).Where(x => x.ItemType.IsAccessory == true);
                     break;
                 default:
                     return (new List<ProductDTO>(), 0);
@@ -84,7 +88,7 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<(IEnumerable<ProductDTO>, int)> GetByItemType(string itemType, int pageNumber, int pageSize)
         {
-            var query = _db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).Where(x => x.ItemType.Model == itemType);
+            var query = _db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).Include(x => x.Tags).Where(x => x.ItemType.Model == itemType);
 
             int totalCount = await query.CountAsync();
             var products = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
@@ -95,7 +99,7 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<ProductDTO> GetById(int id)
         {
-            var obj = await _db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).FirstOrDefaultAsync(x => x.Id == id);
+            var obj = await _db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).Include(x => x.Tags).FirstOrDefaultAsync(x => x.Id == id);
             if (obj != null)
             {
                 return _mapper.Map<Product, ProductDTO>(obj);
@@ -105,7 +109,7 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<ProductDTO> GetByName(string name)
         {
-            var obj = await _db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).FirstOrDefaultAsync(x => x.Name == name);
+            var obj = await _db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).Include(x => x.Tags).FirstOrDefaultAsync(x => x.Name == name);
             if (obj != null)
             {
                 return _mapper.Map<Product, ProductDTO>(obj);
@@ -148,9 +152,13 @@ namespace Wardrobe.Services.Implementations
             if ( obj != null)
             {
                 var selectedColors = pDTO.Colors.Select(x => x.Id).ToList();
-                var existingColors = _db.ColorList.Where(x => selectedColors.Contains(x.Id)).ToList();  
+                var existingColors = _db.ColorList.Where(x => selectedColors.Contains(x.Id)).ToList();
+
+                var tagIds = pDTO.Tags.Select(x => x.TagId).ToList();
+                var existingTags = _db.TagList.Where(x => tagIds.Contains(x.TagId)).ToList();
 
                 obj.Colors = existingColors;
+                obj.Tags = existingTags;
                 obj.Name = pDTO.Name;
                 obj.Description = pDTO.Description;
                 obj.ItemTypeModelId = pDTO.ItemTypeModelId;
@@ -166,7 +174,7 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<(IEnumerable<ProductDTO>, int)> GetBySectionAndItemType(string section, string itemType, int pageNumber, int pageSize)
         {
-            var query = _db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).Where(x => x.ItemType.Model == itemType && x.Section == section);
+            var query = _db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).Include(x => x.Tags).Where(x => x.ItemType.Model == itemType && x.Section == section);
 
             int totalCount = await query.CountAsync();
             var products = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
@@ -182,6 +190,16 @@ namespace Wardrobe.Services.Implementations
                         .Distinct().Select(x => x);
 
             return uniqueSections.ToList();
+        }
+
+        public async Task<(IEnumerable<ProductDTO>, int)> GetBySection(string section, int pageNumber, int pageSize)
+        {
+            var query = _db.ProductList.Include(x => x.ItemType).Include(x => x.Colors).Include(x => x.Tags).Where(x => x.Section == section).OrderByDescending(x => x.DateCreated);
+
+            int totalCount = await query.CountAsync();
+            var products = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            return (_mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(products), totalCount);
         }
     }
 }

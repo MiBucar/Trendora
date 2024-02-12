@@ -1,0 +1,82 @@
+﻿@page "/tags"
+
+@inject ITagService _tagService
+@attribute [Authorize(Roles = SD.Role_Admin)]
+
+@if (!IsLoading)
+{
+    <div class="tags-main__container">
+        <div class="tags_content__container">
+            <div class="tags-title__container">
+                <h3>Create Tags</h3>
+            </div>
+            <div class="tags-create__container">
+                    <EditForm Model="Tag" OnValidSubmit="@CreateNewTag">
+                        <DataAnnotationsValidator />
+                        <div class="tags-create__container-block">
+                            <div class="tags-create__container-title">
+                                <RadzenText TagName="TagName.H3">Tag Title</RadzenText>
+                                <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
+                            </div>
+                            <RadzenTextBox @bind-Value="Tag.Title" class="w-100" aria-label="Default TextBox" />
+                            <ValidationMessage For="() => Tag.Title" />
+                        </div>
+                        <button class="submit-button" typeof="submit">Create Tag</button>
+                    </EditForm>
+            </div>
+            <div class="tags-list__container">
+                <RadzenDataGrid FilterPopupRenderMode="PopupRenderMode.OnDemand" AllowPaging="true" PageSize="5" AllowSorting="true"
+                            Data="@TagList" TItem="TagDTO">
+                    <Columns>
+                        <RadzenDataGridColumn TItem="TagDTO" Title="Tag Name" Filterable="true" Sortable="true" TextAlign="TextAlign.Center">
+                            <Template Context="tag">
+                                <RadzenText TagName="TagName.H3">@tag.Title</RadzenText>
+                            </Template>
+                        </RadzenDataGridColumn>
+                        <RadzenDataGridColumn TItem="TagDTO" Title="Actions" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+                            <Template Context="data">
+                                    <button @onclick="(() => DeleteTag(data))" class="btn-form btn-form--cancel">Delete</button>
+                            </Template>
+                        </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
+            </div>
+        </div>
+    </div>
+} else
+{
+    <_LoadingAnimation />
+}
+
+@code {
+    private TagDTO Tag { get; set; } = new TagDTO();
+    private IEnumerable<TagDTO> TagList { get; set; } = new List<TagDTO>();
+
+    private bool IsLoading { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+        StateHasChanged();
+
+        TagList = await _tagService.GetAllTags();
+
+        IsLoading = false;
+        StateHasChanged();
+    }
+
+    private async void CreateNewTag()
+    {
+        await _tagService.CreateTag(Tag);
+        TagList = await _tagService.GetAllTags();
+        Tag = new TagDTO();
+        StateHasChanged();
+    }
+
+    private async void DeleteTag(TagDTO tag)
+    {
+        await _tagService.DeleteTag(tag);
+        TagList = await _tagService.GetAllTags();
+        StateHasChanged();
+    }
+}

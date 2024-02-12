@@ -1,4 +1,4 @@
-﻿@page "/products/{SelectedSection}/{ItemType}"
+﻿@page "/products/{SelectedSection}"
 @inject IProductService _productService
 @inject IItemTypeService _itemTypeService
 @inject IColorService _colorService
@@ -83,8 +83,8 @@ else
 
         (IEnumerable<ProductDTO> products, int totalCount) result;
 
-        if (!String.IsNullOrEmpty(ItemType) && !String.IsNullOrEmpty(SelectedSection))
-            result = await _productService.GetBySectionAndItemType(SelectedSection, ItemType, CurrentPage, ItemsPerPage);
+        if (!String.IsNullOrEmpty(SelectedSection))
+            result = await _productService.GetBySection(SelectedSection, CurrentPage, ItemsPerPage);
         else
             result = (new List<ProductDTO>(), 0);
 
