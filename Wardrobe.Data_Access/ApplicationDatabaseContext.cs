@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Wardrobe.Common;
 using Wardrobe.Models.Models;
 
 namespace Wardrobe.Data_Access
@@ -10,13 +11,15 @@ namespace Wardrobe.Data_Access
         public ApplicationDatabaseContext(DbContextOptions<ApplicationDatabaseContext> options) : base(options) { }
 
         public DbSet<Product> ProductList { get; set; }
-        public DbSet<ItemType> ItemTypeList { get; set; }
+        public DbSet<Category> ItemTypeList { get; set; }
         public DbSet<Size> SizeList { get; set; }
         public DbSet<Color> ColorList { get; set; }
         public DbSet<ApplicationUser> UserList { get; set; }
         public DbSet<OrderDetail> OrderDetailList { get; set; }
         public DbSet<OrderInfo> OrderInfoList { get; set; }
         public DbSet<Tag> TagList { get; set; }
+        public DbSet<Collection> CollectionList { get; set; }
+        public DbSet<Gender> GenderList { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,6 +33,18 @@ namespace Wardrobe.Data_Access
                 new Color { Id=7, Name="Pink", ColorCode= "#e610a9" },
                 new Color { Id=8, Name="Brown", ColorCode= "#964B00" },
                 new Color { Id=9, Name="Purple", ColorCode= "#800080" }
+            );            
+
+            modelBuilder.Entity<Gender>().HasData(
+                new Gender { Id=1, Name = SD.Section_Women},
+                new Gender { Id=2, Name = SD.Section_Men},
+                new Gender { Id=3, Name = SD.Section_Kids}
+            );
+
+            modelBuilder.Entity<Collection>().HasData(
+                new Collection { CollectionId = 1, Name = SD.Section_Women },
+                new Collection { CollectionId = 2, Name = SD.Section_Men },
+                new Collection { CollectionId = 3, Name = SD.Section_Kids }
             );
 
             base.OnModelCreating(modelBuilder);

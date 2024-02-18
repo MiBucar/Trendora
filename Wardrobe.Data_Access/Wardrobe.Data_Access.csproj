@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Wardrobe.Common\Wardrobe.Common.csproj" />
     <ProjectReference Include="..\Wardrobe.Models\Wardrobe.Models.csproj" />
   </ItemGroup>
 

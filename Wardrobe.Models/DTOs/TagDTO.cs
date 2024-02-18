@@ -14,5 +14,6 @@ namespace Wardrobe.Models.DTOs
         [Required]
         public string Title { get; set; }
         public List<ProductDTO> Products { get; set; }
+        public List<CollectionDTO> Collections { get; set; }
     }
 }

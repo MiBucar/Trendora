@@ -5,15 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Wardrobe.Models.Models
+namespace Wardrobe.Models.DTOs
 {
-    public class Collection
+    public class CollectionDTO
     {
-        [Key]
         public int CollectionId { get; set; }
         [Required]
         public string Name { get; set; }
-        public List<Gender> Genders { get; set; }
-        public List<Tag> Tags { get; set; }
+        public List<GenderDTO> Genders { get; set; }
+        public List<TagDTO> Tags { get; set; }
     }
 }

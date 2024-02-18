@@ -7,13 +7,11 @@ using System.Threading.Tasks;
 
 namespace Wardrobe.Models.Models
 {
-    public class Tag
+    public class Gender
     {
         [Key]
-        public int TagId { get; set; }
-        [Required]
-        public string Title { get; set; }
-        public List<Product> Products { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
         public List<Collection> Collections { get; set; }
     }
 }

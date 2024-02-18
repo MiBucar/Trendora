@@ -1,18 +1,18 @@
-﻿@page "/products/{SelectedSection}"
+﻿@page "/products/{CollectionName}"
 @inject IProductService _productService
-@inject IItemTypeService _itemTypeService
+@inject ICategoryService _itemTypeService
 @inject IColorService _colorService
+@inject ICollectionService _collectionService
 @inject IJSRuntime JSRuntime
 
-<h2 class="component-header">@ItemType.ToUpper() FOR @SelectedSection.ToUpper()</h2>
+<h2 class="component-header">@CollectionName</h2>
 
 @if (!IsLoading)
-{ 
+{
+    <_ProductFilter ProductList="@StartingList" Collection="@Collection"  OnFilterApplied="HandleFilterApplied"></_ProductFilter>
+
     @if (ProductList.Any())
     {
-        <_ProductFilter ProductList="@StartingList" SelectedSection="@SelectedSection" OnSelectedColors="HandleOnSelectedColors"
-        OnFilterApplied="HandleFilterApplied"></_ProductFilter>
-
         @if (FilteredColors.Any()){
             <div class="tag-container">
                 @if (FilteredColors.Any())
@@ -34,11 +34,14 @@
                 </a>
             }
         </div>
-        <div class="product-pages">
-            <button @onclick="LoadPreviousPage" disabled="@IsFirstPage" class="product-pages__button">Back</button>
-            <span>Page @CurrentPage of @TotalPages</span>
-            <button @onclick="LoadNextPage" disabled="@IsLastPage" class="product-pages__button">Next</button>
-        </div>
+        @if (TotalPages > 1)
+        {
+            <div class="product-pages">
+                <button @onclick="LoadPreviousPage" disabled="@IsFirstPage" class="product-pages__button">Back</button>
+                <span>Page @CurrentPage of @TotalPages</span>
+                <button @onclick="LoadNextPage" disabled="@IsLastPage" class="product-pages__button">Next</button>
+            </div>
+        }        
     }
     else
     {
@@ -53,11 +56,15 @@ else
 
 @code {
     [Parameter]
+    public string CollectionName { get; set; }
+
+    [Parameter]
     public string SelectedSection { get; set; }
 
     [Parameter]
     public string ItemType { get; set; }
 
+    private CollectionDTO Collection { get; set; } = new CollectionDTO();
     private IEnumerable<ProductDTO> ProductList { get; set; } = new List<ProductDTO>();
     private IEnumerable<ProductDTO> StartingList { get; set; } = new List<ProductDTO>();
     private IEnumerable<string> FilteredColors { get; set; } = new List<string>();
@@ -71,7 +78,7 @@ else
 
     private bool IsLoading { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         await LoadProducts();
     }
@@ -81,12 +88,10 @@ else
         IsLoading = true;
         StateHasChanged();
 
-        (IEnumerable<ProductDTO> products, int totalCount) result;
+        Collection = await _collectionService.GetByName(CollectionName);
 
-        if (!String.IsNullOrEmpty(SelectedSection))
-            result = await _productService.GetBySection(SelectedSection, CurrentPage, ItemsPerPage);
-        else
-            result = (new List<ProductDTO>(), 0);
+        (IEnumerable<ProductDTO> products, int totalCount) result;
+        result = await _productService.GetByCollection(Collection, CurrentPage, ItemsPerPage);
 
         ProductList = result.products;
         StartingList = result.products;
@@ -117,18 +122,6 @@ else
     private void HandleFilterApplied(IEnumerable<ProductDTO> filteredProducts)
     {
         ProductList = filteredProducts;
-        StateHasChanged();
-    }
-
-    private async Task HandleOnSelectedColors(List<int> colors)
-    {
-        var tempColors = await _colorService.GetColorsByIds(colors);
-
-        if (colors.Any())
-            FilteredColors = tempColors.Select(x => x.Name).ToList();
-        else
-            FilteredColors = new List<string>();
-
         StateHasChanged();
     }
 }

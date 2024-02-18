@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Wardrobe.Data_Access;
 
@@ -11,9 +12,11 @@ using Wardrobe.Data_Access;
 namespace Wardrobe.Data_Access.Migrations
 {
     [DbContext(typeof(ApplicationDatabaseContext))]
-    partial class ApplicationDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240212212910_AddGendersForCollection")]
+    partial class AddGendersForCollection
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -304,30 +307,6 @@ namespace Wardrobe.Data_Access.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Wardrobe.Models.Models.Category", b =>
-                {
-                    b.Property<int>("ItemTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ItemTypeId"));
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<byte[]>("Image")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<string>("Model")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ItemTypeId");
-
-                    b.ToTable("ItemTypeList");
-                });
-
             modelBuilder.Entity("Wardrobe.Models.Models.Collection", b =>
                 {
                     b.Property<int>("CollectionId")
@@ -473,6 +452,39 @@ namespace Wardrobe.Data_Access.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Wardrobe.Models.Models.ItemType", b =>
+                {
+                    b.Property<int>("ItemTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ItemTypeId"));
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("Image")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<bool>("IsAccessory")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsClothing")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsShoes")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Model")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ItemTypeId");
+
+                    b.ToTable("ItemTypeList");
+                });
+
             modelBuilder.Entity("Wardrobe.Models.Models.OrderDetail", b =>
                 {
                     b.Property<int>("Id")
@@ -578,9 +590,6 @@ namespace Wardrobe.Data_Access.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
@@ -588,12 +597,12 @@ namespace Wardrobe.Data_Access.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("GenderId")
-                        .HasColumnType("int");
-
                     b.Property<byte[]>("ImageData")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
+
+                    b.Property<int>("ItemTypeModelId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -602,11 +611,13 @@ namespace Wardrobe.Data_Access.Migrations
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
+                    b.Property<string>("Section")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("GenderId");
+                    b.HasIndex("ItemTypeModelId");
 
                     b.ToTable("ProductList");
                 });
@@ -777,26 +788,18 @@ namespace Wardrobe.Data_Access.Migrations
 
             modelBuilder.Entity("Wardrobe.Models.Models.Product", b =>
                 {
-                    b.HasOne("Wardrobe.Models.Models.Category", "Category")
+                    b.HasOne("Wardrobe.Models.Models.ItemType", "ItemType")
                         .WithMany()
-                        .HasForeignKey("CategoryId")
+                        .HasForeignKey("ItemTypeModelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Wardrobe.Models.Models.Gender", "Gender")
-                        .WithMany()
-                        .HasForeignKey("GenderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Gender");
+                    b.Navigation("ItemType");
                 });
 
             modelBuilder.Entity("Wardrobe.Models.Models.Size", b =>
                 {
-                    b.HasOne("Wardrobe.Models.Models.Category", "ItemTypeModel")
+                    b.HasOne("Wardrobe.Models.Models.ItemType", "ItemTypeModel")
                         .WithMany("Sizes")
                         .HasForeignKey("ItemTypeModelId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -805,7 +808,7 @@ namespace Wardrobe.Data_Access.Migrations
                     b.Navigation("ItemTypeModel");
                 });
 
-            modelBuilder.Entity("Wardrobe.Models.Models.Category", b =>
+            modelBuilder.Entity("Wardrobe.Models.Models.ItemType", b =>
                 {
                     b.Navigation("Sizes");
                 });

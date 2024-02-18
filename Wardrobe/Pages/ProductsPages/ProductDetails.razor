@@ -1,7 +1,7 @@
 ﻿@page "/product/{ProductName}/{Guid:guid}"
 @using Wardrobe.Models.ViewModels;
 @inject IProductService _productService
-@inject IItemTypeService _itemTypeService
+@inject ICategoryService _itemTypeService
 @inject IShoppingCartService _shoppingCartService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager _navigationManager
@@ -80,7 +80,7 @@ else
 
     public ProductDTO Product { get; set; } = new ProductDTO();
     public ProductCount ProductAmount { get; set; } = new ProductCount();
-    public ItemTypeDTO ItemType { get; set; } = new ItemTypeDTO();
+    public CategoryDTO ItemType { get; set; } = new CategoryDTO();
     public string SelectedSize { get; set; }
 
     private bool IsLoading { get; set; }
@@ -95,7 +95,7 @@ else
         IsLoading = true;
         StateHasChanged();
         Product = await _productService.GetByName(ProductName);
-        ItemType = await _itemTypeService.GetById(Product.ItemTypeModelId);
+        ItemType = await _itemTypeService.GetById(Product.CategoryId);
         IsLoading = false;
         StateHasChanged();
     }

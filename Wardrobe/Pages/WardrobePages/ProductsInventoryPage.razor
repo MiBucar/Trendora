@@ -1,6 +1,6 @@
 ﻿@page "/wardrobe"
 @inject IProductService _productService
-@inject IItemTypeService _itemTypeService
+@inject ICategoryService _itemTypeService
 @inject IJSRuntime JSRuntime
 @inject IImageService _imageService
 @attribute [Authorize(Roles = SD.Role_Admin)]
@@ -73,7 +73,7 @@
         {
             <div class="item-row item-row--content">
                 <div class="item-container__property">@item.Name</div>
-                <div class="item-container__property">@item.ItemType.Model</div>
+                <div class="item-container__property">@item.Category.Model</div>
                 <div class="item-container__property">@item.Price€</div>
                 <div class="item-container__property">
                     @if (item.ImageData.Any()) {

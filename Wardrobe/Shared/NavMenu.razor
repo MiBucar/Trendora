@@ -25,10 +25,11 @@
         </div>
     </div>
     <AuthorizeView Roles="@SD.Role_Admin">
-        <div class="navigation-container admin-container" style="width: 17rem;">
-            <a href="/wardrobe" class="navigation-container__link">Wardrobe</a>
-            <a href="/tags" class="navigation-container__link">Tags</a>
-            <a href="/itemtypes" class="navigation-container__link">Item Types</a>
+        <div class="navigation-container admin-container" style="width: 22rem;">
+            <a href="/wardrobe" class="navigation-container-admin">Wardrobe</a>
+            <a href="/create/tags" class="navigation-container-admin">Tags</a>
+            <a href="/create/categories" class="navigation-container-admin">Categories</a>
+            <a href="/create/collections" class="navigation-container-admin">Collections</a>
         </div>
     </AuthorizeView>
 </div>
@@ -49,8 +50,9 @@
                 <li><a href="/map">Map</a></li>
                 <AuthorizeView Roles="@SD.Role_Admin">
                     <li><a href="/wardrobe">Wardrobe</a></li>
-                    <li><a href="/itemtypes">Item Types</a></li>
-                    <li><a href="/tags">Tags</a></li>
+                    <li><a href="/create/categories">Categories</a></li>
+                    <li><a href="/create/tags">Tags</a></li>
+                    <li><a href="/create/collections">Collections</a></li>
                 </AuthorizeView>
             </ul>
         </div>

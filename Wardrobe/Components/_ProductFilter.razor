@@ -1,6 +1,6 @@
 ﻿@inject IJSRuntime JSRuntime
 @inject IColorService _colorService
-@inject IItemTypeService _itemTypeService
+@inject ICategoryService _categoryService
 
 <div class="filter-container">
     <div class="filter-container__selector" @onclick="ToggleFilter">
@@ -41,8 +41,30 @@
             </div>
         </div>
 
+        <!-- Genders -->
+        <div class="filter-container--middle">
+            <div class="product-filter__container">
+                <label class="product-filter__label">Select Genders</label>
+                <div class="rz-text-align-center">
+                    <RadzenDropDown @bind-Value=@SelectedGenders Data=@GenderList Chips=true TextProperty="Name" ValueProperty="Id"
+                                    Multiple=true AllowClear=false Placeholder="Select" Style="width: 100%; max-width: 400px;" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="filter-container--middle">
+            <div class="product-filter__container">
+                <label class="product-filter__label">Select Categories</label>
+                <div class="rz-text-align-center">
+                    <RadzenDropDown @bind-Value=@SelectedCategories Data=@CategoryList Chips=true TextProperty="Model" ValueProperty="ItemTypeId"
+                                    Multiple=true AllowClear=false Placeholder="Select" Style="width: 100%; max-width: 400px;" />
+                </div>
+            </div>
+        </div>
+
         <!-- Price Range -->
-        @if (MinPrice != MaxPrice)
+        @if (MinPrice != MaxPrice && ProductList.Any())
         {
             <div class="filter-container--middle">
                 <div class="product-filter__container">
@@ -74,7 +96,7 @@
 
 @code {
     [Parameter]
-    public string SelectedSection { get; set; }
+    public CollectionDTO Collection { get; set; }
 
     [Parameter]
     public IEnumerable<ProductDTO> ProductList { get; set; }
@@ -82,11 +104,17 @@
     [Parameter]
     public EventCallback<IEnumerable<ProductDTO>> OnFilterApplied { get; set; }
 
+    // Genders
+    public IEnumerable<GenderDTO> GenderList { get; set; } = new List<GenderDTO>();
+    public List<int> SelectedGenders { get; set; } = new List<int>();
+
     // Colors
     public IEnumerable<ColorDTO> ColorList { get; set; } = new List<ColorDTO>();
     public List<int> SelectedColors { get; set; } = new List<int>();
-    [Parameter]
-    public EventCallback<List<int>> OnSelectedColors { get; set; }
+
+    // Categories
+    public IEnumerable<CategoryDTO> CategoryList { get; set; } = new List<CategoryDTO>();
+    public List<int> SelectedCategories { get; set; } = new List<int>();
 
     // Prices
     public IEnumerable<string> PriceFilter { get; set; } = new List<string> { "Price Ascending", "Price Descending" };
@@ -95,18 +123,21 @@
     private int MinPrice { get; set; }
     private int MaxPrice { get; set; }
 
-    // Item Types
-    private IEnumerable<ItemTypeDTO> ItemTypes { get; set; } = new List<ItemTypeDTO>();
-
     private bool IsFilterVisible { get; set; } = false;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        ColorList = await _colorService.GetAll();
-        MinPrice = ProductList.Min(x => x.Price);
-        MaxPrice = ProductList.Max(x => x.Price);
+        ColorList = await _colorService.GetColorsByCollection(Collection);
+        CategoryList = await _categoryService.GetCategoriesByCollection(Collection);
+        GenderList = Collection.Genders;
 
-        ProductMinMaxPrices = new List<int>() { MinPrice, MaxPrice };
+        if (ProductList.Any())
+        {
+            MinPrice = ProductList.Min(x => x.Price);
+            MaxPrice = ProductList.Max(x => x.Price);
+
+            ProductMinMaxPrices = new List<int>() { MinPrice, MaxPrice };
+        }
     }
 
     private void FilterProductByPrice()
@@ -125,10 +156,11 @@
         if (SelectedColors.Any())
             filteredProducts = filteredProducts.Where(x => x.Colors.Any(color => SelectedColors.Contains(color.Id)));
 
-        if (!string.IsNullOrEmpty(SelectedSection))
-        {
-            filteredProducts = filteredProducts.Where(x => x.Section == SelectedSection);
-        }
+        if (SelectedGenders.Any())
+            filteredProducts = filteredProducts.Where(x => SelectedGenders.Contains(x.Gender.Id));
+
+        if (SelectedCategories.Any())
+            filteredProducts = filteredProducts.Where(x => SelectedCategories.Contains(x.CategoryId));
 
         if (ProductMinMaxPrices != null && ProductMinMaxPrices.Count() == 2)
         {
@@ -143,7 +175,6 @@
         if (SelectedFilter == "Price Descending")
             filteredProducts = filteredProducts.OrderByDescending(x => x.Price);
 
-        await OnSelectedColors.InvokeAsync(SelectedColors);
         await OnFilterApplied.InvokeAsync(filteredProducts.ToList());
     }
 

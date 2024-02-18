@@ -3,10 +3,11 @@
 
 @inject NavigationManager _navigationManager
 @inject IProductService _productService
-@inject IItemTypeService _itemTypeService
+@inject ICategoryService _itemTypeService
 @inject IColorService _colorService
 @inject IImageService _imageService
 @inject ITagService _tagService
+@inject IGenderService _genderService
 @attribute [Authorize(Roles = SD.Role_Admin)]
 
 <div>
@@ -38,36 +39,26 @@
                     <p class="input-container--text">Item Description</p>
                     <InputTextArea @bind-Value="Product.Description" class="item-container__input" placeholder="Enter text..."></InputTextArea>
                 </div>
-                <!-- Section -->                
+                <!-- Genders -->                
                 <div class="input-container">
-                    <RadzenLabel Text="Select Section" Component="DropDownSection" />
-                    <RadzenDropDown Placeholder="Select" @bind-Value=@Product.Section Data=@AvailableSections Name="DropDownSection" />
-                </div
+                    <RadzenLabel Text="Select Gender" Component="DropDownSection" />
+                    <RadzenDropDown Placeholder="Select" @bind-Value=@Product.GenderId Data=@AvailableGenders ValueProperty="Id"
+                                    TextProperty="Name" Name="DropDownSection" />
+                    <ValidationMessage For="() => Product.GenderId" />
+                </div>
+                <!-- Category -->
+                <div class="input-container">
+                    <RadzenLabel Text="Select Category" Component="DropDownItemType" />
+                    <RadzenDropDown Placeholder="Select" @bind-Value=@Product.CategoryId Data=@ItemTypeModels ValueProperty="ItemTypeId"
+                                    TextProperty="Model" Name="DropDownItemType" Change="@(() => OnCategoryChanged(Product.CategoryId))" />
+                    <ValidationMessage For="() => Product.CategoryId" />
+                </div>
                 <!-- Tags -->                
                 <div class="input-container">
                     <RadzenLabel Text="Select Tags" Component="DropDownSection" />
                     <RadzenDropDown @bind-Value=@SelectedTags Data=@TagModels Chips=true TextProperty="Title"
                                     Multiple=true AllowClear=false Placeholder="Select" />
-                </div>
-                <!-- Item Type-->
-                <div class="input-container">
-                    @* <p class="input-container--text">Item Type</p>
-                    <InputSelect Value="Product.ItemTypeModelId"
-                                 ValueChanged="@(async (int newValue) => await OnItemTypeChanged(newValue))"
-                                 ValueExpression="@(() => Product.ItemTypeModelId)" class="item-container__input">
-                        @if (ItemTypeModels.Any())
-                        {
-                            @foreach (var itemType in ItemTypeModels)
-                            {
-                                <option value="@itemType.ItemTypeId">@itemType.Model</option>
-                            }
-                        }
-                    </InputSelect> *@
-                    <RadzenLabel Text="Select Item Type" Component="DropDownItemType" />
-                    <RadzenDropDown Placeholder="Select" @bind-Value=@Product.ItemTypeModelId Data=@ItemTypeModels ValueProperty="ItemTypeId"
-                                    TextProperty="Model" Name="DropDownItemType" Change="@(() => OnItemTypeChanged(Product.ItemTypeModelId))" />
-                    <ValidationMessage For="() => Product.ItemTypeModelId" />
-                </div>
+                </div>                
                 <!-- Price -->
                 <div class="input-container">
                     <p class="input-container--text">Item Price €</p>
@@ -87,7 +78,8 @@
                                     }
                                 }                                                       
                         </div>
-                    }
+                    <ValidationMessage For="() => Product.Colors" />
+                }
                 </div>
                 <!-- Selected colors -->
                 <div class="input-container">
@@ -112,7 +104,7 @@
                 <!-- Sizes -->
                 <div class="input-container">
                     <p class="input-container--text" style="margin-bottom: -10px;">Sizes</p>
-                    @if (Product.ItemTypeModelId != 0)
+                    @if (Product.CategoryId != 0)
                     {
                         @if (ItemType != null && ItemType.Sizes != null)
                         {
@@ -135,6 +127,7 @@
                 <div class="input-container">
                     <p class="input-container--text">Image Upload</p>
                     <InputFile OnChange="@HandleFileUpload" class="item-container__input" />
+                    <ValidationMessage For="() => Product.ImageData" />
                 </div>
                 <!-- Image -->
                 @if (Product.ImageData != null)
@@ -161,13 +154,13 @@
     private bool IsLoading { get; set; }
 
     private ProductDTO Product { get; set; } = new ProductDTO() { Colors = new List<ColorDTO>()};
-    private ItemTypeDTO ItemType { get; set; } = new ItemTypeDTO();
-    private IEnumerable<ItemTypeDTO> ItemTypeModels { get; set; } = new List<ItemTypeDTO>();
+    private CategoryDTO ItemType { get; set; } = new CategoryDTO();
+    private IEnumerable<CategoryDTO> ItemTypeModels { get; set; } = new List<CategoryDTO>();
     private IEnumerable<ColorDTO> ColorModels { get; set; } = new List<ColorDTO>();
     private IEnumerable<TagDTO> TagModels { get; set; } = new List<TagDTO>();
     private List<ColorDTO> SelectedColors { get; set; } = new List<ColorDTO>();
     private List<TagDTO> SelectedTags { get; set; } = new List<TagDTO>();
-    private List<string> AvailableSections { get; set; } = new List<string>();
+    private IEnumerable<GenderDTO> AvailableGenders { get; set; } = new List<GenderDTO>();
 
     private async Task Submit()
     {
@@ -187,17 +180,6 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadItem();
-        LoadAvailableSections();
-    }
-
-    private void LoadAvailableSections()
-    {
-        AvailableSections = new List<string>()
-        {
-            SD.Section_Kids,
-            SD.Section_Men,
-            SD.Section_Women
-        };
     }
 
     private async Task LoadItem()
@@ -205,12 +187,13 @@
         IsLoading = true;
         StateHasChanged();
         ItemTypeModels = await _itemTypeService.GetAll();
+        AvailableGenders = await _genderService.GetAll();
         TagModels = await _tagService.GetAllTags();
         ColorModels = await _colorService.GetAll();
         if (Id != 0)
         {
             Product = await _productService.GetById(Id);
-            ItemType = await _itemTypeService.GetById(Product.ItemTypeModelId);
+            ItemType = await _itemTypeService.GetById(Product.CategoryId);
             SelectedColors = Product.Colors;
             Title = "Update";
         }
@@ -218,9 +201,9 @@
         StateHasChanged();
     }
 
-    private async Task OnItemTypeChanged(int selectedId)
+    private async Task OnCategoryChanged(int selectedId)
     {
-        Product.ItemTypeModelId = selectedId;
+        Product.CategoryId = selectedId;
         ItemType = await _itemTypeService.GetById(selectedId);
         StateHasChanged();
     }
