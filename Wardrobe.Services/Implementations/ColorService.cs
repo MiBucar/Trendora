@@ -38,6 +38,22 @@ namespace Wardrobe.Services.Implementations
             return new ColorDTO();
         }
 
+        public async Task<IEnumerable<ColorDTO>> GetColorsByCollection(CollectionDTO collection)
+        {
+            var gendersInCollection = collection.Genders.Select(x => x.Id);
+            var tagsInCollection = collection.Tags.Select(x => x.TagId);
+
+            var products = _db.ProductList.Where(x => gendersInCollection.Contains(x.Gender.Id));
+
+            if (tagsInCollection.Any())
+                products = products.Where(x => x.Tags.Any(tag => tagsInCollection.Contains(tag.TagId)));
+
+            var uniqueColors = products.SelectMany(x => x.Colors)
+                        .Distinct().Select(x => x);
+
+            return _mapper.Map<IEnumerable<Color>, IEnumerable<ColorDTO>>(uniqueColors);
+        }
+
         public async Task<List<ColorDTO>> GetColorsByIds(List<int> colorIds)
         {
             var obj = await _db.ColorList.Where(c => colorIds.Contains(c.Id)).ToListAsync();

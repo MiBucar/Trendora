@@ -63,6 +63,19 @@
         color: var(--color-primary);
     }
 
+.navigation-container-admin__link {
+    margin: 0;
+    text-align: center;
+    cursor: pointer;
+    padding: 5px;
+    min-width: 3rem;
+    transition: .5s ease;
+}
+
+    .navigation-container-admin__link:hover {
+        background-color: white;
+        color: var(--color-primary);
+    }
     .navigation-container h4 {
         margin: 0;
         font-size: 1.5rem;

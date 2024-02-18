@@ -13,26 +13,26 @@ using Wardrobe.Services.Interfaces;
 
 namespace Wardrobe.Services.Implementations
 {
-    public class ItemTypeService : IItemTypeService
+    public class CategoryService : ICategoryService
     {
         private readonly ApplicationDatabaseContext _db;
         private readonly IMapper _mapper;
 
-        public ItemTypeService(ApplicationDatabaseContext db, IMapper mapper)
+        public CategoryService(ApplicationDatabaseContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
         }
 
-        public async Task<ItemTypeDTO> Create(ItemTypeDTO item)
+        public async Task<CategoryDTO> Create(CategoryDTO item)
         {
-            var obj = _mapper.Map<ItemTypeDTO, ItemType>(item);
+            var obj = _mapper.Map<CategoryDTO, Category>(item);
             obj.DateCreated = DateTime.Now;
 
             var createdObj = _db.Add(obj);
             await _db.SaveChangesAsync();
 
-            return _mapper.Map<ItemType, ItemTypeDTO>(createdObj.Entity);
+            return _mapper.Map<Category, CategoryDTO>(createdObj.Entity);
         }
 
         public async Task<int> Delete(int id)
@@ -46,19 +46,19 @@ namespace Wardrobe.Services.Implementations
             return 0;
         }
 
-        public async Task<IEnumerable<ItemTypeDTO>> GetAll()
+        public async Task<IEnumerable<CategoryDTO>> GetAll()
         {
-            return _mapper.Map<IEnumerable<ItemType>, IEnumerable<ItemTypeDTO>>(_db.ItemTypeList.Include(x => x.Sizes));
+            return _mapper.Map<IEnumerable<Category>, IEnumerable<CategoryDTO>>(_db.ItemTypeList.Include(x => x.Sizes));
         }
 
-        public async Task<ItemTypeDTO> GetById(int id)
+        public async Task<CategoryDTO> GetById(int id)
         {
             var obj = await _db.ItemTypeList.Include(x => x.Sizes).FirstOrDefaultAsync(x => x.ItemTypeId == id);
             if (obj != null)
             {
-                return _mapper.Map<ItemType, ItemTypeDTO>(obj);
+                return _mapper.Map<Category, CategoryDTO>(obj);
             }
-            return new ItemTypeDTO();
+            return new CategoryDTO();
         }
 
         public async Task<IEnumerable<string>> GetModelsByIds(List<int> ids)
@@ -73,36 +73,39 @@ namespace Wardrobe.Services.Implementations
             return newItemTypeList;
         }
 
-        public async Task<IEnumerable<ItemTypeDTO>> GetModelsBySection(string section)
+        public async Task<IEnumerable<CategoryDTO>> GetCategoriesByCollection(CollectionDTO collection)
         {
-            var productsThatIncludeSection = _db.ProductList.Where(x => x.Section == section);
-            var uniqueItemTypes = productsThatIncludeSection.Select(x => x.ItemType)
+            var genderIds = collection.Genders.Select(x => x.Id);
+            var tagIds = collection.Tags.Select(x => x.TagId);
+
+            var products = _db.ProductList.Where(x => genderIds.Contains(x.GenderId));
+            if (tagIds.Any())
+                products = products.Where(x => x.Tags.Any(tag => tagIds.Contains(tag.TagId)));
+
+            var uniqueCategories = products.Select(x => x.Category)
                         .Distinct().Select(x => x);
-            return _mapper.Map<IEnumerable<ItemType>, IEnumerable<ItemTypeDTO>>(uniqueItemTypes);
+            return _mapper.Map<IEnumerable<Category>, IEnumerable<CategoryDTO>>(uniqueCategories);
         }
 
-        public async Task<IEnumerable<ItemTypeDTO>> GetRandom(int num)
+        public async Task<IEnumerable<CategoryDTO>> GetRandom(int num)
         {
             if (_db.ItemTypeList.Count() >= num)
             {
                 var randomItems = _db.ItemTypeList.OrderBy(x => Guid.NewGuid()).Take(num).Include(x => x.Sizes);
-                return _mapper.Map<IEnumerable<ItemType>, IEnumerable<ItemTypeDTO>>(randomItems);
+                return _mapper.Map<IEnumerable<Category>, IEnumerable<CategoryDTO>>(randomItems);
             }
-            return new List<ItemTypeDTO>();
+            return new List<CategoryDTO>();
         }
 
-        public async Task<ItemTypeDTO> Update(ItemTypeDTO item)
+        public async Task<CategoryDTO> Update(CategoryDTO item)
         {
             var obj = await _db.ItemTypeList.FirstOrDefaultAsync(x => x.ItemTypeId == item.ItemTypeId);
             if (obj != null)
             {
                 obj.Model = item.Model;
-                obj.IsAccessory = item.IsAccessory;
-                obj.IsClothing = item.IsClothing;
-                obj.IsShoes = item.IsShoes;
                 obj.Image = item.Image;
                 await _db.SaveChangesAsync();
-                return _mapper.Map<ItemType, ItemTypeDTO>(obj);                
+                return _mapper.Map<Category, CategoryDTO>(obj);                
             }
             return item;
         }

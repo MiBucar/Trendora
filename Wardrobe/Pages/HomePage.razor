@@ -1,6 +1,6 @@
 ﻿@page "/"
 @inject IProductService _productService
-@inject IItemTypeService _itemTypeService
+@inject ICategoryService _itemTypeService
 @inject IImageService _imageService
 
 <h2 class="component-header">DISCOVER CATEGORIES</h2>
@@ -53,20 +53,7 @@
         {
             @foreach (var itemType in ItemTypeListFour)
             {
-                @if (itemType.IsClothing)
-                {
-                    DiscoverItemType = SD.Category_Clothing;
-                }
-                @if (itemType.IsAccessory)
-                {
-                    DiscoverItemType = SD.Category_Accessories;
-                }
-                @if (itemType.IsShoes)
-                {
-                    DiscoverItemType = SD.Category_Shoes;
-                }
-
-                <a href=@($"/products/{DiscoverItemType}/{itemType.Model}") class="no-underline">
+                <a class="no-underline">
                     <div class="product-discover__item">
                         <img src="@ImageData(itemType.Image)" />
                         <div class="product-discover__item__info">
@@ -94,7 +81,7 @@ else
 
 @code {
     private IEnumerable<ProductDTO> ProductList = new List<ProductDTO>();
-    private IEnumerable<ItemTypeDTO> ItemTypeListFour = new List<ItemTypeDTO>();
+    private IEnumerable<CategoryDTO> ItemTypeListFour = new List<CategoryDTO>();
     private string DiscoverItemType { get; set; }
     private bool IsLoading { get; set; }
 

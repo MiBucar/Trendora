@@ -1,0 +1,160 @@
+﻿@page "/create/collections"
+
+@inject ICollectionService _collectionService
+@inject ITagService _tagService
+@inject IGenderService _genderService
+@attribute [Authorize(Roles = SD.Role_Admin)]
+
+@if (!IsLoading)
+{
+    <div class="collections-main__container">
+        <div class="collections_content__container">
+            <div class="collections-title__container">
+                <h3>Create Collections</h3>
+            </div>
+            <div class="collections-create__container">
+                <EditForm Model="Collection" OnValidSubmit="@CreateNewCollection">
+                    <DataAnnotationsValidator />
+                    <!-- Name -->
+                    <div class="collections-create__container-block">
+                        <div class="collections-create__container-title">
+                            <RadzenText TagName="TagName.H3">Collection Name</RadzenText>
+                            <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
+                        </div>
+                        <RadzenTextBox @bind-Value="Collection.Name" class="w-100" aria-label="Default TextBox" />
+                        <ValidationMessage For="() => Collection.Name" />
+                    </div>
+
+                    <!-- Gender -->
+                    <div class="collections-create__container-block">
+                        <div class="collections-create__container-title">
+                            <RadzenText TagName="TagName.H3">Genders</RadzenText>
+                            <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
+                        </div>
+                        <RadzenDropDown @bind-Value=@SelectedGenders Data=@GenderList Chips=true Multiple=true TextProperty="Name"
+                                    AllowClear=false Placeholder="Select Genders" />
+                    </div>
+
+                    <!-- Tags -->
+                    <div class="collections-create__container-block">
+                        <div class="collections-create__container-title">
+                            <RadzenText TagName="TagName.H3">Tags</RadzenText>
+                        </div>
+                        <RadzenDropDown @bind-Value=@SelectedTags Data=@TagList Chips=true TextProperty="Title" Multiple=true AllowClear=false
+                                            Placeholder="Select Tags" />
+                    </div>
+
+                    <button class="submit-button" typeof="submit">Create Collection</button>
+                </EditForm>
+            </div>
+            <div class="collections-list__container">
+                <RadzenDataGrid FilterPopupRenderMode="PopupRenderMode.OnDemand" AllowPaging="false" PageSize="10" AllowSorting="false"
+                                Data="@CollectionList" TItem="CollectionDTO">
+                    <Columns>
+                        <RadzenDataGridColumn Width="50px" TItem="CollectionDTO" Title="#" TextAlign="TextAlign.Center">
+                            <Template Context="data">
+                                @(CollectionList.ToList().IndexOf(data) + 1)
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                        <RadzenDataGridColumn TItem="CollectionDTO" Title="Title" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+                            <Template Context="collection">
+                                <RadzenText TagName="TagName.H3">@collection.Name</RadzenText>
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                            <RadzenDataGridColumn TItem="CollectionDTO" Title="Genders" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+                            <Template Context="collection">
+                                @foreach (var gender in collection.Genders)
+                                {
+                                    <RadzenText TagName="TagName.H3">@gender.Name</RadzenText>
+                                }
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                        <RadzenDataGridColumn TItem="CollectionDTO" Title="Tags" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+                            <Template Context="collection">
+                                @foreach (var tag in collection.Tags)
+                                {
+                                    <RadzenText TagName="TagName.H3">@tag.Title</RadzenText>
+                                }
+                            </Template>
+                        </RadzenDataGridColumn>
+
+                            <RadzenDataGridColumn TItem="CollectionDTO" Title="Actions" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+                                <Template Context="data">
+                                @if (data.Name != SD.Section_Kids && data.Name != SD.Section_Men && data.Name != SD.Section_Women)
+                                {
+                                    <button @onclick="(() => DeleteCollection(data))" class="btn-form btn-form--cancel">Delete</button>
+                                }
+                                else
+                                {
+                                    <button class="btn-form btn-form--static">Delete</button>
+                                }
+                            </Template>
+                            </RadzenDataGridColumn>
+                        </Columns>
+                    </RadzenDataGrid>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <_LoadingAnimation />
+}
+
+@code {
+    private CollectionDTO Collection { get; set; } = new CollectionDTO();
+
+    private IEnumerable<CollectionDTO> CollectionList { get; set; } = new List<CollectionDTO>();
+    private IEnumerable<TagDTO> TagList { get; set; } = new List<TagDTO>();
+    private IEnumerable<GenderDTO> GenderList { get; set; } = new List<GenderDTO>();
+
+    private List<TagDTO> SelectedTags { get; set; } = new List<TagDTO>();
+    private List<GenderDTO> SelectedGenders { get; set; } = new List<GenderDTO>();
+
+    private bool IsLoading { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoading = true;
+        StateHasChanged();
+
+        CollectionList = await _collectionService.GetAll();
+        TagList = await _tagService.GetAllTags();
+        GenderList = await _genderService.GetAll();
+
+        IsLoading = false;
+        StateHasChanged();
+    }
+
+    private async void CreateNewCollection()
+    {
+        IsLoading = true;
+        StateHasChanged();
+
+        Collection.Tags = SelectedTags;
+        Collection.Genders = SelectedGenders;
+        await _collectionService.CreateCollection(Collection);
+
+        Collection = new CollectionDTO();
+        CollectionList = await _collectionService.GetAll();
+
+        IsLoading = false;
+        StateHasChanged();
+    }
+
+    private async void DeleteCollection(CollectionDTO collection)
+    {
+        IsLoading = true;
+        StateHasChanged();
+
+        await _collectionService.DeleteCollection(collection);
+
+        CollectionList = await _collectionService.GetAll();
+
+        IsLoading = false;
+        StateHasChanged();
+    }
+}

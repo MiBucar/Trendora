@@ -33,8 +33,4 @@
     <ProjectReference Include="..\Wardrobe.Services\Wardrobe.Services.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Pages\ItemTypePages\" />
-  </ItemGroup>
-
 </Project>

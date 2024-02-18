@@ -1,5 +1,7 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
-
+* {
+    margin: 0;
+}
 
 :root {
     --rz-primary: var(--color-primary, #59009f) !important;
@@ -12,7 +14,16 @@
     display: none !important;
 }
 
-.rz-menuitem-link{
+.rz-cell-data {
+    display: flex;
+    justify-content: center;
+}
+
+.rz-cell-data h3{
+    margin: 0;
+}
+
+.rz-menuitem-link {
     pointer-events: none;
     cursor: auto;
 }
@@ -129,6 +140,12 @@ a, .btn-link {
     .btn-form--cancel:hover {
         background-color: #eb3434;
     }
+
+.btn-form--static {
+    background-color: gray;
+    width: 4rem;
+    cursor: default !important;
+}
 
 .btn-plus {
     background-image: url('../Images/plus.png');

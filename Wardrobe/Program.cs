@@ -35,7 +35,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFramework
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<IItemTypeService, ItemTypeService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ISizeService, SizeService>();
 builder.Services.AddScoped<IColorService, ColorService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
@@ -43,6 +43,8 @@ builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
 builder.Services.AddScoped<IApplicationUserService, ApplicationUserService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<ITagService, TagService>();
+builder.Services.AddScoped<ICollectionService, CollectionService>();
+builder.Services.AddScoped<IGenderService, GenderService>();
 builder.Services.AddRadzenComponents();
 builder.Services.AddBlazoredLocalStorage();
 

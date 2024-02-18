@@ -15,13 +15,15 @@ namespace Wardrobe.Services.Mapper
         public MapperService()
         {
             CreateMap<Product, ProductDTO>().ReverseMap();
-            CreateMap<ItemType, ItemTypeDTO>().ReverseMap();
+            CreateMap<Category, CategoryDTO>().ReverseMap();
             CreateMap<Size, SizeDTO>().ReverseMap();
             CreateMap<Color, ColorDTO>().ReverseMap();
             CreateMap<OrderInfo, OrderInfoDTO>().ReverseMap();
             CreateMap<OrderDetail, OrderDetailDTO>().ReverseMap();
             CreateMap<Order, OrderDTO>().ReverseMap();
             CreateMap<Tag, TagDTO>().ReverseMap();
+            CreateMap<Collection, CollectionDTO>().ReverseMap();
+            CreateMap<Gender, GenderDTO>().ReverseMap();
         }
     }
 }

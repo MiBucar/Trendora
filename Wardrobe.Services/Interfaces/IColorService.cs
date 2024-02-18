@@ -12,6 +12,7 @@ namespace Wardrobe.Services.Interfaces
         public Task<ColorDTO> GetById(int id);
         public Task<IEnumerable<ColorDTO>> GetAll();
         public Task<List<ColorDTO>> GetColorsByIds(List<int> colorIds);
+        public Task<IEnumerable<ColorDTO>> GetColorsByCollection(CollectionDTO collection);
 
     }
 }
