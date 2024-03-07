@@ -14,6 +14,8 @@
         public const string Section_Women = "Women";
         public const string Section_AllProducts = "AllProducts";
 
+        public const string Tag_None = "None";
+
         public const string Category_Clothing = "clothing";
         public const string Category_Accessories = "accessories";
         public const string Category_Shoes = "shoes";

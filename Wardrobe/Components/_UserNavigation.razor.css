@@ -83,3 +83,10 @@
     .logout-button:hover {
         background-color: var(--color-primary-light);
     }
+
+@media(max-width: 800px){
+    .logout-button {
+        width: 35%;
+        padding: 8px;
+    }
+}

@@ -31,3 +31,14 @@
     .tag-container__item p {
         color: var(--color-primary, #59009f);
     }
+
+.collection-none{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 45vh;
+}
+
+.collection-none p{
+    font-size: 1.2rem;
+}

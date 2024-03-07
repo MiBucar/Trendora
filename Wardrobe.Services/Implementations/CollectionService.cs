@@ -60,7 +60,7 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<CollectionDTO> GetByName(string name)
         {
-            var obj = await _db.CollectionList.FirstOrDefaultAsync(x => x.Name == name);
+            var obj = await _db.CollectionList.Include(x => x.Tags).Include(x => x.Genders).FirstOrDefaultAsync(x => x.Name == name);
             if (obj != null)
                 return _mapper.Map<Collection, CollectionDTO>(obj);
 

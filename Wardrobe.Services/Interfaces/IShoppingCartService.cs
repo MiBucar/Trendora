@@ -9,8 +9,10 @@ namespace Wardrobe.Services.Interfaces
 {
     public interface IShoppingCartService
     {
+        public event Action OnCartChange;
         public Task DecrementCart(ShoppingCartItem shoppingCart);
         public Task IncrementCart(ShoppingCartItem shoppingCart);
         public Task DeleteCart(int productId);
+        public Task<int> GetNumberOfProductsInCart();
     }
 }

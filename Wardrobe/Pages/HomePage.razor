@@ -1,95 +1,130 @@
 ﻿@page "/"
+@using Wardrobe.Services.Implementations
+@rendermode @(new InteractiveServerRenderMode(prerender: true))
 @inject IProductService _productService
 @inject ICategoryService _itemTypeService
 @inject IImageService _imageService
-
-<h2 class="component-header">DISCOVER CATEGORIES</h2>
+@inject ApiService _apiService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager _navigationManager
+@inject ILocalStorageService _localStorage
 
 @if (!IsLoading)
 {
-    <div class="product-grid">
-        <a href="categories/clothing" class="no-underline">
-            <div class="product-item">
-                <img src="/Images/clothing.png" />
-                <div class="product-item__info">
-                    <h3>Clothing</h3>
-                </div>
-            </div>
-        </a>
-        <a href="categories/shoes" class="no-underline">
-            <div class="product-item">
-                <img src="/Images/shoes.png" />
-                <div class="product-item__info">
-                    <h3>Shoes</h3>
-                </div>
-            </div>
-        </a>
-        <a href="categories/accessories" class="no-underline">
-            <div class="product-item">
-                <img src="/Images/accessories.png" />
-                <div class="product-item__info">
-                    <h3>Accessories</h3>
-                </div>
-            </div>
-        </a>        
-    </div>
-    <div class="product-more">
-        <div class="product-more__container">
-            <div class="product-more__item">
-                <h2>THE WINTER MUST HAVES</h2>
-                <p>Everything your wardrobe needs this season</p>
-                <NavLink href="">
-                    <button>SHOP NEW ARRIVALS</button>
-                </NavLink>
-            </div>
-            <img src="/Images/winter-arrivals.jpg" />
-        </div>
-    </div>
-    <div class="component-header">
-        <h2>FIND YOUR STYLE</h2>
-    </div>
-    <div class="product-discover">
-        @if (ItemTypeListFour.Any())
-        {
-            @foreach (var itemType in ItemTypeListFour)
-            {
-                <a class="no-underline">
-                    <div class="product-discover__item">
-                        <img src="@ImageData(itemType.Image)" />
-                        <div class="product-discover__item__info">
-                            <h3>@itemType.Model</h3>
-                        </div>
+    <div class="homepage__container">
+        <div class="product__first-section">
+            <h2 class="component-header">DISCOVER COLLECTIONS</h2>
+            <div class="product-grid">
+                <a href="/products/@SD.Section_Men" class="no-underline">
+                    <div class="product-item">
+                        <img src="../../Images/Sections/manshirt.png" />
+                        <div class="product-item__cover" />
+                        <h3 class="product-item__title">Men</h3>
                     </div>
                 </a>
-            }
-        }
-        else
-        {
-            <div class="product-discover__empty-item"><p>Empty Item Type</p></div>
-            <div class="product-discover__empty-item"><p>Empty Item Type</p></div>
-            <div class="product-discover__empty-item"><p>Empty Item Type</p></div>
-            <div class="product-discover__empty-item"><p>Empty Item Type</p></div>
-        }
-
-    </div>
+                <a href="/products/@SD.Section_Women" class="no-underline">
+                    <div class="product-item">
+                        <img src="../../Images/Sections/womanshirt.png" />
+                        <div class="product-item__cover" />
+                        <h3 class="product-item__title">Women</h3>
+                    </div>
+                </a>
+                <a href="/products/@SD.Section_Kids" class="no-underline">
+                    <div class="product-item">
+                        <img src="../../Images/Sections/kidshirt.png" />
+                        <div class="product-item__cover" />
+                        <h3 class="product-item__title">Kids</h3>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="home-text__container">
+            <h3 class="home-text__header">Trendora</h3>
+            <p class="home-text__paragraph">
+                Discover Trendora – more than just a brand, it's an experience.
+                When you choose Trendora, you embrace a part of the fashion journey.
+                We take pride in being an official contributor to the fashion scene,
+                connecting our rich history to a vibrant future where you play a significant role.
+                Your support helps fund and promote fashion initiatives globally.
+                Learn more about our brand, the industry, and our place in history as you explore everything Trendora has offered since 1987.
+            </p>
+        </div>
+        <div class="product-more">
+            <div class="product-more__container">
+                <div class="product-more__item">
+                    <h2>THE WINTER MUST HAVES</h2>
+                    <p>Everything your wardrobe needs this season</p>
+                    <NavLink href="">
+                        <button @onclick="NavigateToWinterSection">SHOP NEW ARRIVALS</button>
+                    </NavLink>
+                </div>
+                <img src="/Images/winter-arrivals.jpg" />
+            </div>
+        </div>
+        <div class="component-carousel">
+            <h2 style="text-align: center;">NEW ARRIVALS</h2>
+            <div class="carousel-container">
+                <div class="main-carousel" data-flickity='{ "wrapAround": true }'>
+                    @foreach (var product in ProductList.TakeLast(20))
+                    {
+                        <div class="carousel-cell" @onclick="() => NavigateToProduct(product)">
+                            <img class="carousel-cell__image" src="data:image/png;base64,@Convert.ToBase64String(product.ImageData)" alt="@product.Name" />
+                            <div class="carousel-cell__info">
+                                <h3 style="text-align: left;">@product.Name</h3>
+                                <p>@product.Price.ToString("C")</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="component-newsletter">
+            <div class="component-newsletter__content">
+                <h4>FIND OUT FIRST</h4>
+                <p>Subscribe for updates via email about special promotions, announcements of new products, gift ideas, and much more.</p>
+                @if (!HasSubscribed)
+                {
+                    <EditForm Model="SubEmail" OnValidSubmit="SubscribeToNewsletter">
+                        <DataAnnotationsValidator />
+                        <div class="component-newsletter__handler">
+                            <RadzenTextBox Placeholder="Enter E-mail" @bind-Value="SubEmail.Email" aria-label="Default TextBox" />`
+                            <button type="submit" class="sign-me-up__button">SIGN ME UP</button>
+                        </div>
+                        <ValidationMessage For="() => SubEmail.Email" />
+                    </EditForm>
+                }
+                else
+                {
+                    <p>Thank you for subscribing!</p>
+                }
+            </div>
+        </div>
+    </div>    
 }
 else
 {
     <_LoadingAnimation></_LoadingAnimation>
 }
 
-
 @code {
     private IEnumerable<ProductDTO> ProductList = new List<ProductDTO>();
     private IEnumerable<CategoryDTO> ItemTypeListFour = new List<CategoryDTO>();
     private string DiscoverItemType { get; set; }
     private bool IsLoading { get; set; }
+    public SubscribeEmail SubEmail { get; set; } = new SubscribeEmail();
+    private bool HasSubscribed { get; set; } = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProducts();
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await LoadProducts();
+            await JSRuntime.InvokeAsync<object>("reinitializeFlickity");
+            StateHasChanged();        
         }
     }
 
@@ -106,5 +141,35 @@ else
     private string ImageData(byte[] image)
     {
         return _imageService.GetImage(image);
+    }
+
+    private async void SubscribeToNewsletter()
+    {
+        await SendEmail();
+        HasSubscribed = true;
+        SubEmail = new SubscribeEmail();
+        StateHasChanged();
+    }
+
+    private async Task SendEmail()
+    {
+        try
+        {
+            var response = await _apiService.HttpClient.PostAsJsonAsync("api/email/sendemail", SubEmail.Email);
+        }
+        catch(Exception e)
+        {
+
+        }
+    }
+
+    private void NavigateToWinterSection()
+    {
+        _navigationManager.NavigateTo($"/products/Winter");
+    }
+
+    private void NavigateToProduct(ProductDTO product)
+    {
+        _navigationManager.NavigateTo($"/product/{product.Name}/{product.IdGuid}");
     }
 }

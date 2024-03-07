@@ -27,9 +27,9 @@
                             <EditForm Model="ShownTypeModel" OnValidSubmit="SaveEditingHeaderText" @onfocusout="@(() => SaveEditingHeaderText())">
                                 <DataAnnotationsValidator />
                                 <div class="item-property--card-1">
-                                    <input @bind-value="ShownTypeModel.Model" class="item-container__input no-focus-outline input-for-focus" style="width: 50%;" placeholder="Rename..."></input>
+                                    <input @bind-value="ShownTypeModel.Name" class="item-container__input no-focus-outline input-for-focus" style="width: 50%;" placeholder="Rename..."></input>
                                 </div>
-                                <ValidationMessage For="() => ShownTypeModel.Model" />
+                                <ValidationMessage For="() => ShownTypeModel.Name" />
                             </EditForm>
                         }
                     }
@@ -63,7 +63,7 @@
                             <EditForm Model="ShownTypeModel" OnValidSubmit="SaveEditingExistingSizes" @onfocusout="@(() => StopEditingExistingSizes())">
                                 <DataAnnotationsValidator />
                                 <input @bind-value="SizeModel.ItemSize" class="item-container__input no-focus-outline input-for-focus-2" placeholder="Add new Size" style="padding: 3px 5px 3px 5px; margin-right: 10px; margin-top: 5px; width: 54%;"></input>
-                                <ValidationMessage For="() => ShownTypeModel.Model" />
+                                <ValidationMessage For="() => ShownTypeModel.Name" />
                             </EditForm>
                         }
                     }
@@ -94,7 +94,7 @@
                             <label>Change Image</label>
                         </div>
                         <div style="text-align:left; margin-bottom: 5px;">
-                            <InputFile class="custom-file-input" style="width: 73px;" OnChange="@((InputFileChangeEventArgs e) => LoadImageForShownModel(e, ShownTypeModel.ItemTypeId))" />
+                            <InputFile class="custom-file-input" OnChange="@((InputFileChangeEventArgs e) => LoadImageForShownModel(e, ShownTypeModel.ItemTypeId))" />
                         </div>
                     </EditForm>
                 </div>
@@ -114,9 +114,9 @@
                     <label>Category Name</label>
                 </div>
                 <div class="item-container__property">
-                    <InputText @bind-Value="ItemTypeModel.Model" class="item-container__input" placeholder="Enter new model type..."></InputText>
+                    <InputText @bind-Value="ItemTypeModel.Name" class="item-container__input" placeholder="Enter new model type..."></InputText>
                 </div>
-                <ValidationMessage For="() => ItemTypeModel.Model" />
+                <ValidationMessage For="() => ItemTypeModel.Name" />
                 <!-- Adding sizes -->
                 <div style="text-align:left;">
                     <label>Category Size</label>
@@ -188,7 +188,7 @@
             {
                 <div class="item-container__row item-container__row--content">
                     <!-- Type Name -->
-                    <div class="item-container__property">@model.Model</div>
+                    <div class="item-container__property">@model.Name</div>
                     <!-- Sizes -->
                     <div class="item-container__property">
                         @if (model.Sizes.Any())
@@ -376,7 +376,7 @@
         ShownTypeModel = await _itemTypeService.GetById(id);
         ShowingEditControls = true;
         ShowingItemTypeImage = false;
-        HeaderText = ShownTypeModel.Model;
+        HeaderText = ShownTypeModel.Name;
         IsVisible = true;
         StateHasChanged();
     }
@@ -386,7 +386,7 @@
         ShownTypeModel = await _itemTypeService.GetById(id);
         ShowingEditControls = false;
         ShowingItemTypeImage = true;
-        HeaderText = $"{ShownTypeModel.Model} Image";
+        HeaderText = $"{ShownTypeModel.Name} Image";
         IsVisible = true;
         StateHasChanged();
     }
@@ -410,7 +410,7 @@
     private async Task SaveEditingHeaderText()
     {
         await _itemTypeService.Update(ShownTypeModel);
-        HeaderText = ShownTypeModel.Model;
+        HeaderText = ShownTypeModel.Name;
         ItemTypeModelList = await _itemTypeService.GetAll();
         StateHasChanged();
         IsEditingHeaderText = false;

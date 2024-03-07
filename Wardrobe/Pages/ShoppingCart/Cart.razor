@@ -22,9 +22,12 @@
                         <div class="wizard-container">
                             <div class="main-container">
                                 <div class="cart-items__container">
-                                    @foreach (var item in ShoppingCart)
+                                    @if (ShoppingCart.Any())
                                     {
-                                        <_CartItem OnCartChanged="HandleCartChanged" Item="item"></_CartItem>
+                                        @foreach (var item in ShoppingCart)
+                                        {
+                                            <_CartItem OnCartChanged="HandleCartChanged" Item="item"></_CartItem>
+                                        }
                                     }
                                 </div>
                                 <div class="cart-order__container">
@@ -54,9 +57,9 @@
         </div>
         <button class="keep-purchasing-button">Keep Purchasing</button>
     </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </RadzenStepsItem>
+                                                </RadzenStepsItem>
     <RadzenStepsItem Text="Delivery Info">
         <div class="wizard-container">
             <div class="main-container">
@@ -261,10 +264,10 @@
             </div>
         </div>
     </RadzenStepsItem>
-                                        </Steps>
-                                    </RadzenSteps>
+                                            </Steps>
+                                        </RadzenSteps>
+                                    </div>
                                 </div>
-                            </div>
 }
 else
 {
@@ -279,7 +282,7 @@ else
     public bool IsGuest { get; set; }
 
     private List<ShoppingCartItem> ShoppingCart = new List<ShoppingCartItem>();
-    private IEnumerable<ProductDTO> Products {get;set;} = new List<ProductDTO>();
+    private IEnumerable<ProductDTO> Products { get; set; } = new List<ProductDTO>();
     private int TotalPrice { get; set; }
     private bool IsProcessing { get; set; } = false;
     private int CurrentIndex { get; set; } = 0;
@@ -384,14 +387,14 @@ else
     private async Task CreateNewOrder()
     {
         var newOrder = new OrderDTO()
-        {
-            OrderInfo = new()
             {
-                OrderTotal = 0,
-                Status = SD.Status_Pending
-            },
-            OrderDetails = new List<OrderDetailDTO>()
-        };
+                OrderInfo = new()
+                {
+                    OrderTotal = 0,
+                    Status = SD.Status_Pending
+                },
+                OrderDetails = new List<OrderDetailDTO>()
+            };
 
         await FillNewOrder(newOrder);
 
@@ -412,7 +415,7 @@ else
                     ProductName = product.Name,
                     Count = item.Count,
                     Size = item.Size,
-                    ImageData = product.ImageData, 
+                    ImageData = product.ImageData,
                 };
             newOrder.OrderDetails.Add(orderDetail);
         }
@@ -421,7 +424,7 @@ else
             newOrder.OrderInfo.UserId = User.Id;
         else
             newOrder.OrderInfo.UserId = "GuestUser";
-        
+
         newOrder.OrderInfo.OrderTotal = TotalPrice;
         newOrder.OrderInfo.OrderDate = DateTime.UtcNow;
         newOrder.OrderInfo.FirstName = User.FirstName;

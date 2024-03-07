@@ -28,6 +28,7 @@ namespace Wardrobe.Services.Implementations
         {
             var obj = _mapper.Map<ProductDTO, Product>(pDTO);
             obj.DateCreated = DateTime.Now;
+            obj.IdGuid = Guid.NewGuid();
 
             var colorIds = obj.Colors.Select(c => c.Id).ToList();
             var existingColors = _db.ColorList.Where(c => colorIds.Contains(c.Id)).ToList();
@@ -61,7 +62,7 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<(IEnumerable<ProductDTO>, int)> GetByItemType(string itemType, int pageNumber, int pageSize)
         {
-            var query = _db.ProductList.Include(x => x.Category).Include(x => x.Colors).Include(x => x.Tags).Where(x => x.Category.Model == itemType);
+            var query = _db.ProductList.Include(x => x.Category).Include(x => x.Colors).Include(x => x.Tags).Where(x => x.Category.Name == itemType);
 
             int totalCount = await query.CountAsync();
             var products = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
@@ -97,7 +98,7 @@ namespace Wardrobe.Services.Implementations
 
             foreach (var term in searchTerms)
             {
-                query = query.Where(x => x.Category.Model.Contains(term) || x.Name.Contains(term) || x.Price.ToString().Contains(term));
+                query = query.Where(x => x.Category.Name.Contains(term) || x.Name.Contains(term) || x.Price.ToString().Contains(term));
             }
 
             var results = await query.ToListAsync();
@@ -141,6 +142,8 @@ namespace Wardrobe.Services.Implementations
                 obj.CategoryId = pDTO.CategoryId;
                 obj.Price = pDTO.Price;
                 obj.ImageData = pDTO.ImageData;
+                obj.IdGuid = pDTO.IdGuid;
+                obj.DateCreated = pDTO.DateCreated;
                 _db.ProductList.Update(obj);
                 await _db.SaveChangesAsync();
                 return _mapper.Map<Product, ProductDTO>(obj);

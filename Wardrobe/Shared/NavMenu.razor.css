@@ -2,6 +2,11 @@
     --color-primary: #your_primary_color_here;
 }
 
+*{
+    margin: 0;
+    box-sizing: border-box;
+}
+
 .navigation {
     background-color: var(--color-primary);
     padding: 20px;
@@ -193,6 +198,37 @@
             display: block;
             text-align: center;
         }
+
+.counter::after {
+    content: attr(value);
+    background-color: var(--color-primary-light);
+    border-radius: 100%;
+    width: 15px;
+    height: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+    margin-top: -5px;
+    z-index: 9;
+    font-size: .6rem;
+}
+
+.counter-big::after {
+    content: attr(value);
+    background-color: var(--color-primary-light);
+    border-radius: 100%;
+    color: white;
+    width: 15px;
+    height: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 15px;
+    margin-top: -2px;
+    z-index: 9;
+    font-size: .6rem;
+}
 
 @media (max-width: 700px) {
     .navigation-desktop{

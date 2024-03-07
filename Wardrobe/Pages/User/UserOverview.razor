@@ -118,6 +118,6 @@ else
         IsUserLoaded = true;
         StateHasChanged();
 
-        await JSRuntime.InvokeVoidAsync("ShowToastr", "success", "Profile Saved");
+        await JSRuntime.InvokeVoidAsync("showBanner", ".banner.success", "Profile Saved!", "success");
     }
 }
