@@ -1,7 +1,51 @@
 ﻿@page "/purchasesummary"
+@using Microsoft.Extensions.Caching.Memory
+@using Wardrobe.Services.Implementations
+@inject AuthenticationStateProvider _authState
+@inject IMemoryCache _cache
+@inject ApiService _apiService
 
-<h3>Thanks For Purchasing</h3>
+<div class="purchasesummary-main__container">
+    <div class="purchasesummary_content__container">
+        <div class="purchasesummary__text">
+            <h4>Thank you.</h4>
+            <p>Your order was completed successfully.</p>
+        </div>
+        <div class="purchasesummary__email-receipt">
+            <img class="purchasesummary__image" src="../../Images/emailSent.png" />
+            <p>An email receipt including the details about your order has been sent to the email address. Please keep it for your records.</p>
+        </div>
+    </div>
+</div>
 
 @code {
+    private string Email { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        await GetEmail();
+
+        if (!string.IsNullOrEmpty(Email))
+        {
+            var response = await _apiService.HttpClient.PostAsJsonAsync("api/email/sendemail", Email);
+        }
+    }
+
+    private async Task GetEmail()
+    {
+        var authorizationState = await _authState.GetAuthenticationStateAsync();
+        var user = authorizationState.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            Email = user.Identity.Name;
+        }
+        else
+        {
+            _cache.TryGetValue("guest", out string guestEmail);
+            if (!string.IsNullOrEmpty(guestEmail))
+            {
+                Email = guestEmail;
+            }
+        }
+    }
 }

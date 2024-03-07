@@ -9,7 +9,11 @@ namespace Wardrobe.Services.Implementations
 {
     public class ShoppingCartService : IShoppingCartService
     {
+        public event Action OnCartChange;
+
         private readonly ILocalStorageService _localStorage;
+
+        private void NotifyOnCartChanged() => OnCartChange?.Invoke();
 
         public ShoppingCartService(ILocalStorageService localStorage)
         {
@@ -36,6 +40,7 @@ namespace Wardrobe.Services.Implementations
             }
 
             await _localStorage.SetItemAsync(SD.ShoppingCart, cart);
+            NotifyOnCartChanged();
         }
 
         public async Task DeleteCart(int productId)
@@ -45,6 +50,7 @@ namespace Wardrobe.Services.Implementations
             if (cartToRemove != null)
                 cart.Remove(cartToRemove);
             await _localStorage.SetItemAsync(SD.ShoppingCart, cart);
+            NotifyOnCartChanged();
         }
 
         public async Task IncrementCart(ShoppingCartItem cartToAdd)
@@ -80,6 +86,13 @@ namespace Wardrobe.Services.Implementations
             }
 
             await _localStorage.SetItemAsync(SD.ShoppingCart, cart);
+            NotifyOnCartChanged();
+        }
+
+        public async Task<int> GetNumberOfProductsInCart()
+        {
+            var productsInCart = await _localStorage.GetItemAsync<List<ShoppingCartItem>>(SD.ShoppingCart);
+            return productsInCart.Count();
         }
     }
 }

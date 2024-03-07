@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,13 @@ namespace Wardrobe.Services.Implementations
             var createdObj = _db.Add(obj);
             await _db.SaveChangesAsync();
 
+            var collection = await _db.CollectionList.Include(x => x.Tags).FirstOrDefaultAsync(y => y.CollectionId == 4);
+            if (collection != null)
+            {
+                collection.Tags.Add(createdObj.Entity);
+                await _db.SaveChangesAsync();
+            }
+
             return _mapper.Map<Tag, TagDTO>(createdObj.Entity);
         }
 
@@ -37,6 +45,13 @@ namespace Wardrobe.Services.Implementations
             var obj = _db.TagList.FirstOrDefault(x => x.TagId == tag.TagId);
             if (obj != null)
             {
+                var collection = await _db.CollectionList.Include(x => x.Tags).FirstOrDefaultAsync(y => y.CollectionId == 4);
+                if (collection != null)
+                {
+                    if (collection.Tags.Contains(obj))
+                        collection.Tags.Remove(obj);
+                }
+
                 _db.TagList.Remove(obj);
                 await _db.SaveChangesAsync();
                 return true;

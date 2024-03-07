@@ -76,7 +76,7 @@
         background-color: var(--color-primary-light, #8d00fb);
     }
 
-@media (max-width: 540px) {
+@media (max-width: 700px) {
     .collections_content__container {
         width: 100%;
     }

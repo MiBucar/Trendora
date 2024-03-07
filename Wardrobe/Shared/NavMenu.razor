@@ -1,14 +1,16 @@
 ﻿@inject IJSRuntime JSRuntime
 @inject NavigationManager _navigationManager
 @inject ILocalStorageService _localStorage
+@inject IShoppingCartService _shoppingCartService
+@implements IDisposable
 
 <div class="navigation navigation-desktop">
     <div class="navigation-main__container">
         <div class="navigation-container" style="width: 5rem;">
-            <div class="image image-linkedin"></div>
+            <div @onclick="NavigateToLinkedIn" class="image image-linkedin" />
         </div>
         <div class="navigation-container" style="width: 15rem;">
-            <a href="/" class="navigation-container__link">Products</a>
+            <a href="/products/@SD.Section_AllProducts" class="navigation-container__link">Products</a>
             <a href="/products/@SD.Section_Kids" class="navigation-container__link">Kids</a>
         </div>
 
@@ -20,8 +22,8 @@
             <a href="/products/@SD.Section_Women" class="navigation-container__link">Women</a>
         </div>        
         <div class="navigation-container" style="width: 5rem;">
-            <div class="tooltip-container image image-cart" @onclick="NavigateToShoppingCart"></div>
-            <div class="image image-user" @onclick="NavigateToUser"></div>
+            <div class="tooltip-container image image-cart @(ItemsInCart > 0 ? "counter" : "")" value="@ItemsInCart" @onclick="NavigateToShoppingCart" />
+            <div class="image image-user" @onclick="NavigateToUser" />
         </div>
     </div>
     <AuthorizeView Roles="@SD.Role_Admin">
@@ -45,9 +47,9 @@
             <div class="bar-3"></div>
             <ul class="mobile-menu">
                 <li><a href="/">Products</a></li>
-                <li><a href="/about">About</a></li>
-                <li><a href="/contacts">Contacts</a></li>
-                <li><a href="/map">Map</a></li>
+                <li><a href="/products/@SD.Section_Kids">Kids</a></li>
+                <li><a href="/products/@SD.Section_Men">Men</a></li>
+                <li><a href="/products/@SD.Section_Women">Women</a></li>
                 <AuthorizeView Roles="@SD.Role_Admin">
                     <li><a href="/wardrobe">Wardrobe</a></li>
                     <li><a href="/create/categories">Categories</a></li>
@@ -57,13 +59,41 @@
             </ul>
         </div>
         <div class="navigation-container">
-            <div class="tooltip-container image image-cart" @onclick="NavigateToShoppingCart"></div>
+            <div class="tooltip-container image image-cart @(ItemsInCart > 0 ? "counter-big" : "")" value="@ItemsInCart" @onclick="NavigateToShoppingCart"></div>
             <div class="image image-user" @onclick="NavigateToUser"></div>
         </div>
     </div>       
 </div>
 
 @code {
+    private int ItemsInCart { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {        
+        _shoppingCartService.OnCartChange += CartChangedEventHandler;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            ItemsInCart = await _shoppingCartService.GetNumberOfProductsInCart();
+            StateHasChanged();
+        }
+
+    }
+
+    private async void CartChangedEventHandler()
+    {
+        ItemsInCart = await _shoppingCartService.GetNumberOfProductsInCart();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _shoppingCartService.OnCartChange -= CartChangedEventHandler;
+    }
+
     private void NavigateToShoppingCart()
     {        
         _navigationManager.NavigateTo("/ShoppingCart");
@@ -77,5 +107,17 @@
     private void NavigateToWomenPage()
     {
         _navigationManager.NavigateTo("/loginDisplay");
+    }
+
+    private async void NavigateToLinkedIn()
+    {
+        try
+        {
+            await JSRuntime.InvokeAsync<object>("open", "https://www.linkedin.com/in/mislav-bu%C4%8Dar-19740323b/", "_blank");
+        }
+        catch (Exception e)
+        {
+            
+        }
     }
 }

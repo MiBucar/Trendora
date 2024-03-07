@@ -31,8 +31,9 @@
                             <RadzenText TagName="TagName.H3">Genders</RadzenText>
                             <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
                         </div>
-                        <RadzenDropDown @bind-Value=@SelectedGenders Data=@GenderList Chips=true Multiple=true TextProperty="Name"
+                        <RadzenDropDown @bind-Value=@Collection.SelectedGenders Data=@GenderList Chips=true Multiple=true TextProperty="Name"
                                     AllowClear=false Placeholder="Select Genders" />
+                        <ValidationMessage For="() => Collection.SelectedGenders" />
                     </div>
 
                     <!-- Tags -->
@@ -83,7 +84,7 @@
 
                             <RadzenDataGridColumn TItem="CollectionDTO" Title="Actions" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
                                 <Template Context="data">
-                                @if (data.Name != SD.Section_Kids && data.Name != SD.Section_Men && data.Name != SD.Section_Women)
+                                @if (data.Name != SD.Section_Kids && data.Name != SD.Section_Men && data.Name != SD.Section_Women && data.Name != SD.Section_AllProducts)
                                 {
                                     <button @onclick="(() => DeleteCollection(data))" class="btn-form btn-form--cancel">Delete</button>
                                 }

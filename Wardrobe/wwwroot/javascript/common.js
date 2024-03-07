@@ -1,19 +1,63 @@
-﻿window.ShowToastr = (type, message) => {
-    if (type === "success") {
-        toastr.success(message, "Operation Successful", { timeOut: 5000 });
+﻿window.showBanner = (selector, message, type) => {
+    const bannersContainer = document.querySelector(".banners-container");
+
+    const banner = document.createElement("div");
+    banner.classList.add("banner", type);
+    banner.innerHTML = `
+        <div class="banner-icon"><i data-eva="checkmark-circle-outline" data-eva-fill="#ffffff" data-eva-height="48" data-eva-width="48"></i></div>
+        <div class="banner-message">${message}</div>
+        <div class="banner-close" onclick="hideBanner(this.parentNode)"><i data-eva="close-outline" data-eva-fill="#ffffff"></i></div>
+    `;
+
+    bannersContainer.appendChild(banner);
+
+    requestAnimationFrame(() => {
+        banner.classList.add("visible");
+
+        setTimeout(() => {
+            banner.classList.add("closing");
+            setTimeout(() => {
+                banner.classList.remove("visible", "closing");
+                bannersContainer.removeChild(banner);
+            }, 600); // Animation duration (adjust as needed)
+        }, 3000); // Show duration (adjust as needed)
+    });
+};
+
+let flickityInstance;
+function initializeFlickity() {
+    flickityInstance = new Flickity('.main-carousel', {
+        wrapAround: true
+    });
+}
+function reinitializeFlickity() {
+    console.log("reinitilizing flickity");
+    if (flickityInstance) {
+        flickityInstance.destroy();
     }
-    if (type === "error") {
-        toastr.error(message, "Operation Failed", { timeOut: 5000 });
-    }
+
+    initializeFlickity();
+}document.addEventListener('DOMContentLoaded', function () {
+    initializeFlickity();
+});
+window.reinitializeFlickity = reinitializeFlickity;
+
+function initFlickity() {
+    var elem = document.querySelector('.main-carousel');
+    var flkty = new Flickity(elem, {
+        wrapAround: true
+    });
 }
 
 function toggleMobileMenu(menu) {
+    console.log("Toggling mobile menu");
     var isOpen = menu.classList.contains('hamburger-open');
     menu.classList.toggle('hamburger-open');
     document.body.style.overflowY = isOpen ? 'auto' : 'hidden';
 }
 
 function focusInputText(element) {
+    console.log("Focusing input text");
     setTimeout(function () {
         var inputElement = document.querySelector(element);
         if (inputElement) {

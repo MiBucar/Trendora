@@ -28,9 +28,13 @@
 }
 
 @media (max-width: 768px) {
+    .item-container__card{
+        width: 100%;
+    }
+
     .item-container__row {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         gap: 10px;
         padding: 10px;
         box-sizing: border-box;

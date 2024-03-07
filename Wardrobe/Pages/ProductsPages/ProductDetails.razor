@@ -44,7 +44,7 @@
             </div>
 
             <div class="button-container">
-                <button class="buy-now-button">BUY NOW</button>
+                <button class="buy-now-button" @onclick="BuyNow">BUY NOW</button>
             </div>
 
             <p class="description">@Product.Description</p>
@@ -100,11 +100,22 @@ else
         StateHasChanged();
     }
 
+    private async void BuyNow()
+    {
+        await HandleCartOperation(null);
+        _navigationManager.NavigateTo("/ShoppingCart");
+    }
+
     private async void AddToCard()
+    {
+        await HandleCartOperation("Item added to cart");
+    }
+
+    private async Task HandleCartOperation(string successMessage)
     {
         if (ItemType.Sizes.Any() && SelectedSize == null)
         {
-            await JSRuntime.InvokeVoidAsync("ShowToastr", "error", "Select a size");
+            await JSRuntime.InvokeVoidAsync("showBanner", ".banner.error", "Please select the size!", "error");
             return;
         }
 
@@ -114,20 +125,21 @@ else
                 SelectedSize = "None";
 
             ShoppingCartItem shoppingCart = new ShoppingCartItem()
-            {
-                ProductId = Product.Id,
-                ProductPrice = Product.Price,
-                Count = ProductAmount.Count,
-                Size = SelectedSize
-            };
+                {
+                    ProductId = Product.Id,
+                    ProductPrice = Product.Price,
+                    Count = ProductAmount.Count,
+                    Size = SelectedSize
+                };
 
             await _shoppingCartService.IncrementCart(shoppingCart);
-            await JSRuntime.InvokeVoidAsync("ShowToastr", "success", "Item added to cart");
-            _navigationManager.NavigateTo("/ShoppingCart");
-        } 
+
+            if (!string.IsNullOrEmpty(successMessage))
+                await JSRuntime.InvokeVoidAsync("showBanner", ".banner.success", "Item added to the cart!", "success");
+        }
         catch (Exception e)
         {
-            await JSRuntime.InvokeVoidAsync("ShowToastr", "error", "Error adding idem to cart");
+            await JSRuntime.InvokeVoidAsync("showBanner", ".banner.error", "Please select the size!", "error");
         }
     }
 

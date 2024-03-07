@@ -7,6 +7,7 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Identity;
 using Wardrobe.Models.Models;
 using Microsoft.Extensions.Options;
+using FluentAssertions.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,8 @@ builder.Services.AddDbContext<ApplicationDatabaseContext>(options =>
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDatabaseContext>()
     .AddDefaultTokenProviders().AddDefaultUI();
 
+builder.Services.AddHttpClient();
+builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
@@ -45,6 +48,7 @@ builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<ICollectionService, CollectionService>();
 builder.Services.AddScoped<IGenderService, GenderService>();
+builder.Services.AddTransient<ApiService>();
 builder.Services.AddRadzenComponents();
 builder.Services.AddBlazoredLocalStorage();
 
@@ -67,6 +71,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+
 app.UseSession();
 app.UseEndpoints(configure: endpoints =>
 {
@@ -74,6 +79,7 @@ app.UseEndpoints(configure: endpoints =>
     _ = endpoints.MapRazorPages();
 });
 
+app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 

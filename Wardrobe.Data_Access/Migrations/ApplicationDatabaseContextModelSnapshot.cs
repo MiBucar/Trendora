@@ -35,6 +35,38 @@ namespace Wardrobe.Data_Access.Migrations
                     b.HasIndex("GendersId");
 
                     b.ToTable("CollectionGender");
+
+                    b.HasData(
+                        new
+                        {
+                            CollectionsCollectionId = 1,
+                            GendersId = 1
+                        },
+                        new
+                        {
+                            CollectionsCollectionId = 2,
+                            GendersId = 2
+                        },
+                        new
+                        {
+                            CollectionsCollectionId = 3,
+                            GendersId = 3
+                        },
+                        new
+                        {
+                            CollectionsCollectionId = 4,
+                            GendersId = 1
+                        },
+                        new
+                        {
+                            CollectionsCollectionId = 4,
+                            GendersId = 2
+                        },
+                        new
+                        {
+                            CollectionsCollectionId = 4,
+                            GendersId = 3
+                        });
                 });
 
             modelBuilder.Entity("CollectionTag", b =>
@@ -50,6 +82,13 @@ namespace Wardrobe.Data_Access.Migrations
                     b.HasIndex("TagsTagId");
 
                     b.ToTable("CollectionTag");
+
+                    b.HasData(
+                        new
+                        {
+                            CollectionsCollectionId = 4,
+                            TagsTagId = 1
+                        });
                 });
 
             modelBuilder.Entity("ColorProduct", b =>
@@ -319,13 +358,13 @@ namespace Wardrobe.Data_Access.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("Model")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ItemTypeId");
 
-                    b.ToTable("ItemTypeList");
+                    b.ToTable("CategoryList");
                 });
 
             modelBuilder.Entity("Wardrobe.Models.Models.Collection", b =>
@@ -359,6 +398,11 @@ namespace Wardrobe.Data_Access.Migrations
                         {
                             CollectionId = 3,
                             Name = "Kids"
+                        },
+                        new
+                        {
+                            CollectionId = 4,
+                            Name = "AllProducts"
                         });
                 });
 
@@ -591,6 +635,9 @@ namespace Wardrobe.Data_Access.Migrations
                     b.Property<int>("GenderId")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("IdGuid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<byte[]>("ImageData")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
@@ -651,6 +698,13 @@ namespace Wardrobe.Data_Access.Migrations
                     b.HasKey("TagId");
 
                     b.ToTable("TagList");
+
+                    b.HasData(
+                        new
+                        {
+                            TagId = 1,
+                            Title = "None"
+                        });
                 });
 
             modelBuilder.Entity("CollectionGender", b =>

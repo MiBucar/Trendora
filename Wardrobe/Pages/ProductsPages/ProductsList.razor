@@ -7,50 +7,60 @@
 
 <h2 class="component-header">@CollectionName</h2>
 
-@if (!IsLoading)
+@if (CollectionExists)
 {
-    <_ProductFilter ProductList="@StartingList" Collection="@Collection"  OnFilterApplied="HandleFilterApplied"></_ProductFilter>
-
-    @if (ProductList.Any())
+    @if (!IsLoading)
     {
-        @if (FilteredColors.Any()){
-            <div class="tag-container">
-                @if (FilteredColors.Any())
-                {
-                    foreach (var color in FilteredColors)
-                    {
-                        <div class="tag-container__item">
-                            <p>@color</p>
-                        </div>
-                    }
-                }
-            </div>            
-        }
-        <div class="product-grid">
-            @foreach (var product in ProductList)
-            {
-                <a href=@($"/product/{product.Name}/{product.IdGuid}") style="text-decoration:none;">
-                    <_ProductItem Product="product"></_ProductItem>
-                </a>
-            }
-        </div>
-        @if (TotalPages > 1)
+        <_ProductFilter ProductList="@StartingList" Collection="@Collection" OnFilterApplied="HandleFilterApplied"></_ProductFilter>
+
+        @if (ProductList.Any())
         {
-            <div class="product-pages">
-                <button @onclick="LoadPreviousPage" disabled="@IsFirstPage" class="product-pages__button">Back</button>
-                <span>Page @CurrentPage of @TotalPages</span>
-                <button @onclick="LoadNextPage" disabled="@IsLastPage" class="product-pages__button">Next</button>
+            @if (FilteredColors.Any())
+            {
+                <div class="tag-container">
+                    @if (FilteredColors.Any())
+                    {
+                        foreach (var color in FilteredColors)
+                        {
+                            <div class="tag-container__item">
+                                <p>@color</p>
+                            </div>
+                        }
+                    }
+                </div>
+            }
+            <div class="product-grid">
+                @foreach (var product in ProductList)
+                {
+                    <a href=@($"/product/{product.Name}/{product.IdGuid}") style="text-decoration:none;">
+                        <_ProductItem Product="product"></_ProductItem>
+                    </a>
+                }
             </div>
-        }        
+            @if (TotalPages > 1)
+            {
+                <div class="product-pages">
+                    <button @onclick="LoadPreviousPage" disabled="@IsFirstPage" class="product-pages__button">Back</button>
+                    <span>Page @CurrentPage of @TotalPages</span>
+                    <button @onclick="LoadNextPage" disabled="@IsLastPage" class="product-pages__button">Next</button>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="component-header--no-items">Collection is Empty</p>
+        }
     }
     else
     {
-        <p class="component-header--no-items">Collection is Empty</p>
+        <_LoadingAnimation></_LoadingAnimation>
     }
 }
 else
 {
-    <_LoadingAnimation></_LoadingAnimation>
+    <div class="collection-none">
+        <p>There are currently no products in this collection</p>
+    </div>
 }
 
 
@@ -75,12 +85,18 @@ else
 
     private bool IsFirstPage => CurrentPage == 1;
     private bool IsLastPage => CurrentPage >= TotalPages;
-
+    private bool CollectionExists { get; set; }
     private bool IsLoading { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CheckIfCollectionExists();
+    }
 
     protected override async Task OnParametersSetAsync()
     {
-        await LoadProducts();
+        if (CollectionExists)
+            await LoadProducts();
     }
 
     private async Task LoadProducts()
@@ -99,6 +115,14 @@ else
 
         IsLoading = false;
         StateHasChanged();
+    }
+
+    private async Task CheckIfCollectionExists()
+    {
+        var collections = await _collectionService.GetAll();
+
+        if (collections.Where(x => x.Name == CollectionName).Any())
+            CollectionExists = true;
     }
 
     private async Task LoadNextPage()

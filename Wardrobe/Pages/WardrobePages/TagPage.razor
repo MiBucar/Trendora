@@ -35,7 +35,14 @@
                         </RadzenDataGridColumn>
                         <RadzenDataGridColumn TItem="TagDTO" Title="Actions" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
                             <Template Context="data">
-                                    <button @onclick="(() => DeleteTag(data))" class="btn-form btn-form--cancel">Delete</button>
+                                    @if (data.Title != SD.Tag_None)
+                                    {
+                                        <button @onclick="(() => DeleteTag(data))" class="btn-form btn-form--cancel">Delete</button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn-form btn-form--static">Delete</button>
+                                    }
                             </Template>
                         </RadzenDataGridColumn>
                     </Columns>

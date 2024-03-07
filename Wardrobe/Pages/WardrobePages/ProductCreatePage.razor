@@ -49,16 +49,17 @@
                 <!-- Category -->
                 <div class="input-container">
                     <RadzenLabel Text="Select Category" Component="DropDownItemType" />
-                    <RadzenDropDown Placeholder="Select" @bind-Value=@Product.CategoryId Data=@ItemTypeModels ValueProperty="ItemTypeId"
-                                    TextProperty="Model" Name="DropDownItemType" Change="@(() => OnCategoryChanged(Product.CategoryId))" />
+                    <RadzenDropDown Placeholder="Select" @bind-Value=@Product.CategoryId Data=@Categories ValueProperty="ItemTypeId"
+                                    TextProperty="Name" Name="DropDownItemType" Change="@(() => OnCategoryChanged(Product.CategoryId))" />
                     <ValidationMessage For="() => Product.CategoryId" />
                 </div>
                 <!-- Tags -->                
                 <div class="input-container">
                     <RadzenLabel Text="Select Tags" Component="DropDownSection" />
-                    <RadzenDropDown @bind-Value=@SelectedTags Data=@TagModels Chips=true TextProperty="Title"
+                    <RadzenDropDown @bind-Value=@Product.SelectedTags Data=@TagModels Chips=true TextProperty="Title"
                                     Multiple=true AllowClear=false Placeholder="Select" />
-                </div>                
+                </div>   
+                <ValidationMessage For="() => Product.SelectedTags" />
                 <!-- Price -->
                 <div class="input-container">
                     <p class="input-container--text">Item Price €</p>
@@ -78,8 +79,8 @@
                                     }
                                 }                                                       
                         </div>
-                    <ValidationMessage For="() => Product.Colors" />
                 }
+                <ValidationMessage For="() => Product.SelectedColors" />
                 </div>
                 <!-- Selected colors -->
                 <div class="input-container">
@@ -94,7 +95,7 @@
                         }
                         else
                         {
-                            @foreach (var color in SelectedColors)
+                            @foreach (var color in Product.SelectedColors)
                             {
                                 <div @onclick="() => RemoveColorFromProduct(color)" class="color-container" style="background-color: @color.ColorCode;"></div>
                             }
@@ -155,17 +156,15 @@
 
     private ProductDTO Product { get; set; } = new ProductDTO() { Colors = new List<ColorDTO>()};
     private CategoryDTO ItemType { get; set; } = new CategoryDTO();
-    private IEnumerable<CategoryDTO> ItemTypeModels { get; set; } = new List<CategoryDTO>();
+    private IEnumerable<CategoryDTO> Categories { get; set; } = new List<CategoryDTO>();
     private IEnumerable<ColorDTO> ColorModels { get; set; } = new List<ColorDTO>();
     private IEnumerable<TagDTO> TagModels { get; set; } = new List<TagDTO>();
-    private List<ColorDTO> SelectedColors { get; set; } = new List<ColorDTO>();
-    private List<TagDTO> SelectedTags { get; set; } = new List<TagDTO>();
     private IEnumerable<GenderDTO> AvailableGenders { get; set; } = new List<GenderDTO>();
 
     private async Task Submit()
     {
-        Product.Colors = SelectedColors;
-        Product.Tags = SelectedTags;
+        Product.Colors = Product.SelectedColors;
+        Product.Tags = Product.SelectedTags;
         if (Id == 0)
         {
             await _productService.Create(Product);
@@ -186,7 +185,9 @@
     {
         IsLoading = true;
         StateHasChanged();
-        ItemTypeModels = await _itemTypeService.GetAll();
+        Product.SelectedColors = new List<ColorDTO>();
+        Product.SelectedTags = new List<TagDTO>();
+        Categories = await _itemTypeService.GetAll();
         AvailableGenders = await _genderService.GetAll();
         TagModels = await _tagService.GetAllTags();
         ColorModels = await _colorService.GetAll();
@@ -194,7 +195,8 @@
         {
             Product = await _productService.GetById(Id);
             ItemType = await _itemTypeService.GetById(Product.CategoryId);
-            SelectedColors = Product.Colors;
+            Product.SelectedColors = Product.Colors;
+            Product.SelectedTags = Product.Tags;
             Title = "Update";
         }
         IsLoading = false;
@@ -210,13 +212,13 @@
 
     private void AddColorToProduct(ColorDTO color)
     {
-        SelectedColors.Add(color); 
+        Product.SelectedColors.Add(color); 
         StateHasChanged();
     }
 
     private void RemoveColorFromProduct(ColorDTO color)
     {
-        SelectedColors.Remove(color);
+        Product.SelectedColors.Remove(color);
         StateHasChanged();
     }
 

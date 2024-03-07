@@ -6,7 +6,7 @@ namespace Wardrobe.Models.Models
     {
         [Key]
         public int ItemTypeId { get; set; }
-        public string Model { get; set; }
+        public string Name { get; set; }
         [Required(ErrorMessage = "Please choose an image")]
         public byte[] Image { get; set; }
         public DateTime DateCreated { get; set; }
