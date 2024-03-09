@@ -91,8 +91,12 @@ namespace Wardrobe.Services.Implementations
 
         public async Task<int> GetNumberOfProductsInCart()
         {
-            var productsInCart = await _localStorage.GetItemAsync<List<ShoppingCartItem>>(SD.ShoppingCart);
-            return productsInCart.Count();
+            if (await _localStorage.LengthAsync() > 0)
+            {
+                var productsInCart = await _localStorage.GetItemAsync<List<ShoppingCartItem>>(SD.ShoppingCart);
+                return productsInCart.Count();
+            }
+            return 0;
         }
     }
 }

@@ -12,7 +12,8 @@ i {
     position: fixed;
     top: 80px;
     right: 0;
-    width: 40%;
+    width: 20%;
+    border-radius: 3px;
 }
 
 .banner {
@@ -45,11 +46,11 @@ i {
         }
 
     .banner.success {
-        background: #10c15c;
+        background: var(--color-primary-light);
     }
 
         .banner.success::after {
-            background: #10c15c;
+            background: var(--color-primary-light);
         }
 
     .banner.error {
