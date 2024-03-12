@@ -1,9 +1,10 @@
 ﻿@page "/create/collections"
-
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> _userManager
+@inject AuthenticationStateProvider _authState
 @inject ICollectionService _collectionService
 @inject ITagService _tagService
 @inject IGenderService _genderService
-@attribute [Authorize(Roles = SD.Role_Admin)]
 
 @if (!IsLoading)
 {
@@ -32,7 +33,7 @@
                             <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
                         </div>
                         <RadzenDropDown @bind-Value=@Collection.SelectedGenders Data=@GenderList Chips=true Multiple=true TextProperty="Name"
-                                    AllowClear=false Placeholder="Select Genders" />
+                                        AllowClear=false Placeholder="Select Genders" />
                         <ValidationMessage For="() => Collection.SelectedGenders" />
                     </div>
 
@@ -42,10 +43,17 @@
                             <RadzenText TagName="TagName.H3">Tags</RadzenText>
                         </div>
                         <RadzenDropDown @bind-Value=@SelectedTags Data=@TagList Chips=true TextProperty="Title" Multiple=true AllowClear=false
-                                            Placeholder="Select Tags" />
+                                        Placeholder="Select Tags" />
                     </div>
 
-                    <button class="submit-button" typeof="submit">Create Collection</button>
+                    @if (IsAdmin)
+                    {
+                        <button class="submit-button" typeof="submit">Create Collection</button>
+                    }
+                    else
+                    {
+                        <button class="submit-button" typeof="button">Create Collection</button>
+                    }
                 </EditForm>
             </div>
             <div class="collections-list__container">
@@ -61,12 +69,12 @@
                         <RadzenDataGridColumn TItem="CollectionDTO" Title="Title" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
                             <Template Context="collection">
                                 <RadzenText TagName="TagName.H3">@collection.Name</RadzenText>
-                            </Template>
-                        </RadzenDataGridColumn>
+                                </Template>
+                            </RadzenDataGridColumn>
 
                             <RadzenDataGridColumn TItem="CollectionDTO" Title="Genders" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
-                            <Template Context="collection">
-                                @foreach (var gender in collection.Genders)
+                                <Template Context="collection">
+                                    @foreach (var gender in collection.Genders)
                                 {
                                     <RadzenText TagName="TagName.H3">@gender.Name</RadzenText>
                                 }
@@ -82,20 +90,28 @@
                             </Template>
                         </RadzenDataGridColumn>
 
-                            <RadzenDataGridColumn TItem="CollectionDTO" Title="Actions" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
-                                <Template Context="data">
+                        <RadzenDataGridColumn TItem="CollectionDTO" Title="Actions" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+                            <Template Context="data">
                                 @if (data.Name != SD.Section_Kids && data.Name != SD.Section_Men && data.Name != SD.Section_Women && data.Name != SD.Section_AllProducts)
                                 {
-                                    <button @onclick="(() => DeleteCollection(data))" class="btn-form btn-form--cancel">Delete</button>
+                                    @if (IsAdmin)
+                                    {
+                                        <button @onclick="(() => DeleteCollection(data))" class="btn-form btn-form--cancel">Delete</button>
+
+                                    }
+                                    else
+                                    {
+                                        <button class="btn-form btn-form--cancel">Delete</button>
+                                    }
                                 }
                                 else
                                 {
                                     <button class="btn-form btn-form--static">Delete</button>
                                 }
                             </Template>
-                            </RadzenDataGridColumn>
-                        </Columns>
-                    </RadzenDataGrid>
+                        </RadzenDataGridColumn>
+                    </Columns>
+                </RadzenDataGrid>
             </div>
         </div>
     </div>
@@ -116,6 +132,7 @@ else
     private List<GenderDTO> SelectedGenders { get; set; } = new List<GenderDTO>();
 
     private bool IsLoading { get; set; }
+    private bool IsAdmin { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -125,9 +142,20 @@ else
         CollectionList = await _collectionService.GetAll();
         TagList = await _tagService.GetAllTags();
         GenderList = await _genderService.GetAll();
-
+        await CheckForAdmin();
         IsLoading = false;
         StateHasChanged();
+    }
+
+    private async Task CheckForAdmin()
+    {
+        var authorizationState = await _authState.GetAuthenticationStateAsync();
+        var user = authorizationState?.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            var authorizedUser = await _userManager.FindByEmailAsync(user?.Identity?.Name);
+            IsAdmin = await _userManager.IsInRoleAsync(authorizedUser, SD.Role_Admin);
+        }
     }
 
     private async void CreateNewCollection()

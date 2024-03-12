@@ -1,4 +1,7 @@
-﻿@inject IJSRuntime JSRuntime
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> _userManager
+@inject AuthenticationStateProvider _authState
+@inject IJSRuntime JSRuntime
 @inject NavigationManager _navigationManager
 @inject ILocalStorageService _localStorage
 @inject IShoppingCartService _shoppingCartService
@@ -26,14 +29,12 @@
             <div class="image image-user" @onclick="NavigateToUser" />
         </div>
     </div>
-    <AuthorizeView Roles="@SD.Role_Admin">
-        <div class="navigation-container admin-container" style="width: 22rem;">
-            <a href="/wardrobe" class="navigation-container-admin">Wardrobe</a>
-            <a href="/create/tags" class="navigation-container-admin">Tags</a>
-            <a href="/create/categories" class="navigation-container-admin">Categories</a>
-            <a href="/create/collections" class="navigation-container-admin">Collections</a>
-        </div>
-    </AuthorizeView>
+    <div class="navigation-container admin-container" style="width: 22rem;">
+        <a href="/wardrobe" class="navigation-container-admin">Wardrobe</a>
+        <a href="/create/tags" class="navigation-container-admin">Tags</a>
+        <a href="/create/categories" class="navigation-container-admin">Categories</a>
+        <a href="/create/collections" class="navigation-container-admin">Collections</a>
+    </div>
 </div>
 
 <div class="navigation navigation-phones">
@@ -50,12 +51,10 @@
                 <li><a href="/products/@SD.Section_Kids">Kids</a></li>
                 <li><a href="/products/@SD.Section_Men">Men</a></li>
                 <li><a href="/products/@SD.Section_Women">Women</a></li>
-                <AuthorizeView Roles="@SD.Role_Admin">
-                    <li><a href="/wardrobe">Wardrobe</a></li>
-                    <li><a href="/create/categories">Categories</a></li>
-                    <li><a href="/create/tags">Tags</a></li>
-                    <li><a href="/create/collections">Collections</a></li>
-                </AuthorizeView>
+                <li><a href="/wardrobe">Wardrobe</a></li>
+                <li><a href="/create/categories">Categories</a></li>
+                <li><a href="/create/tags">Tags</a></li>
+                <li><a href="/create/collections">Collections</a></li>
             </ul>
         </div>
         <div class="navigation-container">
@@ -65,12 +64,29 @@
     </div>       
 </div>
 
+@if (!IsAdmin)
+{
+    <p class="no-admin-paragraph">*Admin role required for all functionalities of <b>Wardrobe, Tags, Categories and Collections</b></p>
+}
+
 @code {
     private int ItemsInCart { get; set; }
+    private bool IsAdmin { get; set; }
 
     protected override async Task OnInitializedAsync()
     {        
         _shoppingCartService.OnCartChange += CartChangedEventHandler;
+    }
+
+    private async Task CheckForAdmin()
+    {
+        var authorizationState = await _authState.GetAuthenticationStateAsync();
+        var user = authorizationState?.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            var authorizedUser = await _userManager.FindByEmailAsync(user?.Identity?.Name);
+            IsAdmin = await _userManager.IsInRoleAsync(authorizedUser, SD.Role_Admin);
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -123,8 +123,8 @@ else
     {
         if (firstRender)
         {
-            await JSRuntime.InvokeAsync<object>("reinitializeFlickity");
-            StateHasChanged();        
+            await JSRuntime.InvokeVoidAsync("initializeFlickityOnElement", ".main-carousel");
+            StateHasChanged();
         }
     }
 

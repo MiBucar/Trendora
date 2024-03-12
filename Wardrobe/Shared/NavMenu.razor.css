@@ -230,6 +230,13 @@
     font-size: .6rem;
 }
 
+.no-admin-paragraph{
+    color: red;
+    text-align: center;
+    margin-top: 5px;
+    font-size: 1.1rem;
+}
+
 @media (max-width: 700px) {
     .navigation-desktop{
         display: none;

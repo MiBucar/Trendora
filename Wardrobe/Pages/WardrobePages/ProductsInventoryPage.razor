@@ -1,10 +1,11 @@
 ﻿@page "/wardrobe"
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> _userManager
+@inject AuthenticationStateProvider _authState
 @inject IProductService _productService
 @inject ICategoryService _itemTypeService
 @inject IJSRuntime JSRuntime
 @inject IImageService _imageService
-@attribute [Authorize(Roles = SD.Role_Admin)]
-
 @{
     var showClass = IsVisible ? "d-block" : "d-none";
 }
@@ -34,8 +35,12 @@
     </div>
 </div>
 
-<div class="header-container">
-    <h2>Products Inventory</h2>    
+<div class="wardrobe-main__container">
+    <div class="wardrobe_content__container">
+        <div class="wardrobe-title__container">
+            <h3>Products Inventory</h3>
+        </div>
+    </div>
 </div>
 
 @if (!IsLoading)
@@ -76,7 +81,8 @@
                 <div class="item-container__property">@item.Category.Name</div>
                 <div class="item-container__property">@item.Price€</div>
                 <div class="item-container__property">
-                    @if (item.ImageData.Any()) {
+                    @if (item.ImageData.Any())
+                    {
                         <button class="item-container__property-button-image-picture" @onclick="() => ShowProductImage(item.Id)"></button>
                     }
                     else
@@ -99,7 +105,15 @@
                     <NavLink href=@($"/wardrobe/create/{item.Id}")>
                         <button class="btn-form btn-form--submit" style="margin-right: 2px;">Edit</button>
                     </NavLink>
-                    <button class="btn-form btn-form--cancel" style="margin-left: 2px;" @onclick="() => DeleteItem(item.Id)">Delete</button>
+                    @if (IsAdmin)
+                    {
+                        <button class="btn-form btn-form--cancel" style="margin-left: 2px;" @onclick="() => DeleteItem(item.Id)">Delete</button>
+
+                    }
+                    else
+                    {
+                        <button class="btn-form btn-form--cancel" style="margin-left: 2px;">Delete</button>
+                    }
                 </div>
             </div>
         }
@@ -116,13 +130,15 @@
         }
         else
         {
-           <p>No Data found</p>
+            <p>No Data found</p>
         }
     }
 </div>
 
 <style>
-    body { background-color: #f3f3f3; }
+    body {
+        background-color: #f3f3f3;
+    }
 
     .btn-plus {
         background-image: url('Images/plus.png');
@@ -141,13 +157,30 @@
     private string SearchedItem { get; set; } = "";
     private bool ShowingProductImage { get; set; }
     private bool ShowingProductPallete { get; set; }
+    private bool IsAdmin { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CheckForAdmin();
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             await LoadWardrobeList();
-        }        
+        }
+    }
+
+    private async Task CheckForAdmin()
+    {
+        var authorizationState = await _authState.GetAuthenticationStateAsync();
+        var user = authorizationState?.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            var authorizedUser = await _userManager.FindByEmailAsync(user?.Identity?.Name);
+            IsAdmin = await _userManager.IsInRoleAsync(authorizedUser, SD.Role_Admin);
+        }
     }
 
     private async Task LoadWardrobeList()
@@ -209,7 +242,7 @@
     public EventCallback<bool> IsVisibleChanged { get; set; }
 
     [Parameter]
-    public string? HeaderText { get; set; }        
+    public string? HeaderText { get; set; }
 
     private void Close()
     {

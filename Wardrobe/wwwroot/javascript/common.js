@@ -25,29 +25,25 @@
 };
 
 let flickityInstance;
-function initializeFlickity() {
-    flickityInstance = new Flickity('.main-carousel', {
-        wrapAround: true
-    });
-}
-function reinitializeFlickity() {
-    console.log("reinitilizing flickity");
-    if (flickityInstance) {
-        flickityInstance.destroy();
+function initializeFlickityOnElement(selector) {
+    var carouselElem = document.querySelector(selector);
+    if (carouselElem) {
+        if (flickityInstance) {
+            flickityInstance.destroy();
+        }
+        flickityInstance = new Flickity(carouselElem, {
+            wrapAround: true
+        });
     }
-
-    initializeFlickity();
-}document.addEventListener('DOMContentLoaded', function () {
-    initializeFlickity();
-});
-window.reinitializeFlickity = reinitializeFlickity;
-
-function initFlickity() {
-    var elem = document.querySelector('.main-carousel');
-    var flkty = new Flickity(elem, {
-        wrapAround: true
-    });
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    initializeFlickityOnElement('.main-carousel');
+});
+
+window.reinitializeFlickity = function () {
+    initializeFlickityOnElement('.main-carousel');
+};
 
 function toggleMobileMenu(menu) {
     console.log("Toggling mobile menu");

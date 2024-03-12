@@ -1,7 +1,8 @@
 ﻿@page "/create/tags"
-
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> _userManager
+@inject AuthenticationStateProvider _authState
 @inject ITagService _tagService
-@attribute [Authorize(Roles = SD.Role_Admin)]
 
 @if (!IsLoading)
 {
@@ -11,38 +12,53 @@
                 <h3>Create Tags</h3>
             </div>
             <div class="tags-create__container">
-                    <EditForm Model="Tag" OnValidSubmit="@CreateNewTag">
-                        <DataAnnotationsValidator />
-                        <div class="tags-create__container-block">
-                            <div class="tags-create__container-title">
-                                <RadzenText TagName="TagName.H3">Tag Title</RadzenText>
-                                <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
-                            </div>
-                            <RadzenTextBox @bind-Value="Tag.Title" class="w-100" aria-label="Default TextBox" />
-                            <ValidationMessage For="() => Tag.Title" />
+                <EditForm Model="Tag" OnValidSubmit="@CreateNewTag">
+                    <DataAnnotationsValidator />
+                    <div class="tags-create__container-block">
+                        <div class="tags-create__container-title">
+                            <RadzenText TagName="TagName.H3">Tag Title</RadzenText>
+                            <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
                         </div>
+                        <RadzenTextBox @bind-Value="Tag.Title" class="w-100" aria-label="Default TextBox" />
+                        <ValidationMessage For="() => Tag.Title" />
+                    </div>
+                    @if (IsUserAdmin)
+                    {
                         <button class="submit-button" typeof="submit">Create Tag</button>
-                    </EditForm>
+
+                    }
+                    else
+                    {
+                        <button class="submit-button no-admin__button" type="button">Create Tag</button>
+                    }
+                </EditForm>
             </div>
             <div class="tags-list__container">
                 <RadzenDataGrid FilterPopupRenderMode="PopupRenderMode.OnDemand" AllowPaging="true" PageSize="5" AllowSorting="true"
-                            Data="@TagList" TItem="TagDTO">
+                                Data="@TagList" TItem="TagDTO">
                     <Columns>
                         <RadzenDataGridColumn TItem="TagDTO" Title="Tag Name" Filterable="true" Sortable="true" TextAlign="TextAlign.Center">
                             <Template Context="tag">
                                 <RadzenText TagName="TagName.H3">@tag.Title</RadzenText>
-                            </Template>
-                        </RadzenDataGridColumn>
-                        <RadzenDataGridColumn TItem="TagDTO" Title="Actions" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
-                            <Template Context="data">
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="TagDTO" Title="Actions" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+                                <Template Context="data">
                                     @if (data.Title != SD.Tag_None)
+                                {
+                                    if (IsUserAdmin)
                                     {
                                         <button @onclick="(() => DeleteTag(data))" class="btn-form btn-form--cancel">Delete</button>
                                     }
                                     else
                                     {
-                                        <button class="btn-form btn-form--static">Delete</button>
+                                        <button class="btn-form btn-form--cancel">Delete</button>
                                     }
+                                }
+                                else
+                                {
+                                    <button class="btn-form btn-form--static">Delete</button>
+                                }
                             </Template>
                         </RadzenDataGridColumn>
                     </Columns>
@@ -50,7 +66,8 @@
             </div>
         </div>
     </div>
-} else
+}
+else
 {
     <_LoadingAnimation />
 }
@@ -61,15 +78,29 @@
 
     private bool IsLoading { get; set; }
 
+    private bool IsUserAdmin { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         IsLoading = true;
         StateHasChanged();
 
         TagList = await _tagService.GetAllTags();
+        await CheckForAdmin();
 
         IsLoading = false;
         StateHasChanged();
+    }
+
+    private async Task CheckForAdmin()
+    {
+        var authorizationState = await _authState.GetAuthenticationStateAsync();
+        var user = authorizationState?.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            var authorizedUser = await _userManager.FindByEmailAsync(user?.Identity?.Name);
+            IsUserAdmin = await _userManager.IsInRoleAsync(authorizedUser, SD.Role_Admin);
+        }
     }
 
     private async void CreateNewTag()

@@ -117,11 +117,9 @@ namespace Wardrobe.Areas.Identity.Pages.Account
         {
             ReturnUrl = returnUrl;
 
-            if (Input.Email == SD.Admin_Email && !await _roleManager.RoleExistsAsync(SD.Role_Admin))
-            {
+            if (!await _roleManager.RoleExistsAsync(SD.Role_Admin))
                 _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin)).GetAwaiter().GetResult();
-            }
-            else
+            if (!await _roleManager.RoleExistsAsync(SD.Role_Customer))
                 _roleManager.CreateAsync(new IdentityRole(SD.Role_Customer)).GetAwaiter().GetResult();
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
@@ -141,7 +139,11 @@ namespace Wardrobe.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, SD.Role_Admin);
+                    if (Input.Email.ToLower() == SD.Admin_Email.ToLower())
+                        await _userManager.AddToRoleAsync(user, SD.Role_Admin);
+                    else
+                        await _userManager.AddToRoleAsync(user, SD.Role_Customer);
+
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);

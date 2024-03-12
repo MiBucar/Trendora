@@ -1,4 +1,32 @@
-﻿.form {
+﻿.product-create-main__container {
+    display: flex;
+    justify-content: center;
+}
+
+.product-create_content__container {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    padding: 10px;
+}
+
+.product-create-title__container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+    .product-create-title__container h3 {
+        color: white;
+        text-transform: uppercase;
+        font-size: 1.8rem;
+        padding: 10px;
+        background-color: var(--color-primary, #59009f);
+        border-radius: 3px;
+    }
+
+.form {
     background-color: #dbdbdb;
     padding: 10px;
     margin-bottom: 10px;

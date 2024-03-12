@@ -1,8 +1,30 @@
-﻿.header-container{
+﻿.wardrobe-main__container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: center;
 }
+
+.wardrobe_content__container {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    padding: 10px;
+}
+
+.wardrobe-title__container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+    .wardrobe-title__container h3 {
+        color: white;
+        text-transform: uppercase;
+        font-size: 1.8rem;
+        padding: 10px;
+        background-color: var(--color-primary, #59009f);
+        border-radius: 3px;
+    }
 
 /* Grid Item List Styles */
 

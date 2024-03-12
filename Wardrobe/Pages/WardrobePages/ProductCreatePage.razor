@@ -1,6 +1,8 @@
 ﻿@page "/wardrobe/create"
 @page "/wardrobe/create/{Id:int}"
-
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> _userManager
+@inject AuthenticationStateProvider _authState
 @inject NavigationManager _navigationManager
 @inject IProductService _productService
 @inject ICategoryService _itemTypeService
@@ -8,10 +10,13 @@
 @inject IImageService _imageService
 @inject ITagService _tagService
 @inject IGenderService _genderService
-@attribute [Authorize(Roles = SD.Role_Admin)]
 
-<div>
-    <h2>@Title Product</h2>
+<div class="product-create-main__container">
+    <div class="product-create_content__container">
+        <div class="product-create-title__container">
+            <h3>@Title Product</h3>
+        </div>
+    </div>
 </div>
 
 <div>
@@ -39,7 +44,7 @@
                     <p class="input-container--text">Item Description</p>
                     <InputTextArea @bind-Value="Product.Description" class="item-container__input" placeholder="Enter text..."></InputTextArea>
                 </div>
-                <!-- Genders -->                
+                <!-- Genders -->
                 <div class="input-container">
                     <RadzenLabel Text="Select Gender" Component="DropDownSection" />
                     <RadzenDropDown Placeholder="Select" @bind-Value=@Product.GenderId Data=@AvailableGenders ValueProperty="Id"
@@ -53,12 +58,12 @@
                                     TextProperty="Name" Name="DropDownItemType" Change="@(() => OnCategoryChanged(Product.CategoryId))" />
                     <ValidationMessage For="() => Product.CategoryId" />
                 </div>
-                <!-- Tags -->                
+                <!-- Tags -->
                 <div class="input-container">
                     <RadzenLabel Text="Select Tags" Component="DropDownSection" />
                     <RadzenDropDown @bind-Value=@Product.SelectedTags Data=@TagModels Chips=true TextProperty="Title"
                                     Multiple=true AllowClear=false Placeholder="Select" />
-                </div>   
+                </div>
                 <ValidationMessage For="() => Product.SelectedTags" />
                 <!-- Price -->
                 <div class="input-container">
@@ -69,18 +74,18 @@
                 <div class="input-container">
                     @if (ColorModels.Any())
                     {
-                        <p class="input-container--text" >Available Colors</p>
+                        <p class="input-container--text">Available Colors</p>
                         <div class="input-container--wrap">
-                                @foreach (var color in ColorModels)
+                            @foreach (var color in ColorModels)
+                            {
+                                @if (!Product.SelectedColors.Any(x => x.Id == color.Id))
                                 {
-                                    @if (!Product.Colors.Any(x => x.Id == color.Id))
-                                    {
-                                        <div @onclick="() => AddColorToProduct(color)" class="color-container" style="background-color: @color.ColorCode;"></div>
-                                    }
-                                }                                                       
+                                    <div @onclick="() => AddColorToProduct(color)" class="color-container" style="background-color: @color.ColorCode;"></div>
+                                }
+                            }
                         </div>
-                }
-                <ValidationMessage For="() => Product.SelectedColors" />
+                    }
+                    <ValidationMessage For="() => Product.SelectedColors" />
                 </div>
                 <!-- Selected colors -->
                 <div class="input-container">
@@ -95,9 +100,12 @@
                         }
                         else
                         {
-                            @foreach (var color in Product.SelectedColors)
+                            @if (Product.SelectedColors.Any())
                             {
-                                <div @onclick="() => RemoveColorFromProduct(color)" class="color-container" style="background-color: @color.ColorCode;"></div>
+                                @foreach (var color in Product.SelectedColors)
+                                {
+                                    <div @onclick="() => RemoveColorFromProduct(color)" class="color-container" style="background-color: @color.ColorCode;"></div>
+                                }
                             }
                         }
                     </div>
@@ -135,14 +143,21 @@
                 {
                     if (Product.ImageData.Any())
                     {
-                            <div class="input-container">
-                                <p class="input-container--text">Image</p>
+                        <div class="input-container">
+                            <p class="input-container--text">Image</p>
                             <img src="@ImageData(Product.ImageData)" class="input-container--image" />
-                            </div>
-                    }                    
-                }                
+                        </div>
+                    }
+                }
             </div>
-            <button type="submit" class="btn-form btn-form--submit">Submit</button>
+            @if (IsAdmin)
+            {
+                <button type="submit" class="btn-form btn-form--submit">Submit</button>
+            }
+            else
+            {
+                <button type="button" class="btn-form btn-form--submit">Submit</button>
+            }
             <NavLink href="/wardrobe"><button class="btn-form btn-form--cancel">Cancel</button></NavLink>
         </EditForm>
     }
@@ -153,8 +168,9 @@
     public int Id { get; set; }
     private string Title { get; set; } = "Create";
     private bool IsLoading { get; set; }
+    private bool IsAdmin { get; set; }
 
-    private ProductDTO Product { get; set; } = new ProductDTO() { Colors = new List<ColorDTO>()};
+    private ProductDTO Product { get; set; } = new ProductDTO() { Colors = new List<ColorDTO>() };
     private CategoryDTO ItemType { get; set; } = new CategoryDTO();
     private IEnumerable<CategoryDTO> Categories { get; set; } = new List<CategoryDTO>();
     private IEnumerable<ColorDTO> ColorModels { get; set; } = new List<ColorDTO>();
@@ -179,6 +195,19 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadItem();
+        await CheckForAdmin();
+        StateHasChanged();
+    }
+
+    private async Task CheckForAdmin()
+    {
+        var authorizationState = await _authState.GetAuthenticationStateAsync();
+        var user = authorizationState?.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            var authorizedUser = await _userManager.FindByEmailAsync(user?.Identity?.Name);
+            IsAdmin = await _userManager.IsInRoleAsync(authorizedUser, SD.Role_Admin);
+        }
     }
 
     private async Task LoadItem()
@@ -212,7 +241,7 @@
 
     private void AddColorToProduct(ColorDTO color)
     {
-        Product.SelectedColors.Add(color); 
+        Product.SelectedColors.Add(color);
         StateHasChanged();
     }
 
