@@ -13,7 +13,7 @@ namespace Wardrobe.Services.Implementations
 
         private readonly ILocalStorageService _localStorage;
 
-        private void NotifyOnCartChanged() => OnCartChange?.Invoke();
+        public void NotifyOnCartChanged() => OnCartChange?.Invoke();
 
         public ShoppingCartService(ILocalStorageService localStorage)
         {

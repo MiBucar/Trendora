@@ -14,5 +14,6 @@ namespace Wardrobe.Services.Interfaces
         public Task IncrementCart(ShoppingCartItem shoppingCart);
         public Task DeleteCart(int productId);
         public Task<int> GetNumberOfProductsInCart();
+        public void NotifyOnCartChanged();
     }
 }
