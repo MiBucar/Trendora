@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.Extensions.Caching.Memory
 @inject ILocalStorageService _localStorage
+@inject IShoppingCartService _shoppingCartService
 @inject IProductService _productService
 @inject IOrderService _orderService
 @inject UserManager<ApplicationUser> _userManager
@@ -381,6 +382,7 @@ else
     {
         await CreateNewOrder();
         await _localStorage.ClearAsync();
+        _shoppingCartService.NotifyOnCartChanged();
         _navigationManager.NavigateTo("/purchasesummary");
     }
 
