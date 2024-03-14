@@ -1,7 +1,5 @@
 ﻿@page "/create/categories"
-@using Microsoft.AspNetCore.Identity
-@inject UserManager<ApplicationUser> _userManager
-@inject AuthenticationStateProvider _authState
+@inject IApplicationUserService _appUserService
 @inject ICategoryService _itemTypeService
 @inject ISizeService _sizeService
 @inject IJSRuntime _jsRuntime
@@ -374,7 +372,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await CheckForAdmin();
+        IsAdmin = await _appUserService.IsUserAdmin();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -382,17 +380,6 @@
         if (firstRender)
         {
             await LoadItemTypes();
-        }
-    }
-
-    private async Task CheckForAdmin()
-    {
-        var authorizationState = await _authState.GetAuthenticationStateAsync();
-        var user = authorizationState?.User;
-        if (user.Identity.IsAuthenticated)
-        {
-            var authorizedUser = await _userManager.FindByEmailAsync(user?.Identity?.Name);
-            IsAdmin = await _userManager.IsInRoleAsync(authorizedUser, SD.Role_Admin);
         }
     }
 

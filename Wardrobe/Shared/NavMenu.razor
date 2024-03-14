@@ -1,6 +1,4 @@
-﻿@using Microsoft.AspNetCore.Identity
-@inject UserManager<ApplicationUser> _userManager
-@inject AuthenticationStateProvider _authState
+﻿@inject IApplicationUserService _appUserService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager _navigationManager
 @inject ILocalStorageService _localStorage
@@ -75,19 +73,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        CheckForAdmin();
+        IsAdmin = await _appUserService.IsUserAdmin();
         _shoppingCartService.OnCartChange += CartChangedEventHandler;
-    }
-
-    private async Task CheckForAdmin()
-    {
-        var authorizationState = await _authState.GetAuthenticationStateAsync();
-        var user = authorizationState?.User;
-        if (user.Identity.IsAuthenticated)
-        {
-            var authorizedUser = await _userManager.FindByEmailAsync(user?.Identity?.Name);
-            IsAdmin = await _userManager.IsInRoleAsync(authorizedUser, SD.Role_Admin);
-        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

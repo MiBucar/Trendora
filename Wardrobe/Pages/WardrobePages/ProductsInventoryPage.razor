@@ -1,7 +1,5 @@
 ﻿@page "/wardrobe"
-@using Microsoft.AspNetCore.Identity
-@inject UserManager<ApplicationUser> _userManager
-@inject AuthenticationStateProvider _authState
+@inject IApplicationUserService _appUserService
 @inject IProductService _productService
 @inject ICategoryService _itemTypeService
 @inject IJSRuntime JSRuntime
@@ -161,7 +159,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await CheckForAdmin();
+        IsAdmin = await _appUserService.IsUserAdmin();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -169,17 +167,6 @@
         if (firstRender)
         {
             await LoadWardrobeList();
-        }
-    }
-
-    private async Task CheckForAdmin()
-    {
-        var authorizationState = await _authState.GetAuthenticationStateAsync();
-        var user = authorizationState?.User;
-        if (user.Identity.IsAuthenticated)
-        {
-            var authorizedUser = await _userManager.FindByEmailAsync(user?.Identity?.Name);
-            IsAdmin = await _userManager.IsInRoleAsync(authorizedUser, SD.Role_Admin);
         }
     }
 

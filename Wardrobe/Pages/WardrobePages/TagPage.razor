@@ -1,7 +1,5 @@
 ﻿@page "/create/tags"
-@using Microsoft.AspNetCore.Identity
-@inject UserManager<ApplicationUser> _userManager
-@inject AuthenticationStateProvider _authState
+@inject IApplicationUserService _appUserService
 @inject ITagService _tagService
 
 @if (!IsLoading)
@@ -86,21 +84,10 @@ else
         StateHasChanged();
 
         TagList = await _tagService.GetAllTags();
-        await CheckForAdmin();
+        IsUserAdmin = await _appUserService.IsUserAdmin();
 
         IsLoading = false;
         StateHasChanged();
-    }
-
-    private async Task CheckForAdmin()
-    {
-        var authorizationState = await _authState.GetAuthenticationStateAsync();
-        var user = authorizationState?.User;
-        if (user.Identity.IsAuthenticated)
-        {
-            var authorizedUser = await _userManager.FindByEmailAsync(user?.Identity?.Name);
-            IsUserAdmin = await _userManager.IsInRoleAsync(authorizedUser, SD.Role_Admin);
-        }
     }
 
     private async void CreateNewTag()

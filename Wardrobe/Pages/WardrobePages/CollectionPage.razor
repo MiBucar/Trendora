@@ -1,7 +1,5 @@
 ﻿@page "/create/collections"
-@using Microsoft.AspNetCore.Identity
-@inject UserManager<ApplicationUser> _userManager
-@inject AuthenticationStateProvider _authState
+@inject IApplicationUserService _appUserService
 @inject ICollectionService _collectionService
 @inject ITagService _tagService
 @inject IGenderService _genderService
@@ -142,20 +140,9 @@ else
         CollectionList = await _collectionService.GetAll();
         TagList = await _tagService.GetAllTags();
         GenderList = await _genderService.GetAll();
-        await CheckForAdmin();
+        IsAdmin = await _appUserService.IsUserAdmin();
         IsLoading = false;
         StateHasChanged();
-    }
-
-    private async Task CheckForAdmin()
-    {
-        var authorizationState = await _authState.GetAuthenticationStateAsync();
-        var user = authorizationState?.User;
-        if (user.Identity.IsAuthenticated)
-        {
-            var authorizedUser = await _userManager.FindByEmailAsync(user?.Identity?.Name);
-            IsAdmin = await _userManager.IsInRoleAsync(authorizedUser, SD.Role_Admin);
-        }
     }
 
     private async void CreateNewCollection()
