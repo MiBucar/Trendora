@@ -110,7 +110,7 @@
                 </div>
                 <!-- Sizes -->
                 <div class="input-container">
-                    <p class="input-container--text" style="margin-bottom: -10px;">Sizes</p>
+                    <p class="input-container--text">Sizes</p>
                     @if (Product.CategoryId != 0)
                     {
                         @if (ItemType != null && ItemType.Sizes != null)
@@ -127,7 +127,7 @@
                     }
                     else
                     {
-                        <p style="margin: 0px;">Select an item type</p>
+                        <p style="margin: 0px;">Select a category</p>
                     }
                 </div>
                 <!-- Image upload -->
@@ -148,15 +148,18 @@
                     }
                 }
             </div>
-            @if (IsAdmin)
-            {
-                <button type="submit" class="btn-form btn-form--submit">Submit</button>
-            }
-            else
-            {
-                <button type="button" class="btn-form btn-form--submit">Submit</button>
-            }
-            <NavLink href="/wardrobe"><button class="btn-form btn-form--cancel">Cancel</button></NavLink>
+            <div class="end-buttons">
+                @if (IsAdmin)
+                {
+                    <button type="submit" class="btn-form btn-form--submit">Submit</button>
+                }
+                else
+                {
+                    <button type="button" class="btn-form btn-form--submit">Submit</button>
+                }
+                <NavLink href="/wardrobe"><button class="btn-form btn-form--cancel">Cancel</button></NavLink>
+
+            </div>            
         </EditForm>
     }
 </div>
@@ -202,7 +205,8 @@
         IsLoading = true;
         StateHasChanged();
         Product.SelectedColors = new List<ColorDTO>();
-        Product.SelectedTags = new List<TagDTO>();
+        Product.SelectedTags = new List<TagDTO>() {};
+        Product.SelectedTags.Add(TagModels.FirstOrDefault(x => x.Title == SD.Tag_None));
         Categories = await _itemTypeService.GetAll();
         AvailableGenders = await _genderService.GetAll();
         TagModels = await _tagService.GetAllTags();

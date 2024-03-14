@@ -151,9 +151,11 @@ else
         StateHasChanged();
 
         Collection.Tags = SelectedTags;
-        Collection.Genders = SelectedGenders;
+        Collection.Genders = Collection.SelectedGenders;
         await _collectionService.CreateCollection(Collection);
 
+        Collection.SelectedGenders = new();
+        SelectedTags = new();
         Collection = new CollectionDTO();
         CollectionList = await _collectionService.GetAll();
 
