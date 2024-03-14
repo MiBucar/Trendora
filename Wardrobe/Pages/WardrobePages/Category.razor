@@ -92,45 +92,8 @@
                             </EditForm>
                         }
                     }
-                    @if (ShowingItemTypeImage)
-                    {
-                        if (IsLoadingImage)
-                        {
-                            <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
-                                <div class="loadingio-spinner-blocks-49enh9aem">
-                                    <div class="ldio-4kmgy2v2hm7">
-                                        <div style='left:25.919999999999998px;top:25.919999999999998px;animation-delay:0s'></div><div style='left:57.599999999999994px;top:25.919999999999998px;animation-delay:0.32894736842105265s'></div><div style='left:89.28px;top:25.919999999999998px;animation-delay:0.6578947368421053s'></div><div style='left:25.919999999999998px;top:57.599999999999994px;animation-delay:2.3026315789473686s'></div><div style='left:89.28px;top:57.599999999999994px;animation-delay:0.9868421052631579s'></div><div style='left:25.919999999999998px;top:89.28px;animation-delay:1.9736842105263157s'></div><div style='left:57.599999999999994px;top:89.28px;animation-delay:1.644736842105263s'></div><div style='left:89.28px;top:89.28px;animation-delay:1.3157894736842106s'></div>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                        else
-                        {
-                            <img src="@ImageDataPopup()" class="input-container--image input-container--image-big" />
-                        }
-                    }
                 </div>
             </div>
-            @if (ShowingItemTypeImage)
-            {
-                <div class="toast-body popup-container__body">
-                    <EditForm Model="ShownTypeModel">
-                        <div style="text-align:left; margin-bottom: 5px;">
-                            <label>Change Image</label>
-                        </div>
-                        <div style="text-align:left; margin-bottom: 5px;">
-                            @if (IsAdmin)
-                            {
-                                <InputFile class="custom-file-input" OnChange="@((InputFileChangeEventArgs e) => LoadImageForShownModel(e, ShownTypeModel.ItemTypeId))" />
-                            }
-                            else
-                            {
-                                <InputFile class="custom-file-input" />
-                            }
-                        </div>
-                    </EditForm>
-                </div>
-            }
         </div>
     </div>
 }
@@ -157,28 +120,6 @@
                     <InputText @bind-Value="NewSizeValue" class="item-container__input" placeholder="Enter new size..."></InputText>
                     <button @onclick="@AddNewSize" class="btn-form btn-form--submit btn-plus" style="margin-left: 5px;" type="button"></button>
                 </div>
-                <!-- Image Upload -->
-                <div style="text-align:left; margin-bottom: 5px;">
-                    <label>Upload an Image</label>
-                </div>
-                <div style="text-align:left; margin-bottom: 5px;">
-                    <InputFile class="custom-file-input" OnChange="@LoadImage" />
-                    <ValidationMessage For="() => ItemTypeModel.Image" />
-                </div>
-                <!-- Image -->
-                @if (ItemTypeModel.Image != null)
-                {
-                    @if (ItemTypeModel.Image.Any())
-                    {
-                        <div style="text-align:left; margin-bottom: 5px; display: flex; flex-direction: column;">
-                            <label style="margin-bottom: 5px;">Image</label>
-                            <img src="@ImageData(ItemTypeModel.Image)" class="input-container--image" />
-                        </div>
-                        <div style="text-align:left; margin-bottom: 5px;">
-                            <button type="button" class="btn-form btn-form--cancel" @onclick="RemoveImage">Remove Image</button>
-                        </div>
-                    }
-                }
                 <!-- Shown Sizes -->
                 @if (AvailableSizes.Any())
                 {
@@ -196,7 +137,7 @@
                     </div>
                 }
                 <!-- Create Button -->
-                <div style="text-align: center; width: 100%; margin-top: 5px;">
+                <div class="button-container">
                     @if (IsAdmin)
                     {
                         <button type="submit" class="btn-form btn-form--submit">Create</button>
@@ -220,7 +161,6 @@
             <div class="item-container__row item-container__row--info">
                 <div class="item-container__property" style="font-weight: 700;">Model Type</div>
                 <div class="item-container__property">Sizes</div>
-                <div class="item-container__property">Image</div>
                 <div class="item-container__property">Action</div>
             </div>
             @foreach (var model in ItemTypeModelList)
@@ -247,17 +187,6 @@
                                     <span style="margin-right: 5px;">@size.ItemSize</span>
                                 }
                             }
-                        }
-                        else
-                        {
-                            <span>None</span>
-                        }
-                    </div>
-                    <!-- Image -->
-                    <div class="item-container__property">
-                        @if (model.Image.Any())
-                        {
-                            <button class="item-container__property-button-image-picture" @onclick="() => ShowItemImage(model.ItemTypeId)"></button>
                         }
                         else
                         {
@@ -490,56 +419,5 @@
         SizeModel = await _sizeService.GetById(SizeModel.Id);
         StateHasChanged();
         IsEditingExistingSize = false;
-    }
-
-    private async Task LoadImage(InputFileChangeEventArgs e)
-    {
-        var imageFiles = e.GetMultipleFiles();
-        var imageFile = imageFiles.FirstOrDefault();
-        if (imageFile != null)
-        {
-            using var stream = new MemoryStream();
-            await imageFile.OpenReadStream(2 * 1024 * 1024).CopyToAsync(stream);
-            ItemTypeModel.Image = stream.ToArray();
-        }
-    }
-
-    private async Task LoadImageForShownModel(InputFileChangeEventArgs e, int id)
-    {
-        IsLoadingImage = true;
-        StateHasChanged();
-        var imageFiles = e.GetMultipleFiles();
-        var imageFile = imageFiles.FirstOrDefault();
-        if (imageFile != null)
-        {
-            using var stream = new MemoryStream();
-            await imageFile.OpenReadStream(2 * 1024 * 1024).CopyToAsync(stream);
-            ShownTypeModel.Image = stream.ToArray();
-        }
-        await _itemTypeService.Update(ShownTypeModel);
-        ShownTypeModel = await _itemTypeService.GetById(ShownTypeModel.ItemTypeId);
-        ItemTypeModelList = await _itemTypeService.GetAll();
-        IsLoadingImage = false;
-        StateHasChanged();
-    }
-
-    private string ImageData(byte[] image)
-    {
-        return _imageService.GetImage(image);
-    }
-
-    private string ImageDataPopup()
-    {
-        if (ShownTypeModel.Image != null && ShownTypeModel.Image.Length > 0)
-        {
-            var base64String = Convert.ToBase64String(ShownTypeModel.Image);
-            return $"data:image/jpeg;base64,{base64String}";
-        }
-        return "";
-    }
-
-    private void RemoveImage()
-    {
-        ItemTypeModel.Image = null;
     }
 }

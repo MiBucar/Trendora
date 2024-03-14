@@ -103,7 +103,6 @@ namespace Wardrobe.Services.Implementations
             if (obj != null)
             {
                 obj.Name = item.Name;
-                obj.Image = item.Image;
                 await _db.SaveChangesAsync();
                 return _mapper.Map<Category, CategoryDTO>(obj);                
             }

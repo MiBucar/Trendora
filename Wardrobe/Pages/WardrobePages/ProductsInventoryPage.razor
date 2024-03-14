@@ -66,7 +66,7 @@
     {
         <div class="item-row item-row--info">
             <div class="item-container__property">Name</div>
-            <div class="item-container__property">Item Type</div>
+            <div class="item-container__property">Category</div>
             <div class="item-container__property">Price</div>
             <div class="item-container__property">Image</div>
             <div class="item-container__property">Available Colors</div>
@@ -105,12 +105,12 @@
                     </NavLink>
                     @if (IsAdmin)
                     {
-                        <button class="btn-form btn-form--cancel" style="margin-left: 2px;" @onclick="() => DeleteItem(item.Id)">Delete</button>
+                        <button class="btn-form btn-form--cancel" @onclick="() => DeleteItem(item.Id)">Delete</button>
 
                     }
                     else
                     {
-                        <button class="btn-form btn-form--cancel" style="margin-left: 2px;">Delete</button>
+                        <button class="btn-form btn-form--cancel">Delete</button>
                     }
                 </div>
             </div>
