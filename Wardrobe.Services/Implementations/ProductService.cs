@@ -159,7 +159,10 @@ namespace Wardrobe.Services.Implementations
             var query = _db.ProductList.Include(x => x.Category).Include(x => x.Colors).Include(x => x.Tags).Where(x => collectionGenders.Contains(x.Gender.Name));
 
             if (collectionTags.Any())
-                query = query.Where(x => x.Tags.Any(tag => collectionTags.Contains(tag.Title)));
+            {
+                var tempQuery = query.Where(x => x.Tags.Any(tag => collectionTags.Contains(tag.Title)));
+                query = query.Union(tempQuery).Distinct();
+            }
 
             int totalCount = await query.CountAsync();
             var products = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();

@@ -11,6 +11,10 @@
     --rz-steps-title-selected-color: var(--color-primary, #59009f) !important;
 }
 
+ul[role=tablist] {
+    margin: 0 !important;
+}
+
 .flickity-page-dots {
     visibility: hidden;
 }
@@ -436,16 +440,6 @@ a, .btn-link {
     justify-content: center;
 }
 
-@media (max-width: 600px) {
-    .product-item {
-        border-radius: 0;
-    }
-
-        .product-item img {
-            height: 300px;
-        }
-}
-
 .input-container {
     display: flex;
     flex-direction: column;
@@ -509,32 +503,6 @@ a, .btn-link {
     text-decoration: none;
 }
 
-@media (max-width: 768px) {
-    .item-container__property-checkbox {
-        margin-right: 5px;
-        padding: 3px;
-        min-width: 6.5rem;
-        transition: .5s ease;
-        border-radius: 2px;
-        border: 1px solid var(--color-primary);
-    }
-
-    .item-container__property-checkbox--small {
-        margin-right: 0px 8px 0px 8px;
-        padding: 5px;
-        min-width: 6.5rem;
-        transition: .5s ease;
-        border-radius: 2px;
-        border: 1px solid var(--color-primary);
-        text-align: center;
-    }
-
-    .input-container--image-big {
-        width: 400px;
-        height: 400px;
-    }
-}
-
 .product-pages__button {
     min-width: 60px;
     height: 35px;
@@ -564,4 +532,46 @@ a, .btn-link {
     padding: 10px 10px 8px 10px;
     text-transform: uppercase;
     color: white;
+}
+
+@media (max-width: 600px) {
+    .product-item {
+        border-radius: 0;
+    }
+
+        .product-item img {
+            height: 300px;
+        }
+}
+
+@media (max-width: 700px){
+    ul[role=tablist]{
+        display: none !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .item-container__property-checkbox {
+        margin-right: 5px;
+        padding: 3px;
+        min-width: 6.5rem;
+        transition: .5s ease;
+        border-radius: 2px;
+        border: 1px solid var(--color-primary);
+    }
+
+    .item-container__property-checkbox--small {
+        margin-right: 0px 8px 0px 8px;
+        padding: 5px;
+        min-width: 6.5rem;
+        transition: .5s ease;
+        border-radius: 2px;
+        border: 1px solid var(--color-primary);
+        text-align: center;
+    }
+
+    .input-container--image-big {
+        width: 400px;
+        height: 400px;
+    }
 }
