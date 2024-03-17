@@ -1,9 +1,6 @@
 ﻿@inject NavigationManager _navigationManager
 
 <div class="user-nav__container">
-    <div>
-        <h4 class="user-nav__heading">My Account</h4>
-    </div>
     <div class="user-nav__content">
         <div @onclick="SetUserInfoActive" class="@((IsUserInfoActive) ? "user-nav__content-item content-item__active" : "user-nav__content-item")">
             <div class="user-image info"></div>

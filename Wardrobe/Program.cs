@@ -27,8 +27,13 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddDbContext<ApplicationDatabaseContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"))
-        .EnableSensitiveDataLogging();
+    var env = builder.Environment;
+    string connectionString = env.IsDevelopment()
+                              ? builder.Configuration.GetConnectionString("Default")
+                              : Environment.GetEnvironmentVariable(" ConnectionStrings__Default");
+
+    options.UseSqlServer(connectionString)
+           .EnableSensitiveDataLogging(env.IsDevelopment());
 });
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDatabaseContext>()

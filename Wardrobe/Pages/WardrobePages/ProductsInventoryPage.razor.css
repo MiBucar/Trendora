@@ -4,7 +4,6 @@
 }
 
 .wardrobe_content__container {
-    width: 80%;
     display: flex;
     flex-direction: column;
     gap: 50px;
@@ -26,15 +25,13 @@
         border-radius: 3px;
     }
 
-/* Grid Item List Styles */
-
 .item-row {
     display: grid;
-    grid-template-columns: repeat(6, 1fr); /* 4 columns */
+    grid-template-columns: repeat(6, 1fr);
     gap: 10px;
     padding: 10px;
     box-sizing: border-box;
-    width: 90%;
+    width: 100%;
 }
 
 .item-row--info {
@@ -53,12 +50,17 @@
     }
 
 .menu-container {
-    margin: 20px;
     text-align: center;
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 90%;
+}
+
+.menu-container--tools{
+    display: flex;
+    justify-content: center;
+    gap: 20px;
 }
 
 .menu-container--content {
@@ -115,3 +117,40 @@
     .popup-container--body img{
         width: 500px;
     }
+
+.name-class{
+    overflow-x:auto;
+}
+
+@media (max-width: 500px) {
+    .menu-container--content{
+        margin: 0;
+    }
+
+    .menu-container{
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .item-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        padding: 10px;
+        box-sizing: border-box;
+        width: 90%;
+    }
+
+    .img-class{
+        display: none;
+    }
+
+    .color-class{
+        display: none;
+    }
+
+    .category-class{
+        display: none;
+    }
+}

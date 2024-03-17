@@ -11,6 +11,10 @@
     --rz-steps-title-selected-color: var(--color-primary, #59009f) !important;
 }
 
+.px-4{
+    padding: 0 !important;
+}
+
 ul[role=tablist] {
     margin: 0 !important;
 }
@@ -20,6 +24,10 @@ ul[role=tablist] {
 }
 
 .rz-steps-next, .rz-steps-prev{
+    display: none !important;
+}
+
+.rz-steps-buttons{
     display: none !important;
 }
 
@@ -532,6 +540,24 @@ a, .btn-link {
     padding: 10px 10px 8px 10px;
     text-transform: uppercase;
     color: white;
+}
+
+@media (max-width: 500px) {
+    .rz-dropdown{
+        width: 100% !important;
+    }
+
+    .subemail-form {
+        width: 100%;
+    }
+
+    .input-container--image {
+        width: 100% !important;
+        height: 400px;
+        border-radius: 2px;
+        border: 2px solid var(--color-primary);
+        object-fit: cover;
+    }
 }
 
 @media (max-width: 600px) {

@@ -45,13 +45,15 @@
 {
     <div style="display: flex; justify-content: center;">
         <div class="menu-container">
-            <div class="menu-container--content">
-                <_FilterComponent OnFilterApplied="HandleFilterApplied"></_FilterComponent>
-            </div>
-            <div class="menu-container--content">
-                <input @bind-value="SearchedItem" placeholder="Search..." @onkeydown="SearchOnEnter" @bind-value:event="oninput" />
-                <button class="menu-container--search-button" @onclick="SearchForItem"></button>
-            </div>
+            <div class="menu-container--tools">
+                <div class="menu-container--content">
+                    <_FilterComponent OnFilterApplied="HandleFilterApplied"></_FilterComponent>
+                </div>
+                <div class="menu-container--content">
+                    <input @bind-value="SearchedItem" placeholder="Search..." @onkeydown="SearchOnEnter" @bind-value:event="oninput" />
+                    <button class="menu-container--search-button" @onclick="SearchForItem"></button>
+                </div>
+            </div>            
             <div class="menu-container--content">
                 <NavLink href="/wardrobe/create" style="float: right;">
                     <button class="btn-form btn-form--submit btn-plus"></button>
@@ -66,19 +68,19 @@
     {
         <div class="item-row item-row--info">
             <div class="item-container__property">Name</div>
-            <div class="item-container__property">Category</div>
+            <div class="item-container__property category-class">Category</div>
             <div class="item-container__property">Price</div>
-            <div class="item-container__property">Image</div>
-            <div class="item-container__property">Available Colors</div>
+            <div class="item-container__property img-class">Image</div>
+            <div class="item-container__property color-class">Available Colors</div>
             <div class="item-container__property">Action</div>
         </div>
         @foreach (var item in WardrobeList)
         {
             <div class="item-row item-row--content">
-                <div class="item-container__property">@item.Name</div>
-                <div class="item-container__property">@item.Category.Name</div>
+                <div class="item-container__property name-class">@item.Name</div>
+                <div class="item-container__property category-class">@item.Category.Name</div>
                 <div class="item-container__property">@item.Price€</div>
-                <div class="item-container__property">
+                <div class="item-container__property img-class">
                     @if (item.ImageData.Any())
                     {
                         <button class="item-container__property-button-image-picture" @onclick="() => ShowProductImage(item.Id)"></button>
@@ -88,7 +90,7 @@
                         <span>None</span>
                     }
                 </div>
-                <div class="item-container__property">
+                <div class="item-container__property color-class">
                     @if (item.Colors.Any())
                     {
                         <button class="item-container__property-button-image-pallete" @onclick="() => ShowProductColors(item.Id)"></button>
@@ -144,6 +146,7 @@
         background-position: center;
         background-size: 15px;
         margin-left: 5px;
+        max-width: 4rem !important;
     }
 </style>
 

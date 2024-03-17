@@ -20,15 +20,17 @@
                         <RadzenTextBox @bind-Value="Tag.Title" class="w-100" aria-label="Default TextBox" />
                         <ValidationMessage For="() => Tag.Title" />
                     </div>
-                    @if (IsUserAdmin)
-                    {
-                        <button class="submit-button" typeof="submit">Create Tag</button>
+                    <div class="button-container">
+                        @if (IsUserAdmin)
+                        {
+                            <button class="submit-button" typeof="submit">Create Tag</button>
 
-                    }
-                    else
-                    {
-                        <button class="submit-button no-admin__button" type="button">Create Tag</button>
-                    }
+                        }
+                        else
+                        {
+                            <button class="submit-button no-admin__button" type="button">Create Tag</button>
+                        }
+                    </div>                    
                 </EditForm>
             </div>
             <div class="tags-list__container">

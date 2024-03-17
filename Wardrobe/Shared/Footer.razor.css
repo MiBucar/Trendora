@@ -14,13 +14,17 @@ footer {
 
 .footer-container {
     display: flex;
-    justify-content: space-around;
     margin-top: 20px;
+    justify-content: space-evenly;
+    max-width: 100%;
 }
 
 .footer-tab {
     list-style-type: none;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
     .footer-tab li {
@@ -32,9 +36,9 @@ footer {
         }
 
 .first-li{
-    padding: 10px;
+    padding: 5px;
     background-color: white;
-    min-width: 10rem;
+    width: 6.5rem;
     border-radius: 1px;
     color: var(--color-primary-dark);
     font-size: 1.5rem;
@@ -52,4 +56,16 @@ ul li a:hover{
     background-color: white;
     border-radius: 1px;
     box-sizing: border-box;
+}
+
+
+@media(max-width: 500px){
+    .first-li {
+        padding: 5px;
+        background-color: white;
+        width: 8rem;
+        border-radius: 1px;
+        color: var(--color-primary);
+        font-size: 1.1rem;
+    }
 }
