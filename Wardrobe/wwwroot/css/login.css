@@ -205,4 +205,8 @@ footer{
         gap: 10px;
         margin: 0;
     }
+
+    .text-muted{
+        display: none !important;
+    }
 }
