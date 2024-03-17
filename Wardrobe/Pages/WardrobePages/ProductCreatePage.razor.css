@@ -37,3 +37,18 @@
     flex-direction: row;
     gap: 10px;
 }
+
+.input-container__text-container{
+    width: 100%;
+    text-align: left;
+}
+
+@media (max-width: 500px){
+    .end-buttons {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        padding: 10px;
+        padding-bottom: 0;
+    }
+}

@@ -43,15 +43,16 @@
                         <RadzenDropDown @bind-Value=@SelectedTags Data=@TagList Chips=true TextProperty="Title" Multiple=true AllowClear=false
                                         Placeholder="Select Tags" />
                     </div>
-
-                    @if (IsAdmin)
-                    {
-                        <button class="submit-button" typeof="submit">Create Collection</button>
-                    }
-                    else
-                    {
-                        <button class="submit-button" typeof="button">Create Collection</button>
-                    }
+                    <div class="button-container">
+                        @if (IsAdmin)
+                        {
+                            <button class="submit-button" typeof="submit">Create Collection</button>
+                        }
+                        else
+                        {
+                            <button class="submit-button" typeof="button">Create Collection</button>
+                        }
+                    </div>                    
                 </EditForm>
             </div>
             <div class="collections-list__container">

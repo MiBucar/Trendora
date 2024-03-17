@@ -42,3 +42,9 @@
 .collection-none p{
     font-size: 1.2rem;
 }
+
+@media(max-width: 500px){
+    .product-grid{
+        padding: 0;
+    }
+}

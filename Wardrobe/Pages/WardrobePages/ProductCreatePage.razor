@@ -142,7 +142,9 @@
                     if (Product.ImageData.Any())
                     {
                         <div class="input-container">
-                            <p class="input-container--text">Image</p>
+                            <div class="input-container__text-container">
+                                <p class="input-container--text">Image</p>
+                            </div>                             
                             <img src="@ImageData(Product.ImageData)" class="input-container--image" />
                         </div>
                     }
@@ -206,10 +208,10 @@
         StateHasChanged();
         Product.SelectedColors = new List<ColorDTO>();
         Product.SelectedTags = new List<TagDTO>() {};
-        Product.SelectedTags.Add(TagModels.FirstOrDefault(x => x.Title == SD.Tag_None));
         Categories = await _itemTypeService.GetAll();
         AvailableGenders = await _genderService.GetAll();
         TagModels = await _tagService.GetAllTags();
+        Product.SelectedTags.Add(TagModels.FirstOrDefault(x => x.Title == SD.Tag_None));
         ColorModels = await _colorService.GetAll();
         if (Id != 0)
         {

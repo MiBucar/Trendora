@@ -42,8 +42,16 @@
     padding: 10px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 500px) {
     .product-item {
         border-radius: 0;
+    }
+
+    .product-item img {
+        width: 100%;
+        height: 350px;
+        object-fit: cover;
+        border-radius: 2px;
+        padding: 10px 10px 0px 10px;
     }
 }

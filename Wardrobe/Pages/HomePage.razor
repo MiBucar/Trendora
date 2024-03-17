@@ -84,10 +84,10 @@
                 <p>Subscribe for updates via email about special promotions, announcements of new products, gift ideas, and much more.</p>
                 @if (!HasSubscribed)
                 {
-                    <EditForm Model="SubEmail" OnValidSubmit="SubscribeToNewsletter">
+                    <EditForm Model="SubEmail" OnValidSubmit="SubscribeToNewsletter" class="subemail-form">
                         <DataAnnotationsValidator />
                         <div class="component-newsletter__handler">
-                            <RadzenTextBox Placeholder="Enter E-mail" @bind-Value="SubEmail.Email" aria-label="Default TextBox" />`
+                            <RadzenTextBox Placeholder="Enter E-mail" @bind-Value="SubEmail.Email" aria-label="Default TextBox" />
                             <button type="submit" class="sign-me-up__button">SIGN ME UP</button>
                         </div>
                         <ValidationMessage For="() => SubEmail.Email" />

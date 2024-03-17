@@ -81,14 +81,14 @@
         background-color: white;
         color: var(--color-primary);
     }
-    .navigation-container h4 {
-        margin: 0;
-        font-size: 1.5rem;
-        cursor: pointer;
-        border: 2px solid white;
-        padding: 10px 10px 8px 10px;
-        text-transform: uppercase;
-    }
+.navigation-container h4 {
+    margin: 0;
+    font-size: 1.5rem;
+    cursor: pointer;
+    border: 2px solid white;
+    padding: 10px 10px 8px 10px;
+    text-transform: uppercase;
+}
 
 .image {
     background-repeat: no-repeat;
@@ -235,6 +235,16 @@
     text-align: center;
     margin-top: 5px;
     font-size: 1.1rem;
+}
+
+@media (max-width: 500px){
+    .title{
+        font-size: 1.1rem;
+    }
+
+    .navigation {
+        padding: 0;
+    }
 }
 
 @media (max-width: 700px) {

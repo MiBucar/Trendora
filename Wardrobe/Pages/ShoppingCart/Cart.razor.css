@@ -1,4 +1,8 @@
-﻿.container {
+﻿.px-4{
+    padding: 0 !important;
+}
+
+.container {
     display: flex;
     justify-content: center;
     margin-top: 10px;
@@ -355,7 +359,6 @@
 
     .identity__container-information {
         width: 100%;
-        margin-bottom: 2rem;
     }
 
     .cart-order__container-50 {
