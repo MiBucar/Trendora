@@ -63,8 +63,7 @@ ul li a:hover{
     .first-li {
         padding: 5px;
         background-color: white;
-        width: 8rem;
-        border-radius: 1px;
+        width: 7rem;
         color: var(--color-primary);
         font-size: 1.1rem;
     }

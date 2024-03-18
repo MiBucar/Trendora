@@ -84,6 +84,13 @@
         background-color: var(--color-primary-light);
     }
 
+@media (max-width: 500px){
+    .button-container{
+        display: flex;
+        justify-content: center;
+    }
+}
+
 @media(max-width: 800px){
     .logout-button {
         width: 35%;

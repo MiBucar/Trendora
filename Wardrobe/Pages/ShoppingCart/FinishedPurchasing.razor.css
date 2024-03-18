@@ -57,8 +57,20 @@
     }
 }
 
-@media (max-width: 540px) {
+@media (max-width: 500px) {
     .purchasesummary_content__container {
         width: 100%;
+    }
+
+    .purchasesummary__text p{
+        font-size: 1.2rem;
+    }
+
+    .purchasesummary__image{
+        width: 60px;
+    }
+
+    .purchasesummary__email-receipt p{
+        font-size: 1rem;
     }
 }

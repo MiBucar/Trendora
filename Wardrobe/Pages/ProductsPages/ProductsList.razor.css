@@ -44,7 +44,8 @@
 }
 
 @media(max-width: 500px){
-    .product-grid{
-        padding: 0;
+    .product-grid {
+        padding: 5px;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));       
     }
 }

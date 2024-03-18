@@ -191,7 +191,6 @@
 
 .cart-container__image-container {
     width: 30%;
-    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -387,7 +386,7 @@
     }
 }
 
-@media (max-width: 540px) {
+@media (max-width: 500px) {
     .main-container {
         width: 100%;
         display: flex;

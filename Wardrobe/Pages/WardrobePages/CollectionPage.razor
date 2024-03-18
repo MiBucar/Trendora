@@ -59,12 +59,6 @@
                 <RadzenDataGrid FilterPopupRenderMode="PopupRenderMode.OnDemand" AllowPaging="false" PageSize="10" AllowSorting="false"
                                 Data="@CollectionList" TItem="CollectionDTO">
                     <Columns>
-                        <RadzenDataGridColumn Width="50px" TItem="CollectionDTO" Title="#" TextAlign="TextAlign.Center">
-                            <Template Context="data">
-                                @(CollectionList.ToList().IndexOf(data) + 1)
-                            </Template>
-                        </RadzenDataGridColumn>
-
                         <RadzenDataGridColumn TItem="CollectionDTO" Title="Title" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
                             <Template Context="collection">
                                 <RadzenText TagName="TagName.H3">@collection.Name</RadzenText>
