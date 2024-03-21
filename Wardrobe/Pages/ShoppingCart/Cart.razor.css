@@ -194,6 +194,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: visible;
 }
 
 .cart-container__image {
@@ -377,10 +378,6 @@
         margin-bottom: 10px;
     }
 
-    .cart-container__image-container {
-        width: 30%;
-    }
-
     .submit-button {
         width: 100%;
     }
@@ -395,7 +392,8 @@
     }
 
     .cart-container__price {
-        width: 30%;
+        width: 25%;
+        margin-top: 10px;
     }
 
     .cart-container__information h3 {

@@ -54,6 +54,14 @@
     background-color: var(--color-primary-light, #8d00fb);
 }
 
+@media (max-width: 500px){
+    .button-container {
+        display: flex;
+        -webkit-justify-content: center;
+        justify-content: center;
+    }
+}
+
 @media (max-width: 800px) {
     .identity__navigation {
         width: 100%;

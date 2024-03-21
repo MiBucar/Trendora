@@ -3,10 +3,11 @@
     box-sizing: border-box;
 }
 
-.main-container{
+.main-container {
     width: 100%;
     display: flex;
     justify-content: center;
+    padding: 10px;
 }
 
 .order-summary__container{
