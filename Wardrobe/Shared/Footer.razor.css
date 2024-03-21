@@ -38,10 +38,10 @@ footer {
 .first-li{
     padding: 5px;
     background-color: white;
-    width: 6.5rem;
+    width: 7.5rem;
     border-radius: 1px;
     color: var(--color-primary-dark);
-    font-size: 1.5rem;
+    font-size: 1.2rem;
 }
 
 ul li a {
