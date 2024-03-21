@@ -4,6 +4,11 @@
 This is a Blazor web application for a clothing store, featuring functionalities common in e-commerce sites.  
 ***Whole documentation is located [here](https://trendora.atlassian.net/wiki/external/ZGIxZmZlMzZhNzZjNDY3MDliOTFiZDkyODE0YTc4MDQ).***
 
+## Reason for choosing Blazor Server instead of WebAssembly
+I am aware that a site of this type should be made using WebAssembly.  
+The reason I chose Blazor Server is because I wanted to try working with SignalR and to minimize client-side resources.  
+In a real scenario I would have chosen Blazor WebAssembly.
+
 ## Prerequisites
 - .NET 8 SDK
 - SQL Server LocalDB
