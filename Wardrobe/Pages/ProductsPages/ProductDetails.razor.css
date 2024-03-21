@@ -91,6 +91,7 @@
     margin-top: 20px;
     font-size: 1.1rem;
     color: #6d6d6d;
+    white-space: pre-line;
 }
 
 .product-name {
@@ -99,6 +100,12 @@
     margin-bottom: 20px;
     margin-top: 20px;
     width: 100%;
+}
+
+.product-price {
+    color: #6d6d6d;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
 }
 
 .product-label {

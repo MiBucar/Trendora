@@ -10,6 +10,7 @@ using Wardrobe.Data_Access;
 using Wardrobe.Models.DTOs;
 using Wardrobe.Models.Models;
 using Wardrobe.Services.Interfaces;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Wardrobe.Services.Implementations
 {
@@ -79,8 +80,12 @@ namespace Wardrobe.Services.Implementations
             var tagIds = collection.Tags.Select(x => x.TagId);
 
             var products = _db.ProductList.Where(x => genderIds.Contains(x.GenderId));
+
             if (tagIds.Any())
-                products = products.Where(x => x.Tags.Any(tag => tagIds.Contains(tag.TagId)));
+            {
+                var tempQuery = products.Where(x => x.Tags.Any(tag => tagIds.Contains(tag.TagId)));
+                products = products.Union(tempQuery).Distinct();
+            }
 
             var uniqueCategories = products.Select(x => x.Category)
                         .Distinct().Select(x => x);
