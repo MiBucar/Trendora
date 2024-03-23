@@ -95,7 +95,7 @@ else
     {
         IsLoading = true;
         StateHasChanged();
-        Product = await _productService.GetByName(ProductName);
+        Product = await _productService.GetByGuid(Guid);
         ItemType = await _itemTypeService.GetById(Product.CategoryId);
         IsLoading = false;
         StateHasChanged();

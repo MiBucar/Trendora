@@ -130,7 +130,7 @@
 
 .carousel-cell {
     width: 20%;
-    height: 400px;
+    height: auto;
     margin-right: 10px;
     background-color: var(--color-primary);
     border-radius: 2px;
@@ -140,10 +140,8 @@
 
 .carousel-cell__image {
     width: 100%;
-    height: 300px;
+    height: auto;
     object-fit: cover;
-    border-radius: 2px;
-    padding: 10px 10px 0px 10px;
 }
 
 .carousel-cell__info {
@@ -221,13 +219,8 @@
         padding: 0;
     }
 
-    .carousel-cell__image{
-        height: 200px;
-    }
-
     .carousel-cell {
         width: 50%;
-        height: 300px;
     }
 
     .carousel-cell__info h3 {

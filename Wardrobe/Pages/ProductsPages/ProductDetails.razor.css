@@ -89,9 +89,10 @@
 
 .description {
     margin-top: 20px;
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: #6d6d6d;
     white-space: pre-line;
+    font-family: Arial, sans-serif;
 }
 
 .product-name {
