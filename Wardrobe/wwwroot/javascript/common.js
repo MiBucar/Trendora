@@ -52,6 +52,15 @@ function toggleMobileMenu(menu) {
     document.body.style.overflowY = isOpen ? 'auto' : 'hidden';
 }
 
+function closeMobileMenu() {
+    console.log("Closing mobile menu");
+    var menu = document.querySelector('.hamburger-icon');
+    if (menu.classList.contains('hamburger-open')) {
+        menu.classList.remove('hamburger-open');
+        document.body.style.overflowY = 'auto'; 
+    }
+}
+
 function focusInputText(element) {
     console.log("Focusing input text");
     setTimeout(function () {

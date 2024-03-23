@@ -176,6 +176,7 @@
             filteredProducts = filteredProducts.OrderByDescending(x => x.Price);
 
         await OnFilterApplied.InvokeAsync(filteredProducts.ToList());
+        await ToggleFilter();
     }
 
     [JSInvokable]

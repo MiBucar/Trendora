@@ -22,5 +22,7 @@ namespace Wardrobe.Models.Models
         public string ZipCode { get; set; }
         [Required(ErrorMessage = "Country is required")]
         public string Country { get; set; }
+        [Required(ErrorMessage = "Phone Number is required")]
+        public string PhoneNumber { get; set; }
     }
 }

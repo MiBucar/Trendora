@@ -130,7 +130,7 @@ a, .btn-link {
 .btn-form {
     border: none;
     padding: 8px;
-    min-width: 4rem;
+    min-width: 3rem;
     min-height: 2rem;
     color: white;
     border-radius: 3px;
@@ -156,7 +156,6 @@ a, .btn-link {
 
 .btn-form--static {
     background-color: gray;
-    width: 4rem;
     cursor: default !important;
 }
 

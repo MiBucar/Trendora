@@ -37,8 +37,12 @@
                         <ValidationMessage For="() => User.LastName" />
                     </div>
                     <div class="identity__container-block">
-                        <RadzenText TagName="TagName.H3">Phone Number</RadzenText>
+                        <div class="identity__container-title">
+                            <RadzenText TagName="TagName.H3">Phone Number</RadzenText>
+                            <RadzenText Style="color:red;" TagName="TagName.H3">*</RadzenText>
+                        </div>
                         <RadzenTextBox @bind-Value="User.PhoneNumber" class="w-100" aria-label="Default TextBox" />
+                        <ValidationMessage For="() => User.PhoneNumber" />
                     </div>
                     <div class="identity__container-block">
                         <div class="identity__container-title">
