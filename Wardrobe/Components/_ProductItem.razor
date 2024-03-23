@@ -2,7 +2,7 @@
     <img src="data:image/png;base64,@Convert.ToBase64String(Product.ImageData)" alt="@Product.Name" />
     <div class="product-item__info">
         <h3 style="text-align: left;">@Product.Name</h3>
-        <p>@Product.Price.ToString("C")</p>
+        <p>@Product.Price.ToString("C", new System.Globalization.CultureInfo("fr-FR"))</p>
     </div>    
 </div>
 

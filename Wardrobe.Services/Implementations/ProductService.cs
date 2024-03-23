@@ -81,9 +81,9 @@ namespace Wardrobe.Services.Implementations
             return new ProductDTO();
         }
 
-        public async Task<ProductDTO> GetByName(string name)
+        public async Task<ProductDTO> GetByGuid(Guid guid)
         {
-            var obj = await _db.ProductList.Include(x => x.Category).Include(x => x.Colors).Include(x => x.Tags).FirstOrDefaultAsync(x => x.Name == name);
+            var obj = await _db.ProductList.Include(x => x.Category).Include(x => x.Colors).Include(x => x.Tags).FirstOrDefaultAsync(x => x.IdGuid == guid);
             if (obj != null)
             {
                 return _mapper.Map<Product, ProductDTO>(obj);
@@ -168,6 +168,43 @@ namespace Wardrobe.Services.Implementations
             var products = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
             return (_mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(products), totalCount);
+        }
+
+        public async Task<IEnumerable<ProductDTO>> GetAllByCollection(CollectionDTO collection)
+        {
+            var collectionGenders = collection.Genders.Select(x => x.Name);
+            var collectionTags = collection.Tags.Select(x => x.Title);
+
+            var query = _db.ProductList.Include(x => x.Category).Include(x => x.Colors).Include(x => x.Tags).Where(x => collectionGenders.Contains(x.Gender.Name));
+
+            if (collectionTags.Any())
+            {
+                var tempQuery = query.Where(x => x.Tags.Any(tag => collectionTags.Contains(tag.Title)));
+                query = query.Union(tempQuery).Distinct();
+            }
+
+            var products = query.ToList();
+
+            return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(products);
+        }
+
+        public async Task<(IEnumerable<ProductDTO>, int)> GetByCollectionAndProducts(IEnumerable<ProductDTO> products, CollectionDTO collection, int pageNumber, int pageSize)
+        {
+            var collectionGenders = collection.Genders.Select(x => x.Name);
+            var collectionTags = collection.Tags.Select(x => x.Title);
+
+            var query = products;
+
+            if (collectionTags.Any())
+            {
+                var tempQuery = query.Where(x => x.Tags.Any(tag => collectionTags.Contains(tag.Title)));
+                query = query.Union(tempQuery).Distinct().ToList();
+            }
+
+            int totalCount = query.Count();
+            var newProducts = query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+            return (newProducts, totalCount);
         }
     }
 }
