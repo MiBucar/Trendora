@@ -61,79 +61,84 @@
             </div>
         </div>
     </div>
-}
 
-<div class="item-container">
-    @if (WardrobeList.Any())
-    {
-        <div class="item-row item-row--info">
-            <div class="item-container__property">Name</div>
-            <div class="item-container__property category-class">Category</div>
-            <div class="item-container__property">Price</div>
-            <div class="item-container__property img-class">Image</div>
-            <div class="item-container__property color-class">Available Colors</div>
-            <div class="item-container__property">Action</div>
-        </div>
-        @foreach (var item in WardrobeList)
+    <div class="item-container">
+        @if (WardrobeList.Any())
         {
-            <div class="item-row item-row--content">
-                <div class="item-container__property name-class">@item.Name</div>
-                <div class="item-container__property category-class">@item.Category.Name</div>
-                <div class="item-container__property">@item.Price€</div>
-                <div class="item-container__property img-class">
-                    @if (item.ImageData.Any())
-                    {
-                        <button class="item-container__property-button-image-picture" @onclick="() => ShowProductImage(item.Id)"></button>
-                    }
-                    else
-                    {
-                        <span>None</span>
-                    }
-                </div>
-                <div class="item-container__property color-class">
-                    @if (item.Colors.Any())
-                    {
-                        <button class="item-container__property-button-image-pallete" @onclick="() => ShowProductColors(item.Id)"></button>
-
-                    }
-                    else
-                    {
-                        <span>None</span>
-                    }
-                </div>
-                <div class="item-container__property">
-                    <NavLink href=@($"/wardrobe/create/{item.Id}")>
-                        <button class="btn-form btn-form--submit" style="margin-right: 2px;">Edit</button>
-                    </NavLink>
-                    @if (IsAdmin)
-                    {
-                        <button class="btn-form btn-form--cancel" @onclick="() => DeleteItem(item.Id)">Delete</button>
-
-                    }
-                    else
-                    {
-                        <button class="btn-form btn-form--cancel">Delete</button>
-                    }
-                </div>
+            <div class="item-row item-row--info">
+                <div class="item-container__property">Name</div>
+                <div class="item-container__property category-class">Category</div>
+                <div class="item-container__property">Price</div>
+                <div class="item-container__property img-class">Image</div>
+                <div class="item-container__property color-class">Available Colors</div>
+                <div class="item-container__property">Action</div>
             </div>
-        }
-    }
-    else
-    {
-        if (IsLoading)
-        {
-            <div class="loadingio-spinner-ripple-kzrhxmj307">
-                <div class="ldio-i6ylih2ekth">
-                    <div></div><div></div>
+            @foreach (var item in WardrobeList)
+            {
+                <div class="item-row item-row--content">
+                    <div class="item-container__property name-class">@item.Name</div>
+                    <div class="item-container__property category-class">@item.Category.Name</div>
+                    <div class="item-container__property">@item.Price€</div>
+                    <div class="item-container__property img-class">
+                        @if (item.ImageData.Any())
+                        {
+                            <button class="item-container__property-button-image-picture" @onclick="() => ShowProductImage(item.Id)"></button>
+                        }
+                        else
+                        {
+                            <span>None</span>
+                        }
+                    </div>
+                    <div class="item-container__property color-class">
+                        @if (item.Colors.Any())
+                        {
+                            <button class="item-container__property-button-image-pallete" @onclick="() => ShowProductColors(item.Id)"></button>
+
+                        }
+                        else
+                        {
+                            <span>None</span>
+                        }
+                    </div>
+                    <div class="item-container__property">
+                        <NavLink href=@($"/wardrobe/create/{item.Id}")>
+                            <button class="btn-form btn-form--submit" style="margin-right: 2px;">Edit</button>
+                        </NavLink>
+                        @if (IsAdmin)
+                        {
+                            <button class="btn-form btn-form--cancel" @onclick="() => DeleteItem(item.Id)">Delete</button>
+
+                        }
+                        else
+                        {
+                            <button class="btn-form btn-form--cancel">Delete</button>
+                        }
+                    </div>
                 </div>
-            </div>
+            }
         }
         else
         {
-            <p>No Data found</p>
+            if (IsLoading)
+            {
+                <div class="loadingio-spinner-ripple-kzrhxmj307">
+                    <div class="ldio-i6ylih2ekth">
+                        <div></div><div></div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <p>No Data found</p>
+            }
         }
-    }
-</div>
+    </div>
+}
+else
+{
+    <_LoadingAnimation/>
+}
+
 
 <style>
     body {

@@ -206,5 +206,21 @@ namespace Wardrobe.Services.Implementations
 
             return (newProducts, totalCount);
         }
+
+        public async Task<IEnumerable<string>> GetBrandsByCollection(CollectionDTO collection)
+        {
+            var gendersInCollection = collection.Genders.Select(x => x.Id);
+            var tagsInCollection = collection.Tags.Select(x => x.TagId);
+
+            var products = _db.ProductList.Where(x => gendersInCollection.Contains(x.Gender.Id));
+
+            if (tagsInCollection.Any())
+                products = products.Where(x => x.Tags.Any(tag => tagsInCollection.Contains(tag.TagId)));
+
+            var uniqueBrands = products.Select(x => x.Name)
+                        .Distinct().Select(x => x);
+
+            return uniqueBrands;
+        }
     }
 }
