@@ -21,5 +21,6 @@ namespace Wardrobe.Services.Interfaces
         public Task<(IEnumerable<ProductDTO>, int)> GetByCollection(CollectionDTO collection, int pageNumber, int pageSize);
         public Task<(IEnumerable<ProductDTO>, int)> GetByCollectionAndProducts(IEnumerable<ProductDTO> products, CollectionDTO collection, int pageNumber, int pageSize);
         public Task<IEnumerable<ProductDTO>> GetAllByCollection(CollectionDTO collection);
+        public Task<IEnumerable<string>> GetBrandsByCollection(CollectionDTO collection);
     }
 }

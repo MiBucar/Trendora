@@ -1,6 +1,7 @@
 ﻿@inject IJSRuntime JSRuntime
 @inject IColorService _colorService
 @inject ICategoryService _categoryService
+@inject IProductService _productService
 
 <div class="filter-container">
     <div class="filter-container__selector" @onclick="ToggleFilter">
@@ -63,6 +64,17 @@
             </div>
         </div>
 
+        <!-- Brands -->
+        <div class="filter-container--middle">
+            <div class="product-filter__container">
+                <label class="product-filter__label">Select Brands</label>
+                <div class="rz-text-align-center">
+                    <RadzenDropDown @bind-Value=@SelectedBrands Data=@BrandList Chips=true Multiple=true AllowClear=false Placeholder="Select"
+                                    Style="width: 100%; max-width: 400px;" />
+                </div>
+            </div>
+        </div>
+
         <!-- Price Range -->
         @if (MinPrice != MaxPrice && ProductList.Any())
         {
@@ -116,6 +128,10 @@
     public IEnumerable<CategoryDTO> CategoryList { get; set; } = new List<CategoryDTO>();
     public List<int> SelectedCategories { get; set; } = new List<int>();
 
+    // Brands
+    public IEnumerable<string> BrandList { get; set; } = new List<string>();
+    public List<string> SelectedBrands { get; set; } = new List<string>();
+
     // Prices
     public IEnumerable<string> PriceFilter { get; set; } = new List<string> { "Price Ascending", "Price Descending" };
     public IEnumerable<int> ProductMinMaxPrices { get; set; } = new List<int>();
@@ -129,6 +145,7 @@
     {
         ColorList = await _colorService.GetColorsByCollection(Collection);
         CategoryList = await _categoryService.GetCategoriesByCollection(Collection);
+        BrandList = await _productService.GetBrandsByCollection(Collection);
         GenderList = Collection.Genders;
 
         if (ProductList.Any())
@@ -161,6 +178,9 @@
 
         if (SelectedCategories.Any())
             filteredProducts = filteredProducts.Where(x => SelectedCategories.Contains(x.CategoryId));
+
+        if (SelectedBrands.Any())
+            filteredProducts = filteredProducts.Where(x => SelectedBrands.Contains(x.Name));
 
         if (ProductMinMaxPrices != null && ProductMinMaxPrices.Count() == 2)
         {

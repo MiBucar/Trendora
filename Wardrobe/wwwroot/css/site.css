@@ -139,6 +139,7 @@ a, .btn-link {
 .btn-form--submit {
     background-color: var(--color-primary);
     transition: .5s ease;
+    cursor: pointer;
 }
 
     .btn-form--submit:hover {
@@ -468,8 +469,8 @@ a, .btn-link {
 }
 
 .input-container--image {
-    width: 300px;
-    height: 400px;
+    width: 100%;
+    height: auto;
     border-radius: 2px;
     border: 2px solid var(--color-primary);
     object-fit: cover;

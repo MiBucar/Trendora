@@ -32,7 +32,10 @@ namespace Wardrobe.Data_Access
                 new Color { Id = 6, Name = "White", ColorCode = "#ffffff" },
                 new Color { Id = 7, Name = "Pink", ColorCode = "#e610a9" },
                 new Color { Id = 8, Name = "Brown", ColorCode = "#964B00" },
-                new Color { Id = 9, Name = "Purple", ColorCode = "#800080" }
+                new Color { Id = 9, Name = "Purple", ColorCode = "#800080" },
+                new Color { Id = 10, Name = "Orange", ColorCode = "#FFA500" },
+                new Color { Id = 11, Name = "Gray", ColorCode = "#808080" },
+                new Color { Id = 12, Name = "Light Blue", ColorCode = "#ADD8E6" }
             );
 
             modelBuilder.Entity<Gender>().HasData(

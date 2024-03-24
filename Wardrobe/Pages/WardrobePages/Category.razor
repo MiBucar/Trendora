@@ -44,10 +44,6 @@
                             </EditForm>
                         }
                     }
-                    @if (ShowingItemTypeImage)
-                    {
-                        <h5 style="margin: 0;">@HeaderText</h5>
-                    }
                 </div>
                 <button type="button" class="btn-close" aria-label="Close" @onclick="ClosePopup"></button>
             </div>
@@ -144,7 +140,7 @@
                     }
                     else
                     {
-                        <button type="button" class="btn-form btn-form--submit">Create</button>
+                        <div class="btn-form btn-form--submit">Create</div>
                     }
                     @if (AvailableSizes.Any())
                     {
@@ -266,7 +262,6 @@
     private string NewSizeValue { get; set; } = "";
     private List<SizeDTO> AvailableSizes { get; set; } = new List<SizeDTO>() { };
 
-    private bool ShowingItemTypeImage { get; set; }
     private bool ShowingEditControls { get; set; }
 
     private bool IsAdmin { get; set; }
@@ -357,7 +352,6 @@
     {
         ShownTypeModel = await _itemTypeService.GetById(id);
         ShowingEditControls = true;
-        ShowingItemTypeImage = false;
         HeaderText = ShownTypeModel.Name;
         IsVisible = true;
         StateHasChanged();
@@ -367,7 +361,6 @@
     {
         ShownTypeModel = await _itemTypeService.GetById(id);
         ShowingEditControls = false;
-        ShowingItemTypeImage = true;
         HeaderText = $"{ShownTypeModel.Name} Image";
         IsVisible = true;
         StateHasChanged();
