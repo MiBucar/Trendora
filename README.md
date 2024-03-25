@@ -5,9 +5,16 @@ This is a Blazor web application for a clothing store, featuring functionalities
 ***Whole documentation is located [here](https://trendora.atlassian.net/wiki/external/ZGIxZmZlMzZhNzZjNDY3MDliOTFiZDkyODE0YTc4MDQ).***
 
 ## Reason for choosing Blazor Server instead of WebAssembly
-I am aware that a site of this type should be made using WebAssembly.  
-The reason I chose Blazor Server is because I wanted to try working with SignalR and to minimize client-side resources.  
+I am aware that a site of this type should be made using WebAssembly and that using Blazor server is a terrible choice.  
+The reason I chose Blazor Server is because I wanted to try working with SignalR, to minimize client-side resources and to challenge myself to make such a site using it.  
 In a real scenario I would have chosen Blazor WebAssembly.
+
+## Simplicity choices
+Because I wanted to keep it fairly simple, some options clothing stores ussualy have are limited.  
+For example:  
+- you can't declare sizes for each product, but for the category itself  
+- colors are pre-made  
+- there is no storage tracking how many products are left in stock  
 
 ## Prerequisites
 - .NET 8 SDK
