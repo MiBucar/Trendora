@@ -2,6 +2,7 @@
 
 ## Overview
 This is a Blazor web application for a clothing store, featuring functionalities common in e-commerce sites.  
+Url for the site is [Trendoramb.com](https://trendoramb.com/)  
 ***Whole documentation is located [here](https://trendora.atlassian.net/wiki/external/ZGIxZmZlMzZhNzZjNDY3MDliOTFiZDkyODE0YTc4MDQ).***
 
 ## Reason for choosing Blazor Server instead of WebAssembly
