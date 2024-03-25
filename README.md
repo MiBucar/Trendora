@@ -6,7 +6,7 @@ This is a Blazor web application for a clothing store, featuring functionalities
 
 ## Reason for choosing Blazor Server instead of WebAssembly
 I am aware that a site of this type should be made using WebAssembly and that using Blazor server is a terrible choice.  
-The reason I chose Blazor Server is because I wanted to try working with SignalR and to minimize client-side resources.  
+The reason I chose Blazor Server is because I wanted to try working with SignalR, to minimize client-side resources and to challenge myself to make such a site using it.  
 In a real scenario I would have chosen Blazor WebAssembly.
 
 ## Simplicity choices
