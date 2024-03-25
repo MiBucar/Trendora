@@ -1,7 +1,20 @@
-@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+/*@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');*/
+@import url('../Fonts/mainFont.css');
 * {
     margin: 0;
     box-sizing: border-box;
+}
+
+h2{
+    font-weight: normal;
+}
+
+h3{
+    font-weight: normal;
+}
+
+h4{
+    font-weight: normal;
 }
 
 :root {
@@ -50,8 +63,7 @@ ul[role=tablist] {
 }
 
 html, body {
-    font-family: CovesBold;
-    background-color: #f3f3f3;
+    background-color: white;
 }
 
 #toast-container .toast-success {
@@ -394,7 +406,6 @@ a, .btn-link {
     cursor: pointer;
     background-color: var(--color-primary);
     border-radius: 3px;
-    box-shadow: 0 4px 21px -12px rgba(0, 0, 0, 0.66);
 }
 
 .product-item__cover {
@@ -464,12 +475,11 @@ a, .btn-link {
     }
 
 .input-container--text {
-    font-size: 20px;
     margin-bottom: 2px;
 }
 
 .input-container--image {
-    width: 100%;
+    width: 20%;
     height: auto;
     border-radius: 2px;
     border: 2px solid var(--color-primary);

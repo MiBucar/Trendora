@@ -37,7 +37,7 @@
         await OnCartChanged.InvokeAsync();
     }
 
-    private async Task IncrementCart(int productId, int productPrice)
+    private async Task IncrementCart(int productId, double productPrice)
     {
         await _shoppingCartService.IncrementCart(new()
         {
@@ -48,7 +48,7 @@
         await OnCartChanged.InvokeAsync();
     }
 
-    private async Task DecrementCart(int productId, int productPrice)
+    private async Task DecrementCart(int productId, double productPrice)
     {
         await _shoppingCartService.DecrementCart(new()
             {

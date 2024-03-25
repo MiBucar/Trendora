@@ -193,15 +193,26 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadItem();
+
+        IsLoading = true;
+        StateHasChanged();
+
         IsAdmin = await _appUserService.IsUserAdmin();
         StateHasChanged();
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadItem();
+            IsLoading = false;
+            StateHasChanged();
+        }
+    }
+
     private async Task LoadItem()
     {
-        IsLoading = true;
-        StateHasChanged();
         Product.SelectedColors = new List<ColorDTO>();
         Product.SelectedTags = new List<TagDTO>() {};
         Categories = await _itemTypeService.GetAll();
@@ -217,8 +228,6 @@
             Product.SelectedTags = Product.Tags;
             Title = "Update";
         }
-        IsLoading = false;
-        StateHasChanged();
     }
 
     private async Task OnCategoryChanged(int selectedId)

@@ -67,4 +67,8 @@ ul li a:hover{
         color: var(--color-primary);
         font-size: 1.1rem;
     }
+
+    .sub-li{
+        font-size: 1rem;
+    }
 }

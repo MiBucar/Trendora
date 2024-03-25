@@ -41,7 +41,8 @@ namespace Wardrobe.Data_Access
             modelBuilder.Entity<Gender>().HasData(
                 new Gender { Id = 1, Name = SD.Section_Women },
                 new Gender { Id = 2, Name = SD.Section_Men },
-                new Gender { Id = 3, Name = SD.Section_Kids }
+                new Gender { Id = 3, Name = SD.Section_Boys },
+                new Gender { Id = 4, Name = SD.Section_Girls }
             );
 
             modelBuilder.Entity<Collection>().HasData(
@@ -71,9 +72,12 @@ namespace Wardrobe.Data_Access
                 new { GendersId = 1, CollectionsCollectionId = 1 },
                 new { GendersId = 2, CollectionsCollectionId = 2 },
                 new { GendersId = 3, CollectionsCollectionId = 3 },
+                new { GendersId = 4, CollectionsCollectionId = 3 },
+
                 new { GendersId = 1, CollectionsCollectionId = 4 },
                 new { GendersId = 2, CollectionsCollectionId = 4 },
-                new { GendersId = 3, CollectionsCollectionId = 4 }
+                new { GendersId = 3, CollectionsCollectionId = 4 },
+                new { GendersId = 4, CollectionsCollectionId = 4 }
             ));
 
             base.OnModelCreating(modelBuilder);

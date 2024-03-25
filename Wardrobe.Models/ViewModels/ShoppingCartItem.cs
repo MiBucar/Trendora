@@ -11,7 +11,7 @@ namespace Wardrobe.Models.ViewModels
     {
         public int ProductId { get; set; }
         public ProductDTO Product { get; set; }
-        public int ProductPrice { get; set; }
+        public double ProductPrice { get; set; }
         public int Count { get; set; }
         public int OrderId { get; set; }
         public string Size { get; set; }

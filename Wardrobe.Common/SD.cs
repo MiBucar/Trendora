@@ -12,6 +12,8 @@
         public const string Section_Kids = "Kids";
         public const string Section_Men = "Men";
         public const string Section_Women = "Women";
+        public const string Section_Boys = "Boys";
+        public const string Section_Girls = "Girls";
         public const string Section_AllProducts = "AllProducts";
 
         public const string Admin_Email = "mislavbucar@gmail.com";

@@ -39,7 +39,7 @@
             </div>
         </div>
         <div class="home-text__container">
-            <h3 class="home-text__header">Trendora</h3>
+            <h2 class="home-text__header">Trendora</h2>
             <p class="home-text__paragraph">
                 Discover Trendora – more than just a brand, it's an experience.
                 When you choose Trendora, you embrace a part of the fashion journey.
@@ -80,7 +80,7 @@
         </div>
         <div class="component-newsletter">
             <div class="component-newsletter__content">
-                <h4>FIND OUT FIRST</h4>
+                <h2>FIND OUT FIRST</h2>
                 <p>Subscribe for updates via email about special promotions, announcements of new products, gift ideas, and much more.</p>
                 @if (!HasSubscribed)
                 {
@@ -116,13 +116,13 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadProducts();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            await LoadProducts();
             await JSRuntime.InvokeVoidAsync("initializeFlickityOnElement", ".main-carousel");
             StateHasChanged();
         }
