@@ -397,7 +397,7 @@ else
                 OrderDetails = new List<OrderDetailDTO>()
             };
 
-        await FillNewOrder(newOrder);
+        FillNewOrder(newOrder);
 
         await _orderService.Create(newOrder);
     }
