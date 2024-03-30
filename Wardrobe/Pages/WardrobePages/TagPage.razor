@@ -10,7 +10,7 @@
                 <h3>Create Tags</h3>
             </div>
             <div class="tags-create__container">
-                <EditForm Model="Tag" OnValidSubmit="@CreateNewTag">
+                <EditForm Model="Tag" OnValidSubmit="@CreateNewTagAsync">
                     <DataAnnotationsValidator />
                     <div class="tags-create__container-block">
                         <div class="tags-create__container-title">
@@ -48,7 +48,7 @@
                                 {
                                     if (IsUserAdmin)
                                     {
-                                        <button @onclick="(() => DeleteTag(data))" class="btn-form btn-form--cancel">Delete</button>
+                                        <button @onclick="(() => DeleteTagAsync(data))" class="btn-form btn-form--cancel">Delete</button>
                                     }
                                     else
                                     {
@@ -92,7 +92,7 @@ else
         StateHasChanged();
     }
 
-    private async void CreateNewTag()
+    private async Task CreateNewTagAsync()
     {
         await _tagService.CreateTag(Tag);
         TagList = await _tagService.GetAllTags();
@@ -100,7 +100,7 @@ else
         StateHasChanged();
     }
 
-    private async void DeleteTag(TagDTO tag)
+    private async Task DeleteTagAsync(TagDTO tag)
     {
         await _tagService.DeleteTag(tag);
         TagList = await _tagService.GetAllTags();

@@ -11,7 +11,7 @@
 {
     @if (!IsLoading)
     {
-        <_ProductFilter ProductList="@AllProducts" Collection="@Collection" OnFilterApplied="HandleFilterApplied" />
+        <_ProductFilter ProductList="@AllProducts" Collection="@Collection" OnFilterApplied="HandleFilterAppliedAsync" />
 
         @if (ProductList.Any())
         {
@@ -42,9 +42,9 @@
             @if (TotalPages > 1)
             {
                 <div class="product-pages">
-                    <button @onclick="LoadPreviousPage" disabled="@IsFirstPage" class="product-pages__button">Back</button>
+                    <button @onclick="LoadPreviousPageAsync" disabled="@IsFirstPage" class="product-pages__button">Back</button>
                     <span>Page @CurrentPage of @TotalPages</span>
-                    <button @onclick="LoadNextPage" disabled="@IsLastPage" class="product-pages__button">Next</button>
+                    <button @onclick="LoadNextPageAsync" disabled="@IsLastPage" class="product-pages__button">Next</button>
                 </div>
             }
         }
@@ -92,16 +92,16 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await CheckIfCollectionExists();
+        await CheckIfCollectionExistsAsync();
     }
 
     protected override async Task OnParametersSetAsync()
     {
         if (CollectionExists)
-            await LoadProducts();
+            await LoadProductsAsync();
     }
 
-    private async Task LoadProducts()
+    private async Task LoadProductsAsync()
     {
         IsLoading = true;
         StateHasChanged();
@@ -118,7 +118,7 @@ else
         StateHasChanged();
     }
 
-    private async Task CheckIfCollectionExists()
+    private async Task CheckIfCollectionExistsAsync()
     {
         var collections = await _collectionService.GetAll();
 
@@ -126,25 +126,25 @@ else
             CollectionExists = true;
     }
 
-    private async Task LoadNextPage()
+    private async Task LoadNextPageAsync()
     {
         if (!IsLastPage)
         {
             CurrentPage++;
-            await LoadProducts();
+            await LoadProductsAsync();
         }
     }
 
-    private async Task LoadPreviousPage()
+    private async Task LoadPreviousPageAsync()
     {
         if (!IsFirstPage)
         {
             CurrentPage--;
-            await LoadProducts();
+            await LoadProductsAsync();
         }
     }
 
-    private async void HandleFilterApplied(IEnumerable<ProductDTO> filteredProducts)
+    private async Task HandleFilterAppliedAsync(IEnumerable<ProductDTO> filteredProducts)
     {
         (IEnumerable<ProductDTO> products, int totalCount) result;
         result = await _productService.GetByCollectionAndProducts(filteredProducts, Collection, CurrentPage, ItemsPerPage);

@@ -50,8 +50,8 @@
                     <_FilterComponent OnFilterApplied="HandleFilterApplied"></_FilterComponent>
                 </div>
                 <div class="menu-container--content">
-                    <input @bind-value="SearchedItem" placeholder="Search..." @onkeydown="SearchOnEnter" @bind-value:event="oninput" />
-                    <button class="menu-container--search-button" @onclick="SearchForItem"></button>
+                    <input @bind-value="SearchedItem" placeholder="Search..." @onkeydown="SearchOnEnterAsync" @bind-value:event="oninput" />
+                    <button class="menu-container--search-button" @onclick="SearchForItemAsync"></button>
                 </div>
             </div>            
             <div class="menu-container--content">
@@ -82,7 +82,7 @@
                     <div class="item-container__property img-class">
                         @if (item.ImageData.Any())
                         {
-                            <button class="item-container__property-button-image-picture" @onclick="() => ShowProductImage(item.Id)"></button>
+                            <button class="item-container__property-button-image-picture" @onclick="() => ShowProductImageAsync(item.Id)"></button>
                         }
                         else
                         {
@@ -92,7 +92,7 @@
                     <div class="item-container__property color-class">
                         @if (item.Colors.Any())
                         {
-                            <button class="item-container__property-button-image-pallete" @onclick="() => ShowProductColors(item.Id)"></button>
+                            <button class="item-container__property-button-image-pallete" @onclick="() => ShowProductColorsAsync(item.Id)"></button>
 
                         }
                         else
@@ -106,7 +106,7 @@
                         </NavLink>
                         @if (IsAdmin)
                         {
-                            <button class="btn-form btn-form--cancel" @onclick="() => DeleteItem(item.Id)">Delete</button>
+                            <button class="btn-form btn-form--cancel" @onclick="() => DeleteItemAsync(item.Id)">Delete</button>
 
                         }
                         else
@@ -174,11 +174,11 @@ else
     {
         if (firstRender)
         {
-            await LoadWardrobeList();
+            await LoadWardrobeListAsync();
         }
     }
 
-    private async Task LoadWardrobeList()
+    private async Task LoadWardrobeListAsync()
     {
         IsLoading = true;
         StateHasChanged();
@@ -187,32 +187,32 @@ else
         StateHasChanged();
     }
 
-    private async Task DeleteItem(int id)
+    private async Task DeleteItemAsync(int id)
     {
         IsLoading = true;
         await _productService.Delete(id);
-        await LoadWardrobeList();
+        await LoadWardrobeListAsync();
         IsLoading = false;
     }
 
-    private async Task SearchForItem()
+    private async Task SearchForItemAsync()
     {
         IsLoading = true;
         WardrobeList = await Task.Run(() => _productService.SearchByText(SearchedItem));
         IsLoading = false;
     }
 
-    private async Task SearchOnEnter(KeyboardEventArgs e)
+    private async Task SearchOnEnterAsync(KeyboardEventArgs e)
     {
         if (e.Key == "Enter")
         {
-            await SearchForItem();
+            await SearchForItemAsync();
         }
     }
 
-    public async void ShowProductColors(int id)
+    public async Task ShowProductColorsAsync(int id)
     {
-        await LoadWardrobeItem(id);
+        await LoadWardrobeItemAsync(id);
         HeaderText = "Colors";
         IsVisible = true;
         ShowingProductPallete = true;
@@ -220,9 +220,9 @@ else
         StateHasChanged();
     }
 
-    public async void ShowProductImage(int id)
+    public async Task ShowProductImageAsync(int id)
     {
-        await LoadWardrobeItem(id);
+        await LoadWardrobeItemAsync(id);
         HeaderText = "Image";
         IsVisible = true;
         ShowingProductPallete = false;
@@ -246,7 +246,7 @@ else
         StateHasChanged();
     }
 
-    private async Task LoadWardrobeItem(int id)
+    private async Task LoadWardrobeItemAsync(int id)
     {
         WardrobeItem = await _productService.GetById(id);
     }

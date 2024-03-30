@@ -15,7 +15,7 @@
         </div> 
         <div class="identity__container">
             <div class="identity__container-information">
-                <EditForm Model="User" OnValidSubmit="@Submit">
+                <EditForm Model="User" OnValidSubmit="@SubmitAsync">
                     <div style="margin-bottom: 10px;">
                         <h4 class="user-nav__heading">User Data</h4>
                     </div>                    
@@ -114,7 +114,7 @@ else
         }
     }
 
-    public async Task Submit()
+    public async Task SubmitAsync()
     {
         IsUserLoaded = false;
         StateHasChanged();

@@ -41,11 +41,11 @@
             </div>
 
             <div class="button-container">
-                <button class="add-to-basket-button" @onclick="AddToCard">ADD TO CART</button>
+                <button class="add-to-basket-button" @onclick="AddToCartAsync">ADD TO CART</button>
             </div>
 
             <div class="button-container">
-                <button class="buy-now-button" @onclick="BuyNow">BUY NOW</button>
+                <button class="buy-now-button" @onclick="BuyNowAsync">BUY NOW</button>
             </div>
 
             <p class="description">@Product.Description</p>
@@ -88,10 +88,10 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadProducts();
+        await LoadProductsAsync();
     }
 
-    private async Task LoadProducts()
+    private async Task LoadProductsAsync()
     {
         IsLoading = true;
         StateHasChanged();
@@ -101,18 +101,18 @@ else
         StateHasChanged();
     }
 
-    private async void BuyNow()
+    private async Task BuyNowAsync()
     {
-        await HandleCartOperation(null);
+        await HandleCartOperationAsync(null);
         _navigationManager.NavigateTo("/ShoppingCart");
     }
 
-    private async void AddToCard()
+    private async Task AddToCartAsync()
     {
-        await HandleCartOperation("Item added to cart");
+        await HandleCartOperationAsync("Item added to cart");
     }
 
-    private async Task HandleCartOperation(string successMessage)
+    private async Task HandleCartOperationAsync(string successMessage)
     {
         if (ItemType.Sizes.Any() && SelectedSize == null)
         {

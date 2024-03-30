@@ -54,7 +54,7 @@ else{
         IsLoading = true;
         StateHasChanged();
 
-        await GetUser();
+        await GetUserAsync();
 
         Orders = await _orderService.GetAll(User.Id);
 
@@ -62,7 +62,7 @@ else{
         StateHasChanged();
     }
 
-    private async Task GetUser(){
+    private async Task GetUserAsync(){
         var authorizationState = await _authState.GetAuthenticationStateAsync();
         var user = authorizationState.User;
         User = await _userManager.FindByEmailAsync(user.Identity.Name);

@@ -24,7 +24,7 @@
     }
     else
     {
-        <EditForm Model="Product" OnValidSubmit="@Submit">
+        <EditForm Model="Product" OnValidSubmit="@SubmitAsync">
             <DataAnnotationsValidator />
             <div class="form">
                 <!-- Name -->
@@ -49,7 +49,7 @@
                 <div class="input-container">
                     <RadzenLabel Text="Select Category" Component="DropDownItemType" />
                     <RadzenDropDown Placeholder="Select" @bind-Value=@Product.CategoryId Data=@Categories ValueProperty="ItemTypeId"
-                                    TextProperty="Name" Name="DropDownItemType" Change="@(() => OnCategoryChanged(Product.CategoryId))" />
+                                    TextProperty="Name" Name="DropDownItemType" Change="@(() => OnCategoryChangedAsync(Product.CategoryId))" />
                     <ValidationMessage For="() => Product.CategoryId" />
                 </div>
                 <!-- Tags -->
@@ -129,7 +129,7 @@
                 <!-- Image upload -->
                 <div class="input-container">
                     <p class="input-container--text">Image Upload</p>
-                    <InputFile OnChange="@HandleFileUpload" class="item-container__input" />
+                    <InputFile OnChange="@HandleFileUploadAsync" class="item-container__input" />
                     <ValidationMessage For="() => Product.ImageData" />
                 </div>
                 <!-- Image -->
@@ -176,7 +176,7 @@
     private IEnumerable<TagDTO> TagModels { get; set; } = new List<TagDTO>();
     private IEnumerable<GenderDTO> AvailableGenders { get; set; } = new List<GenderDTO>();
 
-    private async Task Submit()
+    private async Task SubmitAsync()
     {
         Product.Colors = Product.SelectedColors;
         Product.Tags = Product.SelectedTags;
@@ -205,13 +205,13 @@
     {
         if (firstRender)
         {
-            await LoadItem();
+            await LoadItemAsync();
             IsLoading = false;
             StateHasChanged();
         }
     }
 
-    private async Task LoadItem()
+    private async Task LoadItemAsync()
     {
         Product.SelectedColors = new List<ColorDTO>();
         Product.SelectedTags = new List<TagDTO>() {};
@@ -230,7 +230,7 @@
         }
     }
 
-    private async Task OnCategoryChanged(int selectedId)
+    private async Task OnCategoryChangedAsync(int selectedId)
     {
         Product.CategoryId = selectedId;
         ItemType = await _itemTypeService.GetById(selectedId);
@@ -249,7 +249,7 @@
         StateHasChanged();
     }
 
-    private async Task HandleFileUpload(InputFileChangeEventArgs e)
+    private async Task HandleFileUploadAsync(InputFileChangeEventArgs e)
     {
         var imageFile = e.File;
 
