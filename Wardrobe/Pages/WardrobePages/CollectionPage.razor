@@ -12,7 +12,7 @@
                 <h3>Create Collections</h3>
             </div>
             <div class="collections-create__container">
-                <EditForm Model="Collection" OnValidSubmit="@CreateNewCollection">
+                <EditForm Model="Collection" OnValidSubmit="@CreateNewCollectionAsync">
                     <DataAnnotationsValidator />
                     <!-- Name -->
                     <div class="collections-create__container-block">
@@ -89,7 +89,7 @@
                                 {
                                     @if (IsAdmin)
                                     {
-                                        <button @onclick="(() => DeleteCollection(data))" class="btn-form btn-form--cancel">Delete</button>
+                                        <button @onclick="(() => DeleteCollectionAsync(data))" class="btn-form btn-form--cancel">Delete</button>
 
                                     }
                                     else
@@ -140,7 +140,7 @@ else
         StateHasChanged();
     }
 
-    private async void CreateNewCollection()
+    private async Task CreateNewCollectionAsync()
     {
         IsLoading = true;
         StateHasChanged();
@@ -158,7 +158,7 @@ else
         StateHasChanged();
     }
 
-    private async void DeleteCollection(CollectionDTO collection)
+    private async Task DeleteCollectionAsync(CollectionDTO collection)
     {
         IsLoading = true;
         StateHasChanged();

@@ -84,7 +84,7 @@
                 <p>Subscribe for updates via email about special promotions, announcements of new products, gift ideas, and much more.</p>
                 @if (!HasSubscribed)
                 {
-                    <EditForm Model="SubEmail" OnValidSubmit="SubscribeToNewsletter" class="subemail-form">
+                    <EditForm Model="SubEmail" OnValidSubmit="SubscribeToNewsletterAsync" class="subemail-form">
                         <DataAnnotationsValidator />
                         <div class="component-newsletter__handler">
                             <RadzenTextBox Placeholder="Enter E-mail" @bind-Value="SubEmail.Email" aria-label="Default TextBox" />
@@ -114,21 +114,17 @@ else
     public SubscribeEmail SubEmail { get; set; } = new SubscribeEmail();
     private bool HasSubscribed { get; set; } = false;
 
-    protected override async Task OnInitializedAsync()
-    {
-    }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await LoadProducts();
+            await LoadProductsAsync();
             await JSRuntime.InvokeVoidAsync("initializeFlickityOnElement", ".main-carousel");
             StateHasChanged();
         }
     }
 
-    private async Task LoadProducts()
+    private async Task LoadProductsAsync()
     {
         IsLoading = true;
         StateHasChanged();
@@ -143,15 +139,15 @@ else
         return _imageService.GetImage(image);
     }
 
-    private async void SubscribeToNewsletter()
+    private async Task SubscribeToNewsletterAsync()
     {
-        await SendEmail();
+        await SendEmailAsync();
         HasSubscribed = true;
         SubEmail = new SubscribeEmail();
         StateHasChanged();
     }
 
-    private async Task SendEmail()
+    private async Task SendEmailAsync()
     {
         try
         {

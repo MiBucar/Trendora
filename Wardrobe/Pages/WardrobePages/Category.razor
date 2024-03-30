@@ -26,7 +26,7 @@
                             <h5 style="margin: 0;">@HeaderText</h5>
                             @if (IsAdmin)
                             {
-                                <div @onclick="StartEditingHeaderText" class="popup-container__edit-name"></div>
+                                <div @onclick="StartEditingHeaderTextAsync" class="popup-container__edit-name"></div>
                             }
                             else
                             {
@@ -35,7 +35,7 @@
                         }
                         else
                         {
-                            <EditForm Model="ShownTypeModel" OnValidSubmit="SaveEditingHeaderText" @onfocusout="@(() => SaveEditingHeaderText())">
+                            <EditForm Model="ShownTypeModel" OnValidSubmit="SaveEditingHeaderTextAsync" @onfocusout="@(() => SaveEditingHeaderTextAsync())">
                                 <DataAnnotationsValidator />
                                 <div class="item-property--card-1">
                                     <input @bind-value="ShownTypeModel.Name" class="item-container__input no-focus-outline input-for-focus" style="width: 50%;" placeholder="Rename..."></input>
@@ -58,7 +58,7 @@
                                 <span style="margin: 1px 3px 0px 2px;">@size.ItemSize</span>
                                 @if (IsAdmin)
                                 {
-                                    <div @onclick="() => RemoveExistingSize(size)" class="size-container__image"></div>
+                                    <div @onclick="() => RemoveExistingSizeAsync(size)" class="size-container__image"></div>
                                 }
                                 else
                                 {
@@ -71,7 +71,7 @@
                             <div class="size-container size-container--light">
                                 @if (IsAdmin)
                                 {
-                                    <div @onclick="StartEditingExistingSizes" class="size-container__image--add"></div>
+                                    <div @onclick="StartEditingExistingSizesAsync" class="size-container__image--add"></div>
                                 }
                                 else
                                 {
@@ -81,7 +81,7 @@
                         }
                         else
                         {
-                            <EditForm Model="ShownTypeModel" OnValidSubmit="SaveEditingExistingSizes" @onfocusout="@(() => StopEditingExistingSizes())">
+                            <EditForm Model="ShownTypeModel" OnValidSubmit="SaveEditingExistingSizesAsync" @onfocusout="@(() => StopEditingExistingSizes())">
                                 <DataAnnotationsValidator />
                                 <input @bind-value="SizeModel.ItemSize" class="item-container__input no-focus-outline input-for-focus-2" placeholder="Add new Size" style="padding: 3px 5px 3px 5px; margin-right: 10px; margin-top: 5px; width: 54%;"></input>
                                 <ValidationMessage For="() => ShownTypeModel.Name" />
@@ -99,7 +99,7 @@
     <!-- Create New Model Type -->
     <div class="item-container__card">
         <div style=" height: 100%;">
-            <EditForm Model="ItemTypeModel" OnValidSubmit="@CreateItemType">
+            <EditForm Model="ItemTypeModel" OnValidSubmit="@CreateItemTypeAsync">
                 <DataAnnotationsValidator />
                 <div style="text-align:left;">
                     <label>Category Name</label>
@@ -191,10 +191,10 @@
                     </div>
                     <!-- Buttons -->
                     <div class="item-container__property">
-                        <button class="btn-form btn-form--submit" style="margin-right: 2px;" @onclick="() => ShowEditControls(model.ItemTypeId)">Edit</button>
+                        <button class="btn-form btn-form--submit" style="margin-right: 2px;" @onclick="() => ShowEditControlsAsync(model.ItemTypeId)">Edit</button>
                         @if (IsAdmin)
                         {
-                            <button class="btn-form btn-form--cancel" style="margin-left: 2px;" @onclick="() => DeleteModel(model.ItemTypeId)">Delete</button>
+                            <button class="btn-form btn-form--cancel" style="margin-left: 2px;" @onclick="() => DeleteModelAsync(model.ItemTypeId)">Delete</button>
                         }
                         else
                         {
@@ -280,7 +280,7 @@
         AvailableSizes.Remove(sizeToRemove);
     }
 
-    private async Task RemoveExistingSize(SizeDTO sizeToRemove)
+    private async Task RemoveExistingSizeAsync(SizeDTO sizeToRemove)
     {
         await _sizeService.Delete(sizeToRemove);
         ShownTypeModel = await _itemTypeService.GetById(ShownTypeModel.ItemTypeId);
@@ -303,11 +303,11 @@
     {
         if (firstRender)
         {
-            await LoadItemTypes();
+            await LoadItemTypesAsync();
         }
     }
 
-    private async Task LoadItemTypes()
+    private async Task LoadItemTypesAsync()
     {
         IsLoading = true;
         StateHasChanged();
@@ -317,7 +317,7 @@
         StateHasChanged();
     }
 
-    private async Task CreateItemType()
+    private async Task CreateItemTypeAsync()
     {
         var newModel = await _itemTypeService.Create(ItemTypeModel);
 
@@ -332,10 +332,10 @@
         ItemTypeModel = new CategoryDTO();
     }
 
-    private async Task DeleteModel(int id)
+    private async Task DeleteModelAsync(int id)
     {
         await _itemTypeService.Delete(id);
-        await LoadItemTypes();
+        await LoadItemTypesAsync();
         StateHasChanged();
     }
 
@@ -348,7 +348,7 @@
     [Parameter]
     public string? HeaderText { get; set; }
 
-    public async void ShowEditControls(int id)
+    public async Task ShowEditControlsAsync(int id)
     {
         ShownTypeModel = await _itemTypeService.GetById(id);
         ShowingEditControls = true;
@@ -357,7 +357,7 @@
         StateHasChanged();
     }
 
-    public async void ShowItemImage(int id)
+    public async Task ShowItemImageAsync(int id)
     {
         ShownTypeModel = await _itemTypeService.GetById(id);
         ShowingEditControls = false;
@@ -376,13 +376,13 @@
     private bool IsEditingHeaderText = false;
     private bool IsEditingExistingSize = false;
 
-    private async Task StartEditingHeaderText()
+    private async Task StartEditingHeaderTextAsync()
     {
         IsEditingHeaderText = true;
         await _jsRuntime.InvokeVoidAsync("focusInputText", ".input-for-focus");
     }
 
-    private async Task SaveEditingHeaderText()
+    private async Task SaveEditingHeaderTextAsync()
     {
         await _itemTypeService.Update(ShownTypeModel);
         HeaderText = ShownTypeModel.Name;
@@ -391,7 +391,7 @@
         IsEditingHeaderText = false;
     }
 
-    private async Task StartEditingExistingSizes()
+    private async Task StartEditingExistingSizesAsync()
     {
         IsEditingExistingSize = true;
         await _jsRuntime.InvokeVoidAsync("focusInputText", ".input-for-focus-2");
@@ -402,7 +402,7 @@
         IsEditingExistingSize = false;
     }
 
-    private async Task SaveEditingExistingSizes()
+    private async Task SaveEditingExistingSizesAsync()
     {
         await _sizeService.Create(SizeModel, ShownTypeModel.ItemTypeId);
         await _itemTypeService.Update(ShownTypeModel);

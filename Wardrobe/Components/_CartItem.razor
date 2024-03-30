@@ -11,15 +11,15 @@
         <div class="cart-container__price">
             <h3 class="cart-container__name">@Item?.Product?.Name @Item?.Size</h3>
             <div class="cart-container__count-container">
-                <div class="tooltip-container image image-minus" @onclick="() => DecrementCart(Item.ProductId, Item.ProductPrice)"></div>
+                <div class="tooltip-container image image-minus" @onclick="() => DecrementCartAsync(Item.ProductId, Item.ProductPrice)"></div>
                 <p style="margin: 0;">@Item?.Count</p>
-                <div class="tooltip-container image image-plus" @onclick="() => IncrementCart(Item.ProductId, Item.ProductPrice)"></div>
+                <div class="tooltip-container image image-plus" @onclick="() => IncrementCartAsync(Item.ProductId, Item.ProductPrice)"></div>
             </div>
             <p>@Item.ProductPrice €</p>
         </div>
     </div>
     <div class="cart=container__buttons">
-        <button @onclick="() => RemoveItem(Item.ProductId)" class="cart-container__button">Delete</button>
+        <button @onclick="() => RemoveItemAsync(Item.ProductId)" class="cart-container__button">Delete</button>
     </div>
 </div>
 
@@ -30,14 +30,14 @@
     [Parameter]
     public EventCallback OnCartChanged { get; set; }
 
-    private async void RemoveItem(int productId)
+    private async Task RemoveItemAsync(int productId)
     {
         await _shoppingCartService.DeleteCart(productId);
         var test = await _localStorage.GetItemAsync<List<ShoppingCartItem>>(SD.ShoppingCart);
         await OnCartChanged.InvokeAsync();
     }
 
-    private async Task IncrementCart(int productId, double productPrice)
+    private async Task IncrementCartAsync(int productId, double productPrice)
     {
         await _shoppingCartService.IncrementCart(new()
         {
@@ -48,7 +48,7 @@
         await OnCartChanged.InvokeAsync();
     }
 
-    private async Task DecrementCart(int productId, double productPrice)
+    private async Task DecrementCartAsync(int productId, double productPrice)
     {
         await _shoppingCartService.DecrementCart(new()
             {

@@ -23,7 +23,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await GetEmail();
+        await GetEmailAsync();
 
         if (!string.IsNullOrEmpty(Email))
         {
@@ -31,7 +31,7 @@
         }
     }
 
-    private async Task GetEmail()
+    private async Task GetEmailAsync()
     {
         var authorizationState = await _authState.GetAuthenticationStateAsync();
         var user = authorizationState.User;

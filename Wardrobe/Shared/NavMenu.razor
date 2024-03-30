@@ -8,7 +8,7 @@
 <div class="navigation navigation-desktop">
     <div class="navigation-main__container">
         <div class="navigation-container" style="width: 5rem;">
-            <div @onclick="NavigateToLinkedIn" class="image image-linkedin" />
+            <div @onclick="NavigateToLinkedInAsync" class="image image-linkedin" />
         </div>
         <div class="navigation-container" style="width: 15rem;">
             <a href="/products/@SD.Section_AllProducts" class="navigation-container__link">Products</a>
@@ -113,7 +113,7 @@
         _navigationManager.NavigateTo("/loginDisplay");
     }
 
-    private async void NavigateToLinkedIn()
+    private async Task NavigateToLinkedInAsync()
     {
         try
         {

@@ -27,7 +27,7 @@
                                     {
                                         @foreach (var item in ShoppingCart)
                                         {
-                                            <_CartItem OnCartChanged="HandleCartChanged" Item="item"></_CartItem>
+                                            <_CartItem OnCartChanged="HandleCartChangedAsync" Item="item"></_CartItem>
                                         }
                                     }
                                 </div>
@@ -102,7 +102,7 @@
                 </div>
                 <div class="identity__container-information">
                     <RadzenCard>
-                        <EditForm Model="User" OnValidSubmit="@ConfirmDelivery">
+                        <EditForm Model="User" OnValidSubmit="@ConfirmDeliveryAsync">
                             <h3 style="text-align: center;">User Data</h3>
                             <DataAnnotationsValidator />
                             <div class="identity__container-block">
@@ -258,7 +258,7 @@
                             <p class="bill-container-cost__main">@TotalPrice €</p>
                         </div>
                     </div>
-                    <button class="submit-button" @onclick="OrderSummary">Finish Order</button>
+                    <button class="submit-button" @onclick="OrderSummaryAsync">Finish Order</button>
                 </div>
             </div>
         </div>
@@ -307,9 +307,9 @@ else
     {
         if (firstRender)
         {
-            await CheckAuthentication();
+            await CheckAuthenticationAsync();
 
-            await LoadCart();
+            await LoadCartAsync();
             StateHasChanged();
             SelectedPaymentMethod = PaymentMethods.First().Id;
             SelectedDeliveryMethod = DeliveryMethods.First().Id;
@@ -319,7 +319,7 @@ else
         }
     }
 
-    private async Task CheckAuthentication()
+    private async Task CheckAuthenticationAsync()
     {
         var authorizationState = await _authState.GetAuthenticationStateAsync();
         var user = authorizationState.User;
@@ -339,7 +339,7 @@ else
         }
     }
 
-    private async Task LoadCart()
+    private async Task LoadCartAsync()
     {
         if (await _localStorage.LengthAsync() > 0)
             ShoppingCart = await _localStorage.GetItemAsync<List<ShoppingCartItem>>(SD.ShoppingCart);
@@ -356,7 +356,7 @@ else
         }
     }
 
-    private async Task FinishOrder()
+    private void FinishOrder()
     {
         if (UserIsAuthenticated)
         {
@@ -369,7 +369,7 @@ else
         StateHasChanged();
     }
 
-    private async Task ConfirmDelivery()
+    private async Task ConfirmDeliveryAsync()
     {
         if (UserIsAuthenticated)
             await _ApplicationUserService.UpdateUser(User);
@@ -377,15 +377,15 @@ else
         CurrentIndex = 2;
     }
 
-    private async Task OrderSummary()
+    private async Task OrderSummaryAsync()
     {
-        await CreateNewOrder();
+        await CreateNewOrderAsync();
         await _localStorage.ClearAsync();
         _shoppingCartService.NotifyOnCartChanged();
         _navigationManager.NavigateTo("/purchasesummary");
     }
 
-    private async Task CreateNewOrder()
+    private async Task CreateNewOrderAsync()
     {
         var newOrder = new OrderDTO()
             {
@@ -402,7 +402,7 @@ else
         await _orderService.Create(newOrder);
     }
 
-    private async Task FillNewOrder(OrderDTO newOrder)
+    private void FillNewOrder(OrderDTO newOrder)
     {
         foreach (var item in ShoppingCart)
         {
@@ -453,18 +453,18 @@ else
         return (int)(TotalPrice - GetTax());
     }
 
-    private async Task HandleCartChanged()
+    private async Task HandleCartChangedAsync()
     {
-        await LoadCart();
+        await LoadCartAsync();
         StateHasChanged();
     }
 
     // PAYMENT
-    private string SelectedPaymentMethod { get; set; }
-    private string SelectedDeliveryMethod { get; set; }
+    private string? SelectedPaymentMethod { get; set; }
+    private string? SelectedDeliveryMethod { get; set; }
 
-    private string SelectedPaymentMethodName { get; set; }
-    private string SelectedDeliveryMethodName { get; set; }
+    private string? SelectedPaymentMethodName { get; set; }
+    private string? SelectedDeliveryMethodName { get; set; }
 
     private class RadioButtonInfo
     {
