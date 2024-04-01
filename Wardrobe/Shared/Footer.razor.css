@@ -71,4 +71,8 @@ ul li a:hover{
     .sub-li{
         font-size: 1rem;
     }
+
+    .privacyPolicy{
+        font-size: 0.8rem !important;
+    }
 }
